@@ -1,0 +1,19 @@
+.ShareButtons{
+    &__shareDiv{
+        width: 100%;
+    }
+
+    &__pointer:hover{
+        cursor: pointer;
+    }
+
+    &__shareButton{
+        display:flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    &__shareText{
+        padding-left: 5px;
+    }
+}
