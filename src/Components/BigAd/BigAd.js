@@ -5,12 +5,9 @@ import './BigAd.scss'
 function BigAd({image='', title='', minorTitle=''}) {
     return (
         <div className='BigAd' style={{ backgroundImage: `url('${image}')` }}>
-            <div>
-                <Row>
-                    <Col span={24} type="flex" align="end">
-                        <Typography.Title className='BigAd__organizationTitle' type="secondary">{minorTitle}</Typography.Title>
-                    </Col>
-                </Row>
+            
+            <div className='BigAd__organizationTitleDiv'>
+                <h1 className='BigAd__organizationTitle'>{minorTitle}</h1>
             </div>
 
 

@@ -1,7 +1,13 @@
+@import "../../variables";
 .EventPage{
     display: flex;
     flex-direction: column;
     padding-bottom: 150px;
+    background-color: $eventBackground;
+
+    &__description{
+        margin-top: 100px;
+    }
     
     &__iframe{
          width:100%;
@@ -16,8 +22,8 @@
     }
 
     &__page{
-        padding-left: 15%;
-        padding-right: 15%;
+        padding: 50px 15% 0 15%;
+
     }
 
     &__shareButtons{
