@@ -1,0 +1,40 @@
+
+@import "../../variables";
+.BigAd{
+        width: 100%;
+        height: 650px;
+        background-size: 100% 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+        position: relative;
+
+        padding: 25px 5% 25px 5%;
+
+        display: flex;
+        flex-direction: column;
+
+
+    &__eventTitleDiv{
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        flex: 1;
+    }
+    &__eventTitle{
+        color: $titleFontColor;
+        font-size: $titleFontSize;
+        margin: 0 0 4% 4%;
+    }
+
+    &__organizationTitleDiv{
+        flex:10;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    &__organizationTitle{
+        font-size: $smallerTitleFontSize;
+        color: rgba($color: $titleFontColor, $alpha: 0.25)
+    }
+}

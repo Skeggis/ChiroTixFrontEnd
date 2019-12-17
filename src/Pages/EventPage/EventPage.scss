@@ -1,0 +1,34 @@
+@import "../../variables";
+.EventPage{
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 150px;
+    background-color: $eventBackground;
+
+    &__description{
+        margin-top: 100px;
+    }
+    
+    &__iframe{
+         width:100%;
+         height:100%;
+    }
+
+
+    &__gmaps{
+        width:800px;
+        height:600px;
+        border:0;
+    }
+
+    &__page{
+        padding: 50px 15% 0 15%;
+
+    }
+
+    &__shareButtons{
+        margin: 25px 0 25px 0;
+    }
+
+
+}
