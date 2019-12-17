@@ -1,19 +1,21 @@
 import React from 'react';
 import {Fragment} from 'react'
+import {Route, Switch} from 'react-router-dom'
 import './App.css';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
-import EventPage from './Pages/EventPage/EventPage'
+import HomePage from './Pages/HomePage/HomePage'
 import 'antd/dist/antd.css';
+import Header from './Components/Header/Header'
+import EventPage from './Pages/EventPage/EventPage'
 
 
 function App() {
   return (
     <Fragment>
-      <Router>
-        <Switch>
-          <Route exact path='/event' component={EventPage}/>
-        </Switch>
-      </Router>
+      <Header/>
+      <Switch>
+        <Route path='/' exact component={HomePage}/>
+        <Route path='/event' exact component={EventPage}/>
+      </Switch>
     </Fragment>
   );
 }
