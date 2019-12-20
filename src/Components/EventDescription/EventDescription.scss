@@ -8,15 +8,17 @@
 
     &__description{
         margin: 50px 0 50px 0;
-        font-size: $subTitleFontSize*0.65;
+        font-size: $subTitleFontSize*0.85;
         color: $titleFontColor;
         line-height: $subTitleFontSize*1.5;
+        color: $normalFontColor;
+        padding-left: 3.5%;
     }
 
     h3{
         font-weight: bold;
-        font-size: $subTitleFontSize;
-        color: $titleFontColor;
+        font-size: $subTitleFontSize*1.25;
+        color: $normalFontColor;
     }
     
     &__speakersDiv{
@@ -24,7 +26,7 @@
         padding-top: 50px;
         padding-bottom: 85px;
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         grid-gap: 50px;
     }
 
@@ -37,15 +39,15 @@
 
     &__speakerImage{
         border-radius: 50%;
-        height: 75px;
-        width: 75px;
+        height: 200px;
+        width: 200px;
     }
 
     h4{
         font-weight: 300;
         margin-top: 10px;
-        font-size: $subTitleFontSize*0.5;
-        color: $titleFontColor;
+        font-size: $subTitleFontSize;
+        color: $normalFontColor;
         text-align: center;
         width: 100%;
     }

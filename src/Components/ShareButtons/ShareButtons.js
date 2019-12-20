@@ -4,8 +4,6 @@ import {
     FacebookIcon, FacebookShareButton,
     TwitterIcon, TwitterShareButton,
     WhatsappIcon, WhatsappShareButton,
-    RedditIcon, RedditShareButton,
-    TumblrIcon, TumblrShareButton,
     EmailIcon, EmailShareButton,
     PinterestIcon, PinterestShareButton
 } from 'react-share'
@@ -28,7 +26,6 @@ function ShareButtons({url=''}){
                             <TwitterIcon size={32} round={true} className="ShareButtons__pointer"/>
                             <Typography.Text className="ShareButtons__shareText ShareButtons__pointer">Tweet</Typography.Text>
                         </TwitterShareButton>
-                        
                     </Col>
                     <Col span={2}>
                         <WhatsappShareButton url={url} className="ShareButtons__shareButton">
@@ -36,30 +33,21 @@ function ShareButtons({url=''}){
                             <Typography.Text className="ShareButtons__shareText ShareButtons__pointer">WhatsApp</Typography.Text>
                         </WhatsappShareButton>
                     </Col>
-                    <Col span={2}>
-                        <RedditShareButton url={url} className="ShareButtons__shareButton">
-                            <RedditIcon size={32} round={true} className="ShareButtons__pointer"/>
-                            <Typography.Text className="ShareButtons__shareText ShareButtons__pointer">Reddit</Typography.Text>
-                        </RedditShareButton>
-                    </Col>
-                    <Col span={2}>
-                        <TumblrShareButton url={url} className="ShareButtons__shareButton">
-                            <TumblrIcon size={32} round={true} className="ShareButtons__pointer"/>
-                            <Typography.Text className="ShareButtons__shareText ShareButtons__pointer">Tumblr</Typography.Text>
-                        </TumblrShareButton>
-                    </Col>
-                    <Col span={2}>
-                        <EmailShareButton url={url} className="ShareButtons__shareButton">
-                            <EmailIcon size={32} round={true} className="ShareButtons__pointer"/>
-                            <Typography.Text className="ShareButtons__shareText ShareButtons__pointer">Send</Typography.Text>
-                        </EmailShareButton>
-                    </Col>
+                    <Col span={1}></Col>
                     <Col span={2}>
                         <PinterestShareButton url={url} className="ShareButtons__shareButton">
                             <PinterestIcon size={32} round={true} className="ShareButtons__pointer"/>
                             <Typography.Text className="ShareButtons__shareText ShareButtons__pointer">Pinterest</Typography.Text>
                         </PinterestShareButton>
                     </Col>
+                    <Col span={1}></Col>
+                    <Col span={2}>
+                        <EmailShareButton url={url} className="ShareButtons__shareButton">
+                            <EmailIcon size={32} round={true} className="ShareButtons__pointer"/>
+                            <Typography.Text className="ShareButtons__shareText ShareButtons__pointer">Send</Typography.Text>
+                        </EmailShareButton>
+                    </Col>
+                    
                 </Row>
             </div>
     );

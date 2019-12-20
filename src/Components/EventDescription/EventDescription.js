@@ -6,7 +6,7 @@ import './EventDescription.scss'
 function EventDescription({ description = '', speakers = [], tags = [] }) {
 
     let speakersItems = []
-    for(let i = 0; i < 5; i++){
+    for(let i = 0; i < 1; i++){
         speakers.forEach(speaker => 
             speakersItems.push(<div className="EventDescription__speakerDiv">
                     <a className="EventDescription__speakerDiv">
@@ -51,7 +51,7 @@ function EventDescription({ description = '', speakers = [], tags = [] }) {
 
                 <div className="EventDescription_tags">
                     {tags.map(tag =>
-                        <Tag color="#108ee9">{tag.tag}</Tag>
+                        <Tag color="#173753">{tag.tag}</Tag>
                     )
                     }
                 </div>
