@@ -39,13 +39,19 @@ function TicketsPage(props) {
             amount: 0
         }]
     }
-    const [current, setCurrent] = useState(0);
+    const [current, setCurrent] = useState(1);
     const [ticketTypes, setTicketTypes] = useState(data.ticketTypes || []);
-    const [totalTicketPrice, setTotalTicketPrice] = useState(1)
+    const [totalTicketPrice, setTotalTicketPrice] = useState(0)
+    const [stepsInfo, setStepsInfo] = useState([{
+        title: "Tickets", subTitle:"00:00:05"
+    }, {
+        title: "Billing Information"
+    }, {
+        title: "Receipt"
+    }])
 
-    let onNexStep = newCurrent => {
-        setCurrent(newCurrent)
-    };
+    
+    
 
 
 
@@ -66,6 +72,44 @@ function TicketsPage(props) {
         setTicketTypes(newTickets)
     }
 
+    let onContinue = () => { 
+        if(current === 1) {
+            stepsInfo[2].status = "error"
+            setStepsInfo(stepsInfo)
+        } 
+        setCurrent(current+1) }
+
+    let onBack = () => { 
+        if(current === 2) {
+            stepsInfo[2].status = ""
+            setStepsInfo(stepsInfo)
+        }
+        setCurrent(current - 1)}
+
+    let continueButton;
+    
+    if(current < 2){
+        continueButton = (<div className="TicketsPage__buttonDiv">
+        <Button onClick={onContinue} className="TicketsPage__button">
+            Find tickets
+        <Icon type="arrow-right" />
+        </Button>
+        </div>);
+    }
+
+    let backButton;
+
+    if(current === 1 || current === 2){
+        backButton = (<div className="TicketsPage__buttonDiv">
+        <Button onClick={onBack} className="TicketsPage__button">
+        <Icon type="arrow-left" />
+            Back
+        </Button>
+        </div>);
+    }
+    
+
+
     let componentToShow;
     if(current === 0){
         componentToShow = <TicketsList ticketTypes={ticketTypes} organization={data.organization}
@@ -81,19 +125,14 @@ function TicketsPage(props) {
             </div>
             <div className="TicketsPage__page">
                 <div className="TicketsPage__ticketsSteps">
-                    <TicketsSteps current={current} onNextStep={onNexStep}  />
+                    <TicketsSteps current={current}  stepsInfo={stepsInfo} />
                 </div>
                 <div >
                     {componentToShow}
                 </div>
             </div>
-
-            <div className="TicketsPage__buttonDiv">
-                <Button className="TicketsPage__button">
-                    Find tickets
-                <Icon type="arrow-right" />
-                </Button>
-            </div>
+            {backButton}
+            {continueButton}
 
         </div>
 
