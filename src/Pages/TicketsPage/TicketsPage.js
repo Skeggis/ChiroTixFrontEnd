@@ -6,6 +6,7 @@ import TicketsSteps from '../../Components/TicketsSteps/TicketsSteps'
 
 import TicketsList from '../../Components/TicketsList/TicketsList'
 import BillingInformation from '../../Components/BillingInformation/BillingInformation'
+import OrderDetails from '../../Components/OrderDetails/OrderDetails'
 import './TicketsPage.scss'
 
 
@@ -39,19 +40,19 @@ function TicketsPage(props) {
             amount: 0
         }]
     }
-    const [current, setCurrent] = useState(1);
+    const [current, setCurrent] = useState(2);
     const [ticketTypes, setTicketTypes] = useState(data.ticketTypes || []);
     const [totalTicketPrice, setTotalTicketPrice] = useState(0)
     const [stepsInfo, setStepsInfo] = useState([{
-        title: "Tickets", subTitle:"00:00:05"
+        title: "Tickets", subTitle: "00:00:05"
     }, {
         title: "Billing Information"
     }, {
         title: "Receipt"
     }])
 
-    
-    
+
+
 
 
 
@@ -72,50 +73,54 @@ function TicketsPage(props) {
         setTicketTypes(newTickets)
     }
 
-    let onContinue = () => { 
-        if(current === 1) {
+    let onContinue = () => {
+        if (current === 1) {
             stepsInfo[2].status = "error"
             setStepsInfo(stepsInfo)
-        } 
-        setCurrent(current+1) }
+        }
+        setCurrent(current + 1)
+    }
 
-    let onBack = () => { 
-        if(current === 2) {
+    let onBack = () => {
+        if (current === 2) {
             stepsInfo[2].status = ""
             setStepsInfo(stepsInfo)
         }
-        setCurrent(current - 1)}
+        setCurrent(current - 1)
+    }
 
     let continueButton;
-    
-    if(current < 2){
+
+    if (current < 2) {
         continueButton = (<div className="TicketsPage__buttonDiv">
-        <Button onClick={onContinue} className="TicketsPage__button">
-            Find tickets
+            <Button onClick={onContinue} className="TicketsPage__button">
+                Find tickets
         <Icon type="arrow-right" />
-        </Button>
+            </Button>
         </div>);
     }
 
     let backButton;
 
-    if(current === 1 || current === 2){
+    if (current === 1 || current === 2) {
         backButton = (<div className="TicketsPage__buttonDiv">
-        <Button onClick={onBack} className="TicketsPage__button">
-        <Icon type="arrow-left" />
-            Back
+            <Button onClick={onBack} className="TicketsPage__button">
+                <Icon type="arrow-left" />
+                Back
         </Button>
         </div>);
     }
-    
+
 
 
     let componentToShow;
-    if(current === 0){
+    if (current === 0) {
         componentToShow = <TicketsList ticketTypes={ticketTypes} organization={data.organization}
-        location={`${data.city}, ${data.country}`} onTicket={onTicket} totalTicketPrice={totalTicketPrice} />
-    } else if(current === 1){
+            location={`${data.city}, ${data.country}`} onTicket={onTicket} totalTicketPrice={totalTicketPrice} />
+    } else if (current === 1) {
         componentToShow = <BillingInformation />
+    } else if (current === 2){
+        componentToShow = <OrderDetails />
     }
 
     return (
@@ -125,7 +130,7 @@ function TicketsPage(props) {
             </div>
             <div className="TicketsPage__page">
                 <div className="TicketsPage__ticketsSteps">
-                    <TicketsSteps current={current}  stepsInfo={stepsInfo} />
+                    <TicketsSteps current={current} stepsInfo={stepsInfo} />
                 </div>
                 <div >
                     {componentToShow}
