@@ -8,6 +8,8 @@ import TicketsList from '../../Components/TicketsList/TicketsList'
 
 
 import Step2Form from '../../Components/Step2Form/Step2Form'
+import OrderDetails from '../../Components/OrderDetails/OrderDetails'
+import PaymentStep from '../../Components/PaymentStep/PaymentStep'
 import './TicketsPage.scss'
 
 
@@ -218,6 +220,12 @@ function TicketsPage(props) {
             ticketsOwnersInfo={ticketsOwnersInfo} setTicketsOwnersInfo={setTicketsOwnersInfo}
             buyerInfo={buyerInfo} setBuyerInfo={setBuyerInfo}/>
             </div> 
+        componentToShow = <TicketsList ticketTypes={ticketTypes} organization={eventInfo.organization}
+            location={`${eventInfo.city}, ${eventInfo.country}`} onTicket={handleTicketChange} totalTicketPrice={totalTicketPrice} />
+    } else if (current === 2){
+        componentToShow = <PaymentStep ticketTypes={ticketTypes} totalTicketPrice={totalTicketPrice}/>
+    } else if (current === 3){
+        componentToShow = <OrderDetails ticketTypes={ticketTypes} totalTicketPrice={totalTicketPrice}/>
     }
 
     return (
