@@ -11,9 +11,7 @@ import TicketsPage from './Pages/TicketsPage/TicketsPage'
 
 function App() {
 
-  useEffect(()=>{
-    AOS.init()
-  }, [])
+
   return (
     <Fragment>
       <Header/>
