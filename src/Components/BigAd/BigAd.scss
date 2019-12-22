@@ -2,28 +2,51 @@
 @import "../../variables";
 .BigAd{
         width: 100%;
-        height: 650px;
+        height: 500px;
         background-size: 100% 100%;
-        background-position: center;
+        background-size: cover;
+    background-position: 50% 50%;
+        // background-position: center;
         background-repeat: no-repeat;
         position: relative;
 
-        padding: 25px 5% 25px 5%;
+        padding: 25px 5% 25px 0;
 
         display: flex;
         flex-direction: column;
 
-
-    &__eventTitleDiv{
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        flex: 1;
+    
+    &__bannerDiv{
+        background-color: rgba($color: $barBackground, $alpha: 0.5);
+        padding-left: 9%;
+        overflow: auto;
+        margin-bottom: 10px;
+        display: inline-block;
+        padding-right: 100px;
+        max-width: 85.5%;
+        border-radius: 7px;
+        margin-left: -5px;
     }
+
+//Hide the scrollbar for the event title if it is too long for the bannerDiv
+    ::-webkit-scrollbar {
+        width: 0px;  /* Remove scrollbar space */
+        background: transparent;  /* Optional: just make scrollbar invisible */
+    } 
+
     &__eventTitle{
         color: $titleFontColor;
         font-size: $titleFontSize;
-        margin: 0 0 4% 4%;
+        margin-bottom:0;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__subTitle{
+        font-size: $titleFontSize*0.4;
+        color: $titleFontColor;
+        font-weight: $subTitleWeight;
+        margin-left: 5px;
     }
 
     &__organizationTitleDiv{
@@ -31,10 +54,11 @@
         display: flex;
         flex-direction: column;
         align-items: flex-end;
+        margin: 15px 15px 0 0;
     }
 
     &__organizationTitle{
-        font-size: $smallerTitleFontSize;
-        color: rgba($color: $titleFontColor, $alpha: 0.25)
+        font-size: $smallerTitleFontSize*1.25;
+        color: rgba($color: $titleFontColor, $alpha: 0.25);
     }
 }

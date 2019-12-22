@@ -1,0 +1,60 @@
+@import "../../variables";
+.TicketsImage{
+    $contentHeight:400px;
+    
+    width: 100%;
+    height: $contentHeight;
+    overflow:hidden;
+
+    &__defaultImage{
+        width: 100%;
+        height: $contentHeight;
+        background-size: 100% 100%;
+        background-size: cover;
+        background-position-x: center;
+        background-position-y: 75%;
+        background-repeat: no-repeat;
+        overflow:hidden;
+
+        position: absolute;
+        left: 0;
+        right: 0;
+        z-index: 1;
+        display: block;
+        -webkit-filter: blur(2px);
+        -moz-filter: blur(2px);
+        -o-filter: blur(2px);
+        -ms-filter: blur(2px);
+        filter: blur(2px);
+        transform: scale(1.02);
+    }
+
+    &__content {
+        position: absolute;
+        left: 0;
+        right: 0;
+        z-index: 9999;
+        margin-left: 20px;
+        margin-right: 20px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        height: $contentHeight;
+      }
+    &__eventName{
+        color: $titleFontColor;
+        font-weight: $titleWeight;
+        font-size: $titleFontSize;
+        margin-bottom: 0;
+        margin-top:15px;
+    }
+
+    &__date{
+        color: $titleFontColor;
+        font-weight: $titleWeight;
+        font-size: $subTitleFontSize;
+    }
+
+}
