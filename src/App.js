@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {Fragment} from 'react'
 import {Route, Switch} from 'react-router-dom'
 import './App.css';
@@ -10,6 +10,10 @@ import TicketsPage from './Pages/TicketsPage/TicketsPage'
 
 
 function App() {
+
+  useEffect(()=>{
+    AOS.init()
+  }, [])
   return (
     <Fragment>
       <Header/>

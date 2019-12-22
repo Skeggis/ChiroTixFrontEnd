@@ -1,0 +1,15 @@
+// .events{
+//  & .ant-collapse-header{
+//     cursor: default !important;
+//     height: 0px !important;
+//   }
+// }
+// .ant-collapse{
+//   height: 0px !important;
+// }
+
+.events{
+  &__descriptionItem{
+    transition: height 0.8s ease
+  }
+}
