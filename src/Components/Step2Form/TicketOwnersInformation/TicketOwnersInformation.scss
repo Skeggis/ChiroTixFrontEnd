@@ -1,0 +1,13 @@
+@import "../../../variables";
+.TicketsOwnersInformation{
+    &__collapse{
+        margin-left: 20px;
+    }
+}
+
+.ant-collapse-content {
+    // background: $eventBackground;
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    // background-color: red;
+}
+
