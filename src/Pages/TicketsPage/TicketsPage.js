@@ -7,6 +7,7 @@ import TicketsSteps from '../../Components/TicketsSteps/TicketsSteps'
 import TicketsList from '../../Components/TicketsList/TicketsList'
 import BillingInformation from '../../Components/BillingInformation/BillingInformation'
 import OrderDetails from '../../Components/OrderDetails/OrderDetails'
+import PaymentStep from '../../Components/PaymentStep/PaymentStep'
 import './TicketsPage.scss'
 
 
@@ -48,7 +49,9 @@ function TicketsPage(props) {
     }, {
         title: "Billing Information"
     }, {
-        title: "Receipt"
+        title: "Payment"
+    }, {
+        title: 'Receipt'
     }])
 
 
@@ -120,7 +123,9 @@ function TicketsPage(props) {
     } else if (current === 1) {
         componentToShow = <BillingInformation />
     } else if (current === 2){
-        componentToShow = <OrderDetails />
+        componentToShow = <PaymentStep ticketTypes={ticketTypes} totalTicketPrice={totalTicketPrice}/>
+    } else if (current === 3){
+        componentToShow = <OrderDetails ticketTypes={ticketTypes} totalTicketPrice={totalTicketPrice}/>
     }
 
     return (
