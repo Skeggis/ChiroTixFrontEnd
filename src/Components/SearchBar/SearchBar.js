@@ -12,7 +12,7 @@ import {
 } from 'antd'
 import 'antd/dist/antd.css';
 import './SearchBar.scss'
-import { useMedia } from 'react-use'
+
 
 const { Option } = Select
 const { RangePicker } = DatePicker
@@ -77,18 +77,7 @@ export default function SearchBar(props) {
     ]
   }
 
-  const events = [
-    {
-      name: 'Test event',
-      organization: 'ICPA',
-      date: '24-06-20',
-      city: 'Reykjavík',
-      image: 'https://www.comolakechiropractic.com/wp-content/uploads/2019/10/chiropractor-coquitlam-adjustment-1.jpg',
-      credits: 3,
-      shortDescription: 'is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electroni',
-      price: [599, 899]
-    }
-  ]
+
   const [seeMore, setSeeMore] = useState(false)
 
   const [selectedCountries, setSelectedCountries] = useState([])
@@ -100,10 +89,8 @@ export default function SearchBar(props) {
   const [selectedPrice, setSelectedPrice] = useState([])
   const [selectedCeCredits, setSelectedCeCredits] = useState([])
 
-  const xs = useMedia('(min-width: 0px) and (max-width: 768px)')
-  const sm = useMedia('(min-width: 769px) and (max-width: 992px)')
-  const md = useMedia('(min-width: 993px) and (max-width: 1200px)')
-  const lg = useMedia('(min-width: 1201px)')
+
+
 
   useEffect(() => {
     const myCities = []
@@ -199,7 +186,10 @@ export default function SearchBar(props) {
     <div className='searchBar'>
       <Card className='searchBar__card' hoverable >
         <div className='searchBar__card__input'>
-          <Input.Search size='large' />
+          <Input.Search 
+            size='large' 
+            enterButton={<Button icon='search'>Search</Button>}
+          />
         </div>
         <div className='searchBar__card__mainFilters'>
           <Row gutter={16}>
@@ -257,11 +247,12 @@ export default function SearchBar(props) {
             </Col>
           </Row>
         </div>
+        {/* <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 20 }}>
+          <Button icon="search">Search</Button>
+        </div> */}
         <Divider style={{ marginTop: 20, marginBottom: 0 }}>
-          <Button type='link' onClick={handleSeeMore}>{!seeMore ? ('See more') : ('See less')}</Button>
+          <Button type='link' >{!seeMore ? ('See more') : ('See less')}</Button>
         </Divider>
-        {seeMore && (
-          <Fragment>
             <Row gutter={16} style={{ marginTop: 20 }}>
               <Col span={8}>
                 <Select
@@ -319,10 +310,9 @@ export default function SearchBar(props) {
                 />
               </Col>
             </Row>
-          </Fragment>
-
-        )}
+        
       </Card>
+
     </div>
 
   )
