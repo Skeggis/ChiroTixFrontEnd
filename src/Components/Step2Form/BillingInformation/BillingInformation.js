@@ -68,8 +68,8 @@ function BillingInformation(props){
 
       let updateState = (e,field) => {
         let newBuyer = JSON.parse(JSON.stringify(buyerInfo))
-        newBuyer[field] = e.target.value
-        console.log("THING:", newBuyer)
+        if(field === 'phone'){newBuyer[field] = e}
+        else{newBuyer[field]= e.target.value}
         setBuyerInfo(newBuyer)
       }
     

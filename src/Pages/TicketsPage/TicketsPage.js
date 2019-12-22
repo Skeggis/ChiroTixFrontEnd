@@ -14,12 +14,13 @@ import './TicketsPage.scss'
 
 
 let stepsInfo = [{
-    title: "Tickets", subTitle: "00:00:05"
+    title: "Tickets"
 }, {
     title: "Billing Information"
-}, {
+},{title:"Payment"}, {
     title: "Receipt"
-}]
+}
+]
 function TicketsPage(props) {
     
     //position of the steps
@@ -157,13 +158,14 @@ function TicketsPage(props) {
 
     let onButtonClick = () =>{
         let list = JSON.parse(JSON.stringify(ticketsOwnersInfo))
+        console.log("Info:", ticketsOwnersInfo)
         let open = []
         for(let i = 0; i < list.length; i++){
             list[i].extra = true
             list[i].open = false
             for(let j = 0; j < list[i].ownerInfo.length; j++){
-                list[i].extra = list[i].ownerInfo[j].success 
-                if(!list[i].extra){list[i].open = true}
+                list[i].extra = !list[i].ownerInfo[j].isEmpty
+                if(!list[i].extra){ list[i].open = true }
             }
             if(!list[i].extra){open.push(i+1)}
         }
@@ -214,17 +216,18 @@ function TicketsPage(props) {
         componentToShow = <TicketsList ticketTypes={ticketTypes} organization={eventInfo.organization}
             location={`${eventInfo.city}, ${eventInfo.country}`} handleTicketChange={handleTicketChange} totalTicketPrice={totalTicketPrice} />
     } else if (current === 1) {
+        console.log("SHOWME!")
         componentToShow = <div className="TicketsPage__billingInfo">
             <Step2Form 
             openPanels={openPanels} setOpenPanels={setOpenPanels} 
             ticketsOwnersInfo={ticketsOwnersInfo} setTicketsOwnersInfo={setTicketsOwnersInfo}
-            buyerInfo={buyerInfo} setBuyerInfo={setBuyerInfo}/>
+            buyerInfo={buyerInfo} setBuyerInfo={setBuyerInfo} stepsController={stepsController} current={current}/>
             </div> 
-        componentToShow = <TicketsList ticketTypes={ticketTypes} organization={eventInfo.organization}
-            location={`${eventInfo.city}, ${eventInfo.country}`} onTicket={handleTicketChange} totalTicketPrice={totalTicketPrice} />
     } else if (current === 2){
+        console.log("HERE")
         componentToShow = <PaymentStep ticketTypes={ticketTypes} totalTicketPrice={totalTicketPrice}/>
     } else if (current === 3){
+        console.log("THERE")
         componentToShow = <OrderDetails ticketTypes={ticketTypes} totalTicketPrice={totalTicketPrice}/>
     }
 

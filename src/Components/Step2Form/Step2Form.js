@@ -12,14 +12,16 @@ function Step2Form(props){
     const {
         openPanels, setOpenPanels,
         ticketsOwnersInfo, setTicketsOwnersInfo,
-        buyerInfo, setBuyerInfo
+        buyerInfo, setBuyerInfo, stepsController, current
     } = props
 
       let handleSubmit = e => {
         e.preventDefault();
         props.form.validateFieldsAndScroll((err, values) => {
           if (!err) {
+
             console.log('Received values of form: ', values);
+            stepsController(1)
           } else {
               
           }
