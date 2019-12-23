@@ -12,7 +12,7 @@ function Step2Form(props){
     const {
         openPanels, setOpenPanels,
         ticketsOwnersInfo, setTicketsOwnersInfo,
-        buyerInfo, setBuyerInfo, stepsController, current
+        buyerInfo, setBuyerInfo, stepsController
     } = props
 
       let handleSubmit = e => {
