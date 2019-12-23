@@ -9,6 +9,7 @@ import {
 import EventItem from './EventItem/EventItem'
 import EventDescriptionItem from './EventDescriptionItem/EventDescriptionItem'
 import { Animated } from 'react-animated-css'
+import { Collapse } from 'react-collapse'
 
 import './Events.scss'
 export default function Events(props) {
@@ -153,26 +154,29 @@ export default function Events(props) {
             ))}
             <Col span={24}>
 
-              <div style={{ height: eventIsOpen && selectedEvent.eventRowNumber === i ? 450 : 0, position: 'relative' }} className='events__descriptionItem'>
-                {/* <Collapse isOpen={selectedEvent.eventRowNumber === i}> */}
-                {row.map((event, j) => (
-                  <div style={{ height: '100%', position: selectedEvent.id === event.id && eventIsOpen ? 'absolute' : 'absolute', display: selectedEvent.id === event.id && eventIsOpen ? '' : '', top: 0, left: 0, overflow: 'hidden' }}>
-                    <Animated
-                      animateOnMount={false}
-                      isVisible={selectedEvent.id === event.id && selectedEvent.eventRowNumber === i}
-                      animationIn={selectedEvent.eventRowNumber !== oldRowNumber ? 'fadeInDown' : animationIn}
-                      animationOut={selectedEvent.eventRowNumber !== oldRowNumber ? 'fadeOutUp' : animationOut}>
-                      <EventDescriptionItem
-                        event={event}
-                        animate={selectedEvent.id === event.id}
-                        animationInDirection={selectedEvent.eventRowNumber !== oldRowNumber ? 'down' : animationInDirection}
-                        animationOutDirection={selectedEvent.eventRowNumber !== oldRowNumber ? 'up' : animationOutDirection}
-                      />
-                    </Animated>
-                  </div>
-                ))}
-                {/* </Collapse> */}
-              </div>
+              {/* <div style={{ height: eventIsOpen && selectedEvent.eventRowNumber === i ? 450 : 0, position: 'relative' }} className='events__descriptionItem'> */}
+              <Collapse isOpened={selectedEvent.eventRowNumber === i || eventIsOpen}>
+                <div style={{ position: 'relative', height: 450 }}>
+                  {row.map((event, j) => (
+                    <div style={{ height: '100%', position: selectedEvent.id === event.id && eventIsOpen ? 'absolute' : 'absolute', display: selectedEvent.id === event.id && eventIsOpen ? '' : '', top: 0, left: 0, overflow: 'hidden' }}>
+
+                      <Animated
+                        animateOnMount={false}
+                        isVisible={selectedEvent.id === event.id && selectedEvent.eventRowNumber === i}
+                        animationIn={selectedEvent.eventRowNumber !== oldRowNumber ? 'fadeInDown' : animationIn}
+                        animationOut={selectedEvent.eventRowNumber !== oldRowNumber ? 'fadeOutUp' : animationOut}>
+                        <EventDescriptionItem
+                          event={event}
+                          animate={selectedEvent.id === event.id}
+                          animationInDirection={selectedEvent.eventRowNumber !== oldRowNumber ? 'down' : animationInDirection}
+                          animationOutDirection={selectedEvent.eventRowNumber !== oldRowNumber ? 'up' : animationOutDirection}
+                        />
+                      </Animated>
+                    </div>
+                  ))}
+                </div>
+              </Collapse>
+              {/* </div> */}
             </Col>
 
 
