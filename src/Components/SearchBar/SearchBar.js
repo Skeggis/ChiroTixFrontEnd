@@ -13,6 +13,7 @@ import {
 import 'antd/dist/antd.css';
 import './SearchBar.scss'
 
+import { Collapse } from 'react-collapse'
 
 const { Option } = Select
 const { RangePicker } = DatePicker
@@ -44,37 +45,89 @@ export default function SearchBar(props) {
     countries: [
       {
         id: 1,
-        name: 'iceland',
-        cities: [
-          {
-            id: 1,
-            countryId: 1,
-            name: 'reyk'
-          },
-          {
-            id: 2,
-            countryId: 1,
-            name: 'hfj'
-          }
-        ]
+        name: 'Iceland'
       },
       {
         id: 2,
-        name: 'USA',
-        cities: [
-          {
-            id: 3,
-            countryId: 2,
-            name: 'New york'
-          },
-          {
-            id: 4,
-            countryId: 2,
-            name: 'Boston'
-          }
-        ]
+        name: 'USA'
+      },
+      {
+        id: 3,
+        name: 'Denmark'
+      }
+    ],
+    cities: [
+      {
+        id: 1,
+        countryId: 1,
+        name: 'hfj'
+      },
+      {
+        id: 2,
+        countryId: 1,
+        name: 'kóp'
+      },
+      {
+        id: 3,
+        countryId: 2,
+        name: 'boston'
+      },
+      {
+        id: 4,
+        countryId: 2,
+        name:'new york'
+      },
+      {
+        id: 5,
+        countryId: 3,
+        name: 'Aruhus'
       }
     ]
+    // countries: [
+    //   {
+    //     id: 1,
+    //     name: 'iceland',
+    //     cities: [
+    //       {
+    //         id: 1,
+    //         countryId: 1,
+    //         name: 'reyk'
+    //       },
+    //       {
+    //         id: 2,
+    //         countryId: 1,
+    //         name: 'hfj'
+    //       }
+    //     ]
+    //   },
+    //   {
+    //     id: 2,
+    //     name: 'USA',
+    //     cities: [
+    //       {
+    //         id: 3,
+    //         countryId: 2,
+    //         name: 'New york'
+    //       },
+    //       {
+    //         id: 4,
+    //         countryId: 2,
+    //         name: 'Boston'
+    //       }
+    //     ]
+    //   },
+    //    {
+    //      id: 3,
+    //      name: 'Denmark',
+    //      cities: [
+    //        {
+    //          id: 5,
+    //          countryId: 3,
+    //          name: 'Arhus'
+    //        }
+    //      ]         
+    //    }
+    // ]
   }
 
 
@@ -93,59 +146,61 @@ export default function SearchBar(props) {
 
 
   useEffect(() => {
-    const myCities = []
-    mock.countries.map(country => {
-      country.cities.map(city => {
-        myCities.push(city)
-      })
-    })
-    setAvailableCities(myCities)
+    // const myCities = []
+    // mock.countries.map(country => {
+    //   country.cities.map(city => {
+    //     myCities.push(city)
+    //   })
+    // })
+    setAvailableCities(mock.cities)
   }, [])
 
   function handleSeeMore() {
-    if (seeMore) {
-      setSeeMore(false)
-    } else {
-      setSeeMore(true)
-    }
+    setSeeMore(prev => !prev)
   }
 
-  function handleCountryChange(value) {
+  function handleCountryChange(value) {//ATH value is a list of counties
     //Clear cities that are not in specified country
     if (selectedCities.length > 0 && value.length !== 0) {
       const newCities = selectedCities.filter(city => {
         const cityId = parseInt(city.key)
-        let b = false
-        value.map(country => {
+        const myCity = mock.cities.find(c => c.id === cityId)
+        console.log(myCity)
+        
+
+        let b = value.some(country => {
           const countryId = parseInt(country.key)
-          const myCountry = mock.countries.find(c => c.id === countryId)
-          myCountry.cities.map(c => {
-            if (c.id === cityId) {
-              b = true
-            }
-          })
+          return countryId === myCity.countryId
         })
-        return b
+        return b 
+        // let b = false
+        // value.map(country => {
+        //   const countryId = parseInt(country.key)
+        //   const myCountry = mock.countries.find(c => c.id === countryId)
+        //   myCountry.cities.map(c => {
+        //     if (c.id === cityId) {
+        //       b = true
+        //     }
+        //   })
+        // })
+        // return b
       })
 
+      console.log(newCities)
       setSelectedCities(newCities)
     }
 
     setSelectedCountries(value)
-    if (value.length > 0) {
+    if (value.length > 0) { 
       let myCities = []
       value.map(val => {
         const id = parseInt(val.key, 10)
-        const myCountry = mock.countries.find(c => c.id === id)
-        myCities = myCities.concat(myCountry.cities)
+        const citiesInCountry = mock.cities.filter(c => c.countryId === id)
+        myCities = myCities.concat(citiesInCountry)
       })
       setAvailableCities(myCities)
     } else {
-      let myCities = []
-      mock.countries.map(country => {
-        myCities = myCities.concat(country.cities)
-      })
-      setAvailableCities(myCities)
+      setAvailableCities(mock.cities)
     }
   }
 
@@ -186,8 +241,8 @@ export default function SearchBar(props) {
     <div className='searchBar'>
       <Card className='searchBar__card' hoverable >
         <div className='searchBar__card__input'>
-          <Input.Search 
-            size='large' 
+          <Input.Search
+            size='large'
             enterButton={<Button icon='search'>Search</Button>}
           />
         </div>
@@ -247,13 +302,12 @@ export default function SearchBar(props) {
             </Col>
           </Row>
         </div>
-        {/* <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 20 }}>
-          <Button icon="search">Search</Button>
-        </div> */}
         <Divider style={{ marginTop: 20, marginBottom: 0 }}>
-          <Button type='link' >{!seeMore ? ('See more') : ('See less')}</Button>
+          <Button type='link' onClick={handleSeeMore} >{!seeMore ? ('See more') : ('See less')}</Button>
         </Divider>
-            <Row gutter={16} style={{ marginTop: 20 }}>
+          <Collapse isOpened={seeMore}>
+        <div style={{paddingTop: 20}}>
+            <Row gutter={16} style={{ marginTop: 0 }}>
               <Col span={8}>
                 <Select
                   style={{ width: '100%' }}
@@ -310,7 +364,9 @@ export default function SearchBar(props) {
                 />
               </Col>
             </Row>
-        
+        </div>
+          </Collapse>
+
       </Card>
 
     </div>
