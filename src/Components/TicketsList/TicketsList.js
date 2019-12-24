@@ -33,7 +33,7 @@ function TicketsList({ ticketTypes = [], location = '', organization = '', handl
                         <Col span={2}></Col>
                         <Col span={3} className="TicketsList__ticketTypeInfo rightAlign"> {location} </Col>
                         <Col span={1}></Col>
-                        <Col span={3} className="TicketsList__ticketTypeInfo rightAlign"> {ticket.price} </Col>
+                        <Col span={3} className="TicketsList__ticketTypeInfo rightAlign"> {parseFloat(ticket.price).toFixed(2)} $</Col>
                         <Col span={2}></Col>
                         <Col span={2} className="TicketsList__ticketTypeInfo">
                             <div className="TicketsList__amountDiv">
@@ -60,7 +60,7 @@ function TicketsList({ ticketTypes = [], location = '', organization = '', handl
                 <Col span={1}></Col>
                 <Col span={4}><h3 className="TicketsList__ticketInfoTitle">Total</h3></Col>
                 <Col span={17}></Col>
-                <Col span={2}><h3 className="TicketsList__ticketInfoTitle" style={{ textAlign: "center" }}>{totalTicketPrice} $</h3></Col>
+                <Col span={2}><h3 className="TicketsList__ticketInfoTitle" style={{ textAlign: "center" }}>{parseFloat(totalTicketPrice).toFixed(2)} $</h3></Col>
             </Row>
         </List.Item>)
 

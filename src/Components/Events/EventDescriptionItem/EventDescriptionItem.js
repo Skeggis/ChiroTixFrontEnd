@@ -59,8 +59,8 @@ export default function EventDescriptionItem(props) {
           </Animated>
           <Animated isVisible={animate} animateOnMount={true} animationIn={descriptionAnimationIn} animationOut={descriptionAnimationOut} animationDuration={300} animationInDelay={180}>
             <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-              <h2 style={{ fontSize: 24 }}>Price: <span style={{ fontSize: 20, marginLeft: 5, fontWeight: 400 }}>{`${event.price[0]} - ${event.price[1]}$`}</span></h2>
-              <h2 style={{ fontSize: 24 }}>CE Credits: <span style={{ fontSize: 20, marginLeft: 5, fontWeight: 400 }}>{event.credits}</span></h2>
+              <h2 style={{ fontSize: 24 }}>Price: <span style={{ fontSize: 20, marginLeft: 5, fontWeight: 400 }}>{`${Number(event.minPrice).toFixed(2)} - ${Number(event.maxPrice).toFixed(2)}$`}</span></h2>
+              <h2 style={{ fontSize: 24 }}>CE Credits: <span style={{ fontSize: 20, marginLeft: 5, fontWeight: 400 }}>{event.CECredits}</span></h2>
             </div>
           </Animated>
         </div>
@@ -70,7 +70,7 @@ export default function EventDescriptionItem(props) {
             <Button size='large' style={{ marginRight: 10 }}>More</Button>
             <Button size='large'>Tickets</Button>
           </div>
-      </Animated>
+        </Animated>
       </div>
 
     </div>

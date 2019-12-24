@@ -12,78 +12,29 @@ import {
 } from 'antd'
 import 'antd/dist/antd.css';
 import './SearchBar.scss'
+import axios from 'axios'
 
+import { Collapse } from 'react-collapse'
 
 const { Option } = Select
 const { RangePicker } = DatePicker
 
 export default function SearchBar(props) {
-  const mock = {
-    orgs: [
-      {
-        name: 'test1'
-      },
-      {
-        name: 'ble'
-      },
-      {
-        name: 'asdf'
-      }
-    ],
-    cats: [
-      {
-        name: 'cat1'
-      },
-      {
-        name: 'cat2'
-      },
-      {
-        name: 'cat3'
-      }
-    ],
-    countries: [
-      {
-        id: 1,
-        name: 'iceland',
-        cities: [
-          {
-            id: 1,
-            countryId: 1,
-            name: 'reyk'
-          },
-          {
-            id: 2,
-            countryId: 1,
-            name: 'hfj'
-          }
-        ]
-      },
-      {
-        id: 2,
-        name: 'USA',
-        cities: [
-          {
-            id: 3,
-            countryId: 2,
-            name: 'New york'
-          },
-          {
-            id: 4,
-            countryId: 2,
-            name: 'Boston'
-          }
-        ]
-      }
-    ]
-  }
+  const {
+    searchValues,
+    setEvents
+  } = props
 
 
   const [seeMore, setSeeMore] = useState(false)
 
+  const [searchString, setSearchString] = useState('')
+  const [selectedCategories, setSelectedCategories] = useState([])
   const [selectedCountries, setSelectedCountries] = useState([])
   const [selectedCities, setSelectedCities] = useState([])
   const [availableCities, setAvailableCities] = useState([])
   const [selectedOrganizations, setSelectedOrganizations] = useState([])
+  const [selectedDates, setSelectedDates] = useState([])
   const [selectedTags, setSelectedTags] = useState([])
   const [selectedSpeakers, setSelectedSpeakers] = useState([])
   const [selectedPrice, setSelectedPrice] = useState([])
@@ -91,41 +42,60 @@ export default function SearchBar(props) {
 
 
 
+  async function handleSearch() {
+    const result = await axios({
+      url: `${process.env.REACT_APP_SERVER_URL}/searchEvents`,
+      method: 'post',
+      data: {
+        search: {
+          organizations: selectedOrganizations.map(org => parseInt(org.key)),
+          countries: selectedCountries.map(count => parseInt(count.key)),
+          cities: selectedCities.map(city => parseInt(city.key)),
+          tags: selectedTags.map(tag => parseInt(tag.key)),
+          speakers: selectedSpeakers.map(sp => parseInt(sp.key)),
+          dates: selectedDates.length > 0 ? {
+            startDate: selectedDates[0],
+            endDate: selectedDates[1]
+          } : {},
+          price: {
+            minPrice: selectedPrice[0],
+            maxPrice: selectedPrice[1]
+          },
+          CECredits: {
+            minCECredits: selectedCeCredits[0],
+            maxCECredits: selectedCeCredits[1]
+          },
+          searchString,
+          categories: selectedCategories.map(cat => parseInt(cat.key))
+        }
+      }
+    })
+    setEvents(result.data.events)
+  }
+
 
   useEffect(() => {
-    const myCities = []
-    mock.countries.map(country => {
-      country.cities.map(city => {
-        myCities.push(city)
-      })
-    })
-    setAvailableCities(myCities)
+    setAvailableCities(searchValues.cities)
   }, [])
 
   function handleSeeMore() {
-    if (seeMore) {
-      setSeeMore(false)
-    } else {
-      setSeeMore(true)
-    }
+    setSeeMore(prev => !prev)
   }
 
-  function handleCountryChange(value) {
+  function handleCountryChange(value) {//ATH value is a list of countries
     //Clear cities that are not in specified country
     if (selectedCities.length > 0 && value.length !== 0) {
       const newCities = selectedCities.filter(city => {
         const cityId = parseInt(city.key)
-        let b = false
-        value.map(country => {
+        const myCity = searchValues.cities.find(c => c.id === cityId)
+
+
+        let b = value.some(country => {
           const countryId = parseInt(country.key)
-          const myCountry = mock.countries.find(c => c.id === countryId)
-          myCountry.cities.map(c => {
-            if (c.id === cityId) {
-              b = true
-            }
-          })
+          return countryId === myCity.countryid //todo format in server
         })
         return b
+
       })
 
       setSelectedCities(newCities)
@@ -136,26 +106,26 @@ export default function SearchBar(props) {
       let myCities = []
       value.map(val => {
         const id = parseInt(val.key, 10)
-        const myCountry = mock.countries.find(c => c.id === id)
-        myCities = myCities.concat(myCountry.cities)
+        const citiesInCountry = searchValues.cities.filter(c => c.countryid === id) //todo format in backend
+        myCities = myCities.concat(citiesInCountry)
       })
       setAvailableCities(myCities)
     } else {
-      let myCities = []
-      mock.countries.map(country => {
-        myCities = myCities.concat(country.cities)
-      })
-      setAvailableCities(myCities)
+      setAvailableCities(searchValues.cities)
     }
   }
 
+
+  function handleCatChange(value) {
+    setSelectedCategories(value)
+  }
 
   function handleCityChange(value) {
     setSelectedCities(value)
   }
 
   function handleDateChange(date, dateString) {
-    console.log(date, dateString)
+    setSelectedDates(dateString)
   }
 
   function handleOrganizationsChange(value) {
@@ -181,14 +151,16 @@ export default function SearchBar(props) {
   function priceDisplayFormatter(value) {
     return `${value} $`
   }
-
   return (
     <div className='searchBar'>
       <Card className='searchBar__card' hoverable >
         <div className='searchBar__card__input'>
-          <Input.Search 
-            size='large' 
+          <Input.Search
+            value={searchString}
+            onChange={(event) => setSearchString(event.target.value)}
+            size='large'
             enterButton={<Button icon='search'>Search</Button>}
+            onSearch={handleSearch}
           />
         </div>
         <div className='searchBar__card__mainFilters'>
@@ -199,9 +171,13 @@ export default function SearchBar(props) {
                   style={{ width: '100%' }}
                   placeholder='Category'
                   showSearch
+                  mode='multiple'
+                  labelInValue
+                  value={selectedCategories}
+                  onChange={handleCatChange}
                 >
-                  {mock.orgs.map(org => (
-                    <Option value={org.name}>{org.name}</Option>
+                  {searchValues.categories.map(cat => (
+                    <Option key={cat.id} value={`${cat.id}`}>{cat.name}</Option>
                   ))}
                 </Select>
               </div>
@@ -211,12 +187,12 @@ export default function SearchBar(props) {
                 <Select
                   style={{ width: '100%' }}
                   placeholder='Country'
-                  mode='tags'
+                  mode='multiple'
                   value={selectedCountries}
                   onChange={handleCountryChange}
                   labelInValue
                 >
-                  {mock.countries.map(country => (
+                  {searchValues.countries.map(country => (
                     <Option value={`${country.id}`}>{country.name}</Option>
                   ))}
                 </Select>
@@ -227,7 +203,7 @@ export default function SearchBar(props) {
                 <Select
                   style={{ width: '100%' }}
                   placeholder='City'
-                  mode='tags'
+                  mode='multiple'
                   labelInValue
                   value={selectedCities}
                   onChange={handleCityChange}
@@ -247,23 +223,22 @@ export default function SearchBar(props) {
             </Col>
           </Row>
         </div>
-        {/* <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 20 }}>
-          <Button icon="search">Search</Button>
-        </div> */}
         <Divider style={{ marginTop: 20, marginBottom: 0 }}>
-          <Button type='link' >{!seeMore ? ('See more') : ('See less')}</Button>
+          <Button type='link' onClick={handleSeeMore} >{!seeMore ? ('See more') : ('See less')}</Button>
         </Divider>
-            <Row gutter={16} style={{ marginTop: 20 }}>
+        <Collapse isOpened={seeMore}>
+          <div style={{ paddingTop: 20 }}>
+            <Row gutter={16} style={{ marginTop: 0 }}>
               <Col span={8}>
                 <Select
                   style={{ width: '100%' }}
                   placeholder='Organization'
-                  mode='tags'
+                  mode='multiple'
                   labelInValue
                   value={selectedOrganizations}
                   onChange={handleOrganizationsChange}
                 >
-                  {mock.orgs.map(org => (
+                  {searchValues.organizations.map(org => (
                     <Option value={`${org.id}`}>{org.name}</Option>
                   ))}
                 </Select>
@@ -272,21 +247,29 @@ export default function SearchBar(props) {
                 <Select
                   style={{ width: '100%' }}
                   placeholder='Tags'
-                  mode='tags'
+                  mode='multiple'
                   labelInValue
                   value={selectedTags}
                   onChange={handleTagsChange}
-                />
+                >
+                  {searchValues.tags.map(tag => (
+                    <Option key={tag.id} value={`${tag.id}`}>{tag.name}</Option>
+                  ))}
+                </Select>
               </Col>
               <Col span={8}>
                 <Select
                   style={{ width: '100%' }}
                   placeholder='Speakers'
-                  mode='tags'
+                  mode='multiple'
                   labelInValue
                   value={selectedSpeakers}
                   onChange={handleSpeakersChange}
-                />
+                >
+                  {searchValues.speakers.map(speaker => (
+                    <Option key={speaker.id} value={`${speaker.id}`}>{speaker.name}</Option>
+                  ))}
+                </Select>
               </Col>
             </Row>
             <Row gutter={24} style={{ marginTop: 20 }}>
@@ -310,7 +293,9 @@ export default function SearchBar(props) {
                 />
               </Col>
             </Row>
-        
+          </div>
+        </Collapse>
+
       </Card>
 
     </div>

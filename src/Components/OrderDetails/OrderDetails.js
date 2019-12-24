@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import {
   Icon,
   Divider
@@ -40,12 +40,16 @@ export default function OrderDetails(props) {
                 <th className='orderDetails__rightAlign'>Total</th>
               </tr>
               {ticketTypes.map(ticket => (
-                <tr>
-                  <td>{ticket.name}</td>
-                  <td className='orderDetails__rightAlign'>{`${ticket.price}$`}</td>
-                  <td className='orderDetails__rightAlign'>{ticket.amount}</td>
-                  <td className='orderDetails__rightAlign'>{`${ticket.amount * ticket.price}$`}</td>
-                </tr>
+                <Fragment>
+                  {ticket.amount > 0 && (
+                    <tr>
+                      <td>{ticket.name}</td>
+                      <td className='orderDetails__rightAlign'>{`${ticket.price}$`}</td>
+                      <td className='orderDetails__rightAlign'>{ticket.amount}</td>
+                      <td className='orderDetails__rightAlign'>{`${ticket.amount * ticket.price}$`}</td>
+                    </tr>
+                  )}
+                </Fragment>
               ))}
               <tr style={{ height: 10 }}></tr>
               <tr >
