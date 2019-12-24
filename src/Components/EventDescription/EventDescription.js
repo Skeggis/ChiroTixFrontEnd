@@ -51,7 +51,7 @@ function EventDescription({ description = '', speakers = [], tags = [] }) {
 
                 <div className="EventDescription_tags">
                     {tags.map(tag =>
-                        <Tag color="#173753">{tag.tag}</Tag>
+                        <Tag color="#173753">{tag.name}</Tag>
                     )
                     }
                 </div>

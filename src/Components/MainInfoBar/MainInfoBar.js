@@ -2,7 +2,7 @@ import React from 'react'
 import { Typography, Row, Col, Button } from 'antd'
 import './MainInfoBar.scss'
 
-function MainInfoBar({ priceRange = '', dates = '' }) {
+function MainInfoBar({ priceRange = '', dates = '', handleBuyTickets = () => {} }) {
     return (
         <div className='MainInfoBar'>
             <Row className="MainInfoBar__bar" type="flex">
@@ -45,7 +45,7 @@ function MainInfoBar({ priceRange = '', dates = '' }) {
                 <Col span={3}></Col>
                 <Col span={3}>
                     <div className='MainInfoBar__colDiv MainInfoBar__buttonDiv'>
-                        <Button className="MainInfoBar__button" style={{ backgroundColor: "#6D8791", borderColor: "#6D8791", fontSize: "20px", fontWeight: "400", color: "white" }} >BUY</Button>
+                        <Button onClick={handleBuyTickets} className="MainInfoBar__button" style={{ backgroundColor: "#6D8791", borderColor: "#6D8791", fontSize: "20px", fontWeight: "400", color: "white" }} >BUY</Button>
                     </div>
                 </Col>
             </Row>
