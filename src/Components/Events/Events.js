@@ -18,67 +18,8 @@ export default function Events(props) {
     eventRows,
     setEventRows,
     size,
+    events
   } = props
-
-  const events = [
-    {
-      id: 1,
-      name: 'ChiroTix Event',
-      organization: 'ICPA',
-      date: '24.06.20',
-      city: 'Reykjavík',
-      country: 'Iceland',
-      image: 'https://www.comolakechiropractic.com/wp-content/uploads/2019/10/chiropractor-coquitlam-adjustment-1.jpg',
-      credits: 3,
-      shortDescription: 'is dustrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electroni',
-      price: [599, 899]
-    }, {
-      id: 2,
-      name: 'Test event',
-      organization: 'ICPA',
-      date: '24.06.20',
-      city: 'Reykjavík',
-      country: 'Iceland',
-      image: 'https://www.comolakechiropractic.com/wp-content/uploads/2019/10/chiropractor-coquitlam-adjustment-1.jpg',
-      credits: 3,
-      shortDescription: 'is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electroni',
-      price: [599, 899]
-    }, {
-      id: 3,
-      name: 'Test event',
-      organization: 'ICPA',
-      country: 'Iceland',
-      date: '24.06.20',
-      city: 'Reykjavík',
-      image: 'https://www.comolakechiropractic.com/wp-content/uploads/2019/10/chiropractor-coquitlam-adjustment-1.jpg',
-      credits: 3,
-      shortDescription: 'is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electroni',
-      price: [599, 899]
-
-    }, {
-      id: 4,
-      name: 'Test event',
-      organization: 'ICPA',
-      country: 'Iceland',
-      date: '24.06.20',
-      city: 'Reykjavík',
-      image: 'https://www.comolakechiropractic.com/wp-content/uploads/2019/10/chiropractor-coquitlam-adjustment-1.jpg',
-      credits: 3,
-      shortDescription: 'is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electroni',
-      price: [599, 899]
-    }, {
-      id: 5,
-      country: 'Iceland',
-      name: 'Test event',
-      organization: 'ICPA',
-      date: '24.06.20',
-      city: 'Reykjavík',
-      image: 'https://www.comolakechiropractic.com/wp-content/uploads/2019/10/chiropractor-coquitlam-adjustment-1.jpg',
-      credits: 3,
-      shortDescription: 'is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electroni',
-      price: [599, 899]
-    }
-  ]
 
   useEffect(() => {
     let numEvents
@@ -101,7 +42,9 @@ export default function Events(props) {
     var myRows = [];
     while (events.length) myRows.push(events.splice(0, numEvents));
     setEventRows(myRows)
-  }, [size])
+  }, [size, events])
+
+  console.log(eventRows)
 
   const [selectedEvent, setSelectedEvent] = useState({ id: -1 })
   const [eventIsOpen, setEventIsOpen] = useState(false)
@@ -136,20 +79,22 @@ export default function Events(props) {
           <Row gutter={[24, 32]}>
             {row.map((event, j) => (
               <Fragment>
-                <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={6}>
-                  <EventItem
-                    event={event}
-                    eventIsOpen={eventIsOpen}
-                    setEventIsOpen={setEventIsOpen}
-                    selectedEvent={selectedEvent}
-                    setSelectedEvent={setSelectedEvent}
-                    eventRowNumber={i}
-                    setOldRowNumber={setOldRowNumber}
-                    eventColNumber={j}
-                    setOldColNumber={setOldColNumber}
-                    setEventWasClosed={setEventWasClosed}
-                  />
-                </Col>
+                {event.id && (
+                  <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={6}>
+                    <EventItem
+                      event={event}
+                      eventIsOpen={eventIsOpen}
+                      setEventIsOpen={setEventIsOpen}
+                      selectedEvent={selectedEvent}
+                      setSelectedEvent={setSelectedEvent}
+                      eventRowNumber={i}
+                      setOldRowNumber={setOldRowNumber}
+                      eventColNumber={j}
+                      setOldColNumber={setOldColNumber}
+                      setEventWasClosed={setEventWasClosed}
+                    />
+                  </Col>
+                )}
               </Fragment>
             ))}
             <Col span={24}>
