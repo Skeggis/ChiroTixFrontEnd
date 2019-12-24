@@ -1,0 +1,7 @@
+@import "../../../variables";
+.BillingInformation{
+    &__buyerInformationDiv{
+        display: grid;
+        grid-template-columns: 1fr 10fr;
+    }
+}

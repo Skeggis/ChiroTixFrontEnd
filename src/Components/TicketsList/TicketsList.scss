@@ -1,0 +1,39 @@
+@import "../../variables";
+.TicketsList{
+    &__listRow{
+        width: 100%;
+        height: 100%;
+    }
+    
+    &__ticketInfoTitle{
+        font-size: $subTitleFontSize;
+    }
+    
+    &__ticketTypeInfo{
+        font-size: $subTitleFontSize*0.8;
+    }
+    
+    &__amountDiv{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    &__amount{
+        margin: 0 10px 0 10px;
+        // font-size: $subTitleFontSize*1.2;
+    }
+
+    .rightAlign{
+        text-align: right;
+    }
+
+    .centerAlign{
+        text-align: center;
+    }
+    
+}
+
+
+
