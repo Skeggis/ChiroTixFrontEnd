@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react'
-import { Button, Icon } from 'antd'
+import React, { useState, useEffect, useRef } from 'react'
+import { Button, Icon, Modal } from 'antd'
+import axios from 'axios'
+import {URL} from '../../Constants'
+import io from 'socket.io-client';
 
 import TicketsImage from '../../Components/TicketsImage/TicketsImage'
 import TicketsSteps from '../../Components/TicketsSteps/TicketsSteps'
@@ -13,6 +16,8 @@ import PaymentStep from '../../Components/PaymentStep/PaymentStep'
 import './TicketsPage.scss'
 
 
+
+
 let stepsInfo = [{
     title: "Tickets"
 }, {
@@ -21,13 +26,25 @@ let stepsInfo = [{
     title: "Receipt"
 }
 ]
+let defaultImage = '../../../tempDefaultImg.jpg'
 function TicketsPage(props) {
     
     //position of the steps
     const [current, setCurrent] = useState(0);
-
+    const [buyerId, setBuyerId] = useState(undefined)
     
+    const [timer, setTimer] = useState(0)
+    const [releaseTime, setReleaseTime] = useState(undefined)
     const [eventInfo, setEventInfo] = useState({})
+
+    useEffect(() => {
+        setTimeout(() => {
+            if(!releaseTime){return setTimer(0) }
+            let now = new Date()
+            if(new Date(releaseTime) - now < 0){return setReleaseTime(undefined)}
+            setTimer(new Date(releaseTime) - now)
+        }, 1000)
+    }, [timer, releaseTime])
 
     //Array of objects of the types of tickets for this event and with key "amount" representing how many of each type the buyer wants
     /**
@@ -75,41 +92,145 @@ function TicketsPage(props) {
      */
     const [ticketsOwnersInfo, setTicketsOwnersInfo] = useState([])
 
-
+    const ref = useRef({})
+    // useEffect(() => () => console.log("SOCKETCHANGE"), [ref.current])
 
     useEffect(() => {
-        const data = {
-            image: '../../../tempDefaultImg.jpg',
-            name: 'ChiroPraktik 101',
-            dates: '16.12.19 - 17.12.19',
-            country: 'Germany',
-            city: 'Berlin',
-            organization: 'ICPA',
-            ticketTypes: [{
-                id: 0,
-                name: 'Student',
-                price: 699
-            }, {
-                id: 1,
-                name: 'Chiropraktor',
-                price: 1199
-            }, {
-                id: 2,
-                name: 'Spouse (non chiro)',
-                price: 999
-            }, {
-                id: 3,
-                name: 'Grandpa',
-                price: 3999
-            }],
-            ownerInfo: [{label:"name", type:"input", required:true}, {label:"Massi", type:"input", required:true}]
+        async function fetchData(){
+            let eventId = props.match.params.eventId
+            let result = await axios.get(URL + `/tickets/info/${eventId}`)
+            let data = result.data
+            setEventInfo(data.eventInfo)
+            setBuyerId(data.buyerId)
+            setTicketTypes(data.ticketTypes)
+
+
+            ref.current.socket = io.connect(URL, { query:{buyerId: data.buyerId, eventId: eventId}})
+
+            ref.current.socket.on('connect', () => {console.log("COONNNEST!")})
+
+            ref.current.socket.on('timerDone', () => {
+
+                showErrorModal()
+                // setModalVisible(true)
+                // stepsController(0)
+            })
+            
         }
-        setEventInfo(data)
-
-        for(let i = 0; i < data.ticketTypes.length; i++){ data.ticketTypes[i].amount = 0 }
-        setTicketTypes(data.ticketTypes)
-
+        fetchData()
     }, [])
+
+    let reserveTickets = async () => {
+        // if(ticketTypes.length === 0){return}
+        let post = {
+            url:URL+'/tickets/reserveTickets',
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json;charset=UTF-8'
+            },
+            data:{
+                buyerId: buyerId,
+                eventId: eventInfo.id,
+                ticketTypes: ticketTypes,
+                socketId: ref.current.socket.id
+            }
+        }
+
+        let result = await axios(post)
+        ref.current.socket.emit('timer')
+        let data = result.data
+        setReleaseTime(data.releaseTime)
+        // startTimer(data.releaseTime)
+        if(!data.success){return console.log("ERROR ON SERVER!")/** TODO: Handle error message from server */}
+
+        let {reservedTickets} = data
+        let ownerInfo = []
+        let newTicketsOwnersInfo = []
+        let oldTicketsOwnersInfo = JSON.parse(JSON.stringify(ticketsOwnersInfo)) 
+        for (let k = 0; k < eventInfo.ownerInfo.length; k++) {
+            let info = eventInfo.ownerInfo[k]
+            ownerInfo.push({
+                label: info.label,
+                value: "",
+                type: info.type,
+                required: info.required
+            })
+        }
+        for(let i = 0; i < reservedTickets.length; i++){
+            let reservedTicket = reservedTickets[i]
+            let ownerInfoForThisTicket = JSON.parse(JSON.stringify(ownerInfo))
+            for(let j = 0; j < oldTicketsOwnersInfo.length; j++){
+                let oldTicket = oldTicketsOwnersInfo[j]
+                if(oldTicket.ticketTypeId === reservedTicket.ticketTypeId && !oldTicket.used){//If there is a ticket of this kind already (perhaps with data)
+                    oldTicket.used = true
+                    ownerInfoForThisTicket = oldTicket.ownerInfo
+                    break;
+                }
+            }
+            newTicketsOwnersInfo.push({
+                id: reservedTicket.id,
+                ticketTypeId: reservedTicket.ticketTypeId,
+                name: reservedTicket.name,
+                price: reservedTicket.price,
+                ownerInfo: ownerInfoForThisTicket
+            })
+        } 
+        setTicketsOwnersInfo(newTicketsOwnersInfo)
+        stepsController(1)
+    }
+
+    let releaseTickets = async () => {
+console.log("RELEASE ME!")
+ // if(ticketTypes.length === 0){return}
+ let post = {
+    url:URL+'/tickets/releaseTickets',
+    method: 'POST',
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data:{
+        buyerId: buyerId,
+        eventId: eventInfo.id,
+        tickets: ticketsOwnersInfo
+    }
+}
+
+let result = await axios(post)
+let data = result.data
+console.log("DATA:", data)
+setReleaseTime(undefined)
+stepsController(-1)
+setTimer(0)
+if(!data.success){return console.log("ERROR ON SERVER!")/** TODO: Handle error message from server */}
+
+    }
+
+    let buyTickets = async (cardInformation) => {
+console.log("BUYINGTICKETS!")
+        let post = {
+            url:URL+'/tickets/buyTickets',
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json;charset=UTF-8'
+            },
+            data:{
+                buyerId: buyerId,
+                eventId: eventInfo.id,
+                tickets: ticketsOwnersInfo,
+                buyerInfo,
+                cardInformation
+            }
+        }
+
+        let result = await axios(post)
+        let data = result.data
+        console.log("DATA:", data)
+        if(!data.success){return console.log("ERROR ON SERVER!")/** TODO: Handle error message from server */}
+        stepsController(1)
+    }
 
 
     let handleTicketChange = (ticketId, addTicket) => {
@@ -118,29 +239,12 @@ function TicketsPage(props) {
             if (newTickets[i].id === ticketId) {
                 if (addTicket) {//Increment the amount of tickets for this type
                     newTickets[i].amount++
-                    setTotalTicketPrice(totalTicketPrice + newTickets[i].price)
-                    let ownerInfo = []
-                    for (let k = 0; k < eventInfo.ownerInfo.length; k++) {
-                        let info = eventInfo.ownerInfo[k]
-                        ownerInfo.push({
-                            label: info.label,
-                            value: "",
-                            type: info.type,
-                            required: info.required
-                        })
-                    }
-                    ticketsOwnersInfo.push({
-                        id: newTickets[i].id,
-                        name: newTickets[i].name,
-                        price: newTickets[i].price,
-                        ownerInfo: ownerInfo
-                    })
-                    setTicketsOwnersInfo(ticketsOwnersInfo)
+                    setTotalTicketPrice(totalTicketPrice + parseFloat(newTickets[i].price))
                     break
                 }
                 else if (newTickets[i].amount > 0) {
                     newTickets[i].amount--
-                    setTotalTicketPrice(totalTicketPrice - newTickets[i].price)
+                    setTotalTicketPrice(totalTicketPrice - parseFloat(newTickets[i].price))
                     ticketsOwnersInfo.reverse()
                     let ticketToDelete = ticketsOwnersInfo.find(ticket => ticket.id === ticketId)
                     let index = ticketsOwnersInfo.indexOf(ticketToDelete)
@@ -154,11 +258,13 @@ function TicketsPage(props) {
         setTicketTypes(newTickets)
     }
 
-    let stepsController = (direction) => setCurrent(current+direction)
+    let stepsController = (direction) => {
+        setCurrent(current+direction)
+        if(current+direction >= 3){setReleaseTime(undefined)}
+    }
 
     let onButtonClick = () =>{
         let list = JSON.parse(JSON.stringify(ticketsOwnersInfo))
-        console.log("Info:", ticketsOwnersInfo)
         let open = []
         for(let i = 0; i < list.length; i++){
             list[i].extra = true
@@ -174,11 +280,8 @@ function TicketsPage(props) {
     }
 
     let continueButton;
-    let buyTicketsButton;
-
-    if (current < 2) {
-        if (current === 1) {
-            buyTicketsButton = (
+         if(current ===1){
+            continueButton = (
                 <div className="TicketsPage__buttonDiv">
                     <Button htmlType="submit" form="billingInformationForm" className="TicketsPage__button" onClick={onButtonClick}>
                         Buy tickets
@@ -186,21 +289,26 @@ function TicketsPage(props) {
                     </Button>
                 </div>
             );
-            continueButton = ""
-        } else {
+        } else if (current === 0) {
             continueButton = (<div className="TicketsPage__buttonDiv">
-                <Button onClick={() => stepsController(1)} className="TicketsPage__button">
+                <Button onClick={() => reserveTickets()} className="TicketsPage__button">
                     Find tickets
                     <Icon type="arrow-right" />
                 </Button>
             </div>);
-            buyTicketsButton = ""
-        }
-    }
+        } else { continueButton = ""}
+
 
     let backButton;
 
-    if (current === 1 || current === 2) {
+    if (current === 1 ) {
+        backButton = (<div className="TicketsPage__buttonDiv">
+            <Button onClick={releaseTickets} className="TicketsPage__button">
+                <Icon type="arrow-left" />
+                Back
+        </Button>
+        </div>);
+    } else if(current === 2){
         backButton = (<div className="TicketsPage__buttonDiv">
             <Button onClick={() => stepsController(-1)} className="TicketsPage__button">
                 <Icon type="arrow-left" />
@@ -225,16 +333,38 @@ function TicketsPage(props) {
             </div> 
     } else if (current === 2){
         console.log("HERE")
-        componentToShow = <PaymentStep ticketTypes={ticketTypes} totalTicketPrice={totalTicketPrice}/>
+        componentToShow = <PaymentStep ticketTypes={ticketTypes} totalTicketPrice={totalTicketPrice} buyTickets={buyTickets}/>
     } else if (current === 3){
         console.log("THERE")
         componentToShow = <OrderDetails ticketTypes={ticketTypes} totalTicketPrice={totalTicketPrice}/>
     }
 
+// let modal = Modal.error()
+// modal.update({
+//     title: "You took too long",
+//     content: "The tickets you reserved have been unreserved so you have to start over again if you want to buy a ticket",
+//     onOk: () => {setModalVisible(false)},
+//     visible: isModalVisible,
+//     afterClose: () => {setCurrent(0)},
+//     okText: "Ok",
+//     centered: true
+// })
+
+let showErrorModal = () => {
+    Modal.error({
+        title: "You took too long",
+        content: "The tickets you reserved have been unreserved so you have to start over again if you want to buy a ticket",
+        onOk: () => {setCurrent(0)},
+        centered: true,
+        zIndex: 1000000
+      });
+}
     return (
+        
         <div className="TicketsPage">
+            {/* {modal} */}
             <div className="TicketsPage__ticketsImage">
-                <TicketsImage imageUrl={eventInfo.image} title={eventInfo.name} subTitle={eventInfo.dates} />
+                <TicketsImage imageUrl={defaultImage} title={eventInfo.name} subTitle={eventInfo.dateRange} timer={timer} showTimer={!!releaseTime && current !== 3} />
             </div>
             <div className="TicketsPage__page">
                 <div className="TicketsPage__ticketsSteps">
@@ -246,9 +376,9 @@ function TicketsPage(props) {
             </div>
             {backButton}
             {continueButton}
-            {buyTicketsButton}
 
         </div>
+    
 
     );
 }

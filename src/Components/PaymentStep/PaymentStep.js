@@ -5,7 +5,8 @@ import './PaymentStep.scss'
 export default function PaymentStep(props) {
   const {
     ticketTypes,
-    totalTicketPrice
+    totalTicketPrice,
+    buyTickets
   } = props
 
   const [insuranceSelected, setInsuranceSelected] = useState(false)
@@ -59,7 +60,7 @@ export default function PaymentStep(props) {
 
 
         <div style={{width: '60%', margin: 'auto', marginTop: 50,}}>
-          <PaymentForm setInsuranceSelected={setInsuranceSelected} insuranceSelected={insuranceSelected}/>
+          <PaymentForm setInsuranceSelected={setInsuranceSelected} insuranceSelected={insuranceSelected} buyTickets={buyTickets}/>
         </div>
 
 

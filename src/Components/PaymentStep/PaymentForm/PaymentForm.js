@@ -10,6 +10,8 @@ function PaymentForm(props) {
   getFieldDecorator
 } = props.form;
 
+const {buyTickets} = props
+
   const [card, setCard] = useState({ value: '', triedToSubmit: false })
   const [date, setDate] = useState({ value: '', triedToSubmit: false })
   const [insuranceDialogOpen, setInsuranceDialogOpen] = useState(false)
@@ -85,8 +87,8 @@ function PaymentForm(props) {
 
     props.form.validateFields((err, values) => {
       if (!err && !error) {
-
         console.log('Received values of form: ', values);
+        buyTickets(values)
       }
     });
   };
