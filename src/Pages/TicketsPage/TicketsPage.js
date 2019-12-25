@@ -145,29 +145,30 @@ function TicketsPage(props) {
         if(!data.success){return console.log("ERROR ON SERVER!")/** TODO: Handle error message from server */}
 
         let {reservedTickets} = data
-        let ownerInfo = []
+        //let ownerInfo = []
         let newTicketsOwnersInfo = []
         let oldTicketsOwnersInfo = JSON.parse(JSON.stringify(ticketsOwnersInfo)) 
-        for (let k = 0; k < eventInfo.ownerInfo.length; k++) {
-            let info = eventInfo.ownerInfo[k]
-            ownerInfo.push({
-                label: info.label,
-                value: "",
-                type: info.type,
-                required: info.required
-            })
-        }
+        // for (let k = 0; k < eventInfo.ownerInfo.length; k++) {
+        //     let info = eventInfo.ownerInfo[k]
+        //     ownerInfo.push({
+        //         label: info.label,
+        //         value: "",
+        //         type: info.type,
+        //         required: info.required
+        //     })
+        // }
         for(let i = 0; i < reservedTickets.length; i++){
             let reservedTicket = reservedTickets[i]
-            let ownerInfoForThisTicket = JSON.parse(JSON.stringify(ownerInfo))
-            for(let j = 0; j < oldTicketsOwnersInfo.length; j++){
-                let oldTicket = oldTicketsOwnersInfo[j]
-                if(oldTicket.ticketTypeId === reservedTicket.ticketTypeId && !oldTicket.used){//If there is a ticket of this kind already (perhaps with data)
-                    oldTicket.used = true
-                    ownerInfoForThisTicket = oldTicket.ownerInfo
-                    break;
-                }
-            }
+            console.log(reservedTicket)
+            let ownerInfoForThisTicket = JSON.parse(JSON.stringify(reservedTicket.ownerInfo))
+            // for(let j = 0; j < oldTicketsOwnersInfo.length; j++){
+            //     let oldTicket = oldTicketsOwnersInfo[j]
+            //     if(oldTicket.ticketTypeId === reservedTicket.ticketTypeId && !oldTicket.used){//If there is a ticket of this kind already (perhaps with data)
+            //         oldTicket.used = true
+            //         ownerInfoForThisTicket = oldTicket.ownerInfo
+            //         break;
+            //     }
+            // }
             newTicketsOwnersInfo.push({
                 id: reservedTicket.id,
                 ticketTypeId: reservedTicket.ticketTypeId,
@@ -176,6 +177,7 @@ function TicketsPage(props) {
                 ownerInfo: ownerInfoForThisTicket
             })
         } 
+        console.log(newTicketsOwnersInfo)
         setTicketsOwnersInfo(newTicketsOwnersInfo)
         stepsController(1)
     }
@@ -332,10 +334,8 @@ console.log("BUYINGTICKETS!")
             buyerInfo={buyerInfo} setBuyerInfo={setBuyerInfo} stepsController={stepsController} current={current}/>
             </div> 
     } else if (current === 2){
-        console.log("HERE")
         componentToShow = <PaymentStep ticketTypes={ticketTypes} totalTicketPrice={totalTicketPrice} buyTickets={buyTickets}/>
     } else if (current === 3){
-        console.log("THERE")
         componentToShow = <OrderDetails ticketTypes={ticketTypes} totalTicketPrice={totalTicketPrice}/>
     }
 

@@ -44,16 +44,16 @@ export default function OrderDetails(props) {
                   {ticket.amount > 0 && (
                     <tr>
                       <td>{ticket.name}</td>
-                      <td className='orderDetails__rightAlign'>{`${ticket.price}$`}</td>
+                      <td className='orderDetails__rightAlign'>{`${Number(ticket.price).toFixed(2)}$`}</td>
                       <td className='orderDetails__rightAlign'>{ticket.amount}</td>
-                      <td className='orderDetails__rightAlign'>{`${ticket.amount * ticket.price}$`}</td>
+                      <td className='orderDetails__rightAlign'>{`${Number(ticket.amount * ticket.price).toFixed(2)}$`}</td>
                     </tr>
                   )}
                 </Fragment>
               ))}
               <tr style={{ height: 10 }}></tr>
               <tr >
-                <th className='orderDetails__rightAlign' colSpan='4'>{totalTicketPrice}$</th>
+                <th className='orderDetails__rightAlign' colSpan='4'>{Number(totalTicketPrice).toFixed(2)}$</th>
               </tr>
             </table>
           </div>
@@ -68,7 +68,7 @@ export default function OrderDetails(props) {
               <h4>Credit card:</h4>
               <p>Card number: <sup>************</sup>-7721</p>
               <p>Expiry date: 03/2022</p>
-              <p>Amount: {totalTicketPrice}$</p>
+              <p>Amount: {Number(totalTicketPrice).toFixed(2)}$</p>
             </div>
 
             <div className='orderDetails__detailBlock'>

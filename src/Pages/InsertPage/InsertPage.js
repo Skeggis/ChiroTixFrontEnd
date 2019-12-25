@@ -10,7 +10,8 @@ import {
   InputNumber,
   Upload,
   message,
-  notification
+  notification,
+  Radio
 } from 'antd';
 import axios from 'axios'
 
@@ -40,19 +41,36 @@ function InsertPage(props) {
   const [tickets, setTickets] = useState([{
     name: '',
     amount: 0,
-    price: 0
+    price: 0,
+    ownerInfo: [{
+      required: false,
+      type: '',
+      label: ''
+    }]
   }])
 
   function addTicket() {
     console.log('asdf')
     const newTickets = JSON.parse(JSON.stringify(tickets))
-    newTickets.push({ name: '', amount: 0, price: 0 })
+    newTickets.push({ name: '', amount: 0, price: 0, ownerInfo: [{ required: false, type: '', label: '' }] })
     setTickets(newTickets)
   }
 
   function removeTicket() {
     const newTickets = JSON.parse(JSON.stringify(tickets))
     newTickets.pop()
+    setTickets(newTickets)
+  }
+
+  function addOwnerInfoItem(i){
+    const newTickets = JSON.parse(JSON.stringify(tickets))
+    newTickets[i].ownerInfo.push({required: false, type: '', label: ''})
+    setTickets(newTickets)
+  }
+
+  function removeOwnerInfoItem(i){
+    const newTickets = JSON.parse(JSON.stringify(tickets))
+    newTickets[i].ownerInfo.pop()
     setTickets(newTickets)
   }
 
@@ -70,6 +88,24 @@ function InsertPage(props) {
       setTickets(oldState)
     }
     console.log('Her')
+  }
+
+  function handleOwnerInfoLabelChange(i, j, event) {
+    const newTickets = JSON.parse(JSON.stringify(tickets))
+    newTickets[i].ownerInfo[j].label = event.target.value
+    setTickets(newTickets)
+  }
+
+  function handleOwnerInfoRequiredChange(i, j, event){
+    const newTickets = JSON.parse(JSON.stringify(tickets))
+    newTickets[i].ownerInfo[j].required = event.target.checked
+    setTickets(newTickets)
+  }
+
+  function handleOwnerInfoTypeChanged(i, j, event){
+    const newTickets = JSON.parse(JSON.stringify(tickets))
+    newTickets[i].ownerInfo[j].type = event.target.value === 1 ? 'input' : 'checkbox'
+    setTickets(newTickets)
   }
 
   useEffect(() => {
@@ -128,8 +164,8 @@ function InsertPage(props) {
             }
           })
           console.log(eventResult)
-          if(eventResult.data.success){
-              openNotificationWithIcon('success', 'Success', 'Successfully inserted event')
+          if (eventResult.data.success) {
+            openNotificationWithIcon('success', 'Success', 'Successfully inserted event')
           }
         }
         uploadEvent()
@@ -366,10 +402,34 @@ function InsertPage(props) {
             <InputNumber placeholder='Price' onChange={(event) => handleChangeTicket(i, event, 'price')} />
             <InputNumber placeholder='Amount' onChange={(event) => handleChangeTicket(i, event, 'amount')} />
           </div>
+          <div styl={{ display: 'felx', flexDirection: 'column' }}>
+            {ticket.ownerInfo.map((ownerInfo, j) => (
+            <div style={{ marginLeft: 50, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+              <Input placeholder='Label' style={{ width: 150 }} onChange={(event) => handleOwnerInfoLabelChange(i, j, event)}/>
+              <Checkbox style={{ marginLeft: 10 }} onChange={(event) => handleOwnerInfoRequiredChange(i, j, event)}>Required</Checkbox>
+              <Radio.Group style={{ marginLeft: 10 }} onChange={(event) =>handleOwnerInfoTypeChanged(i, j, event)}>
+                <Radio value={1}>Input</Radio>
+                <Radio value={2}>Checkbox</Radio>
+              </Radio.Group>
+            </div>
+            ))}
+
+            <div style={{marginLeft: 50}}>
+              <Button onClick={() => addOwnerInfoItem(i)} style={{ marginRight: 5 }}>
+                <Icon type='plus'></Icon>
+              </Button>
+              {tickets[i].ownerInfo.length > 1 && (
+                <Button onClick={() => removeOwnerInfoItem(i)}>
+                  <Icon type='minus'></Icon>
+                </Button>
+              )}
+            </div>
+          </div>
         </Form.Item>
       ))}
+
       <Form.Item>
-        <div style={{ display: 'flex' }}>
+        <div style={{ display: 'flex', marginTop: 20 }}>
           <Button onClick={addTicket} style={{ marginRight: 5 }}>
             <Icon type='plus'></Icon>
           </Button>

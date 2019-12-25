@@ -18,9 +18,10 @@ export default function Events(props) {
     eventRows,
     setEventRows,
     size,
-    events
+    events,
+    setEvents
   } = props
-
+console.log(events[0])
   useEffect(() => {
     let numEvents
     if (size === 'xs') {
@@ -40,11 +41,11 @@ export default function Events(props) {
     }
 
     var myRows = [];
-    while (events.length) myRows.push(events.splice(0, numEvents));
+    let tempEvents = JSON.parse(JSON.stringify(events))
+    while (tempEvents.length) myRows.push(tempEvents.splice(0, numEvents));
     setEventRows(myRows)
   }, [size, events])
 
-  console.log(eventRows)
 
   const [selectedEvent, setSelectedEvent] = useState({ id: -1 })
   const [eventIsOpen, setEventIsOpen] = useState(false)
@@ -103,7 +104,7 @@ export default function Events(props) {
               <Collapse isOpened={selectedEvent.eventRowNumber === i || eventIsOpen}>
                 <div style={{ position: 'relative', height: 450 }}>
                   {row.map((event, j) => (
-                    <div style={{ height: '100%', position: selectedEvent.id === event.id && eventIsOpen ? 'absolute' : 'absolute', display: selectedEvent.id === event.id && eventIsOpen ? '' : '', top: 0, left: 0, overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: '100%', position: selectedEvent.id === event.id && eventIsOpen ? 'absolute' : 'absolute', display: selectedEvent.id === event.id && eventIsOpen ? '' : '', top: 0, left: 0, overflow: 'hidden' }}>
 
                       <Animated
                         animateOnMount={false}
