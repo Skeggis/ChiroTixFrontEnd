@@ -6,10 +6,11 @@ export default function PaymentStep(props) {
   const {
     ticketTypes,
     totalTicketPrice,
-    buyTickets
+    buyTickets,
+    insuranceSelected,
+    setInsuranceSelected
   } = props
 
-  const [insuranceSelected, setInsuranceSelected] = useState(false)
 
 
   return (
@@ -30,12 +31,12 @@ export default function PaymentStep(props) {
             <tbody>
               {ticketTypes.map(ticket => (
                 <Fragment>
-                  {ticket.amount > 0(
+                  {ticket.amount > 0 && (
                     <tr key={ticket.id}>
                       <td>{ticket.name}</td>
-                      <td className='paymentStep__rightAlign'>{`${ticket.price}$`}</td>
+                      <td className='paymentStep__rightAlign'>{`${Number(ticket.price).toFixed(2)}$`}</td>
                       <td className='paymentStep__rightAlign'>{ticket.amount}</td>
-                      <td className='paymentStep__rightAlign'>{`${ticket.amount * ticket.price}$`}</td>
+                      <td className='paymentStep__rightAlign'>{`${Number(ticket.amount * ticket.price).toFixed(2)}$`}</td>
                     </tr>
                   )}
                 </Fragment>
@@ -47,16 +48,16 @@ export default function PaymentStep(props) {
 
               <tr>
                 <th>Insurance</th>
-                <td className='paymentStep__rightAlign'>35$</td>
+                <td className='paymentStep__rightAlign'>35.00$</td>
                 <td className='paymentStep__rightAlign'>{insuranceSelected ? '1' : '0'}</td>
-                <td className='paymentStep__rightAlign'>{insuranceSelected ? '35' : '0'}$</td>
+                <td className='paymentStep__rightAlign'>{insuranceSelected ? '35.00' : '0.00'}$</td>
               </tr>
 
               <tr style={{ height: 10 }}></tr>
 
 
               <tr >
-                <th className='orderDetails__rightAlign' colSpan='4'>{totalTicketPrice}$</th>
+                <th className='orderDetails__rightAlign' colSpan='4'>{insuranceSelected ? Number(totalTicketPrice + 35).toFixed(2) : Number(totalTicketPrice).toFixed(2)}$</th>
               </tr>
             </tbody>
           </table>

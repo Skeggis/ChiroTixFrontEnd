@@ -14,10 +14,14 @@ function TicketsImage({ imageUrl = '', title='', subTitle='', timer=0, showTimer
     }
     
     let timerDiv;
-    if(showTimer){timerDiv = (<div>{time}</div>);}
+    if(showTimer){timerDiv = (<div style={{position: 'absolute', top: 20, right: 20, fontSize: 22, color: 'white'}}>{time}</div>);}
     return (
         <div className="TicketsImage">
-            <div className='TicketsImage__defaultImage' style={{ backgroundImage: `url('${imageUrl}')` }}></div>
+            <div className='TicketsImage__test'>
+
+            <div className='TicketsImage__defaultImage' style={{backgroundImage: `url(${imageUrl})`}} >
+            </div>
+            </div>
             <div className="TicketsImage__content">
                 {timerDiv}
                 <h1 className="TicketsImage__eventName">

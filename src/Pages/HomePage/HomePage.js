@@ -13,32 +13,35 @@ export default function HomePage(props) {
   const xl = useMedia('(min-width: 1200px) and (max-width: 1599px)')
   const xxl = useMedia('(min-width: 1600px)')
   const [eventRows, setEventRows] = useState([[]])
-
-  let size
-  if (xs) { size = 'xs' }
-  if (sm) { size = 'sm' }
-  if (md) { size = 'md' }
-  if (lg) { size = 'lg' }
-  if (xl) { size = 'xl' }
-  if (xxl) { size = 'xxl' }
-
-  const [searchValues, setSearchValues] = useState({})
-  const [events, setEvents] = useState([])
-  const [loading, setLoading] = useState(true)
-
+  const [size, setSize] = useState('')
 
   useEffect(() => {
-    const fetchData = async () => {
+    setEvents(events)
+    if (xs) { setSize('xs')}
+    if (sm) { setSize('sm')}
+    if (md) { setSize('md')}
+    if (lg) { setSize('lg')}
+    if (xl) { setSize('xl') }
+    if (xxl) { setSize('xxl') }
+  }, [xs, sm ,md, lg, xl, xxl])
+    
+    const [searchValues, setSearchValues] = useState({})
+    const [events, setEvents] = useState([])
+  const [loading, setLoading] = useState(true)
+  
+
+  useEffect(() => {
+    async function fetchData(){
       console.log(process.env.REACT_APP_SERVER_URL)
       const result = await axios.get(`${process.env.REACT_APP_SERVER_URL}/initialSearch`)
       console.log(result)
       setSearchValues(result.data.result)
       setEvents(result.data.result.featured)
+      console.log(result.data.result.featured[0])
       setLoading(false)
     }
     fetchData()
   }, [])
-
 
   if (loading) { return null }
 

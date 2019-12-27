@@ -24,6 +24,7 @@ function TicketOwnersInformation(props) {
 
     const { getFieldDecorator } = props.form
     const { openPanels, setOpenPanels, setTicketsOwnersInfo, ticketsOwnersInfo } = props
+    console.log(ticketsOwnersInfo)
 
     const formItemLayout = {
         labelCol: {
@@ -91,8 +92,8 @@ function TicketOwnersInformation(props) {
         for (let j = 0; j < ticketState.ownerInfo.length; j++) {
             let info = ticketState.ownerInfo[j]
             ticketInfo.push(
-                <Form.Item {...formItemLayout} label={info.label} style={{ marginBottom: "0px", display: "flex" }} >
-                    {getFieldDecorator(`tickets[${i}].${info.label}`, {
+                <Form.Item {...formItemLayout} label={info.label} style={{ marginBottom: ticketState.ownerInfo.length === j ? 0: 10, display: "flex" }} >
+                    {getFieldDecorator(`tickets[${i}].ownerInfo[${j}].${info.label}`, {
                         initialValue: info.value,
                         rules: [
                             {
@@ -101,7 +102,7 @@ function TicketOwnersInformation(props) {
                             }
 
                         ],
-                    })(<Input onChange={(e) => { validate(i, j, e) }} />)}
+                    })(<Input size='large' onChange={(e) => { validate(i, j, e) }} />)}
                 </Form.Item>
             )
         }

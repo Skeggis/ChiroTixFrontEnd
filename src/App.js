@@ -8,6 +8,7 @@ import Header from './Components/Header/Header'
 import EventPage from './Pages/EventPage/EventPage'
 import TicketsPage from './Pages/TicketsPage/TicketsPage'
 import InsertPage from './Pages/InsertPage/InsertPage'
+import ReceiptPage from './Pages/ReceiptPage/ReceiptPage';
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
         <Route path='/insert' exact component={InsertPage}/>
         <Route path='/event/:eventId' exact component={EventPage}/>
         <Route path='/tickets/:eventId' exact component={TicketsPage}/>
+        <Route path='/orders/:orderId' exact component={ReceiptPage}/>
       </Switch>
     </Fragment>
   );

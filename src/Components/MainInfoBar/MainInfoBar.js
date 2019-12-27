@@ -11,12 +11,12 @@ function MainInfoBar({ priceRange = '', dates = '', handleBuyTickets = () => {} 
                     <div className="MainInfoBar__colDiv">
 
                         <div className="MainInfoBar__nameDiv">
-                            <h2>
+                            <h2 style={{fontSize: '24px'}}>
                                 Price
                             </h2>
                         </div>
                         <div className="MainInfoBar__valueDiv">
-                            <h3>
+                            <h3 style={{fontSize: '20px'}}>
                                 {priceRange}
                             </h3>
                         </div>
@@ -28,13 +28,13 @@ function MainInfoBar({ priceRange = '', dates = '', handleBuyTickets = () => {} 
                 <Col span={4}>
                     <div className="MainInfoBar__colDiv">
                         <div className="MainInfoBar__nameDiv">
-                            <h2>
+                            <h2 style={{fontSize: '24px'}}>
                                 Dates
                         </h2>
                         </div>
 
                         <div className="MainInfoBar__valueDiv">
-                            <h3>
+                            <h3 style={{fontSize: '20px'}}>
                                 {dates}
                             </h3>
                         </div>
@@ -45,7 +45,7 @@ function MainInfoBar({ priceRange = '', dates = '', handleBuyTickets = () => {} 
                 <Col span={3}></Col>
                 <Col span={3}>
                     <div className='MainInfoBar__colDiv MainInfoBar__buttonDiv'>
-                        <Button onClick={handleBuyTickets} className="MainInfoBar__button" style={{ backgroundColor: "#6D8791", borderColor: "#6D8791", fontSize: "20px", fontWeight: "400", color: "white" }} >BUY</Button>
+                        <Button onClick={handleBuyTickets} className="MainInfoBar__button" style={{ backgroundColor: "#6D8791", borderColor: "#6D8791", fontSize: "20px", fontWeight: "400", color: "white" }} >Tickets</Button>
                     </div>
                 </Col>
             </Row>

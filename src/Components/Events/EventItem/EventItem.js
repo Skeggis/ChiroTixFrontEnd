@@ -5,9 +5,10 @@ import {
   Button
 } from 'antd'
 import { Animated } from "react-animated-css";
+import { withRouter } from 'react-router-dom';
 
 
-export default function EventItem(props) {
+function EventItem(props) {
   const {
     event,
     eventIsOpen,
@@ -18,7 +19,8 @@ export default function EventItem(props) {
     setOldRowNumber,
     eventColNumber,
     setOldColNumber,
-    setEventWasClosed
+    setEventWasClosed,
+    history
   } = props
 
   const [isHovering, setIsHovering] = useState(false)
@@ -77,6 +79,14 @@ export default function EventItem(props) {
     }
   }, [isHovering])
 
+  function handleClickMore(e){
+    history.push(`/event/${event.id}`)
+  }
+
+  function handleClickTickets(e){
+    history.push(`/tickets/${event.id}`)
+  }
+
   const selected = selectedEvent.id === event.id
   const cardHover = selected || isHovering ? 'eventItem-hovering' : ''
 
@@ -94,20 +104,22 @@ export default function EventItem(props) {
           alt={event.name}
         />
 
+         <div className={`${cardHover ? 'overlay-hover': 'overlay'}`}>
         <div style={{ width: '100%', position: 'absolute', top: 0, left: 0 }}>
           <div className='eventItem__imageContent' style={{ margin: '10px 10px 0 10px', display: 'flex', justifyContent: 'space-between', }}>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', flexDirection: 'column',  }}>
               <Animated animateOnMount={false} isVisible={isHovering || selected} animationIn='fadeInLeft' animationOut='fadeOutLeft' animationInDuration={300} animationOutDuration={300}>
-                <h3 style={{ margin: 0, fontSize: 20 }}>{event.city}</h3>
+                <h3 style={{ margin: 0, fontSize: 20, color: 'white' }}>{event.city}</h3>
               </Animated>
               <Animated animateOnMount={false} isVisible={isHovering || selected} animationIn='fadeInLeft' animationOut='fadeOutLeft' animationInDelay={80} animationInDuration={300} animationOutDuration={300}>
-                <p style={{ padding: 0, fontSize: 16, color: 'black' }}>{event.country}</p>
+                <p style={{ padding: 0, fontSize: 16,color: 'white' }}>{event.country}</p>
               </Animated>
             </div>
             <div>
               <Animated animateOnMount={false} isVisible={isHovering ||selected} animationIn='fadeInRight' animationOut='fadeOutRight' animationInDuration={300} animationOutDuration={300}>
-                <h3>{event.organization}</h3>
+                <h3 style={{color: 'white'}}>{event.organization}</h3>
               </Animated>
+            </div>
             </div>
           </div>
         </div>
@@ -124,9 +136,9 @@ export default function EventItem(props) {
             </div>
             <div style={{ position: 'absolute', top: 0, left: 0, height: 80, width: '100%' }}>
               <Animated style={{ height: '100%' }} isVisible={isHovering} animateOnMount={false} animationOut='fadeOutRight' animationIn='fadeInRight' animationInDuration={300} animationOutDuration={300}>
-                <div style={{ display: 'flex', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                  <Button size='large' style={{ color: 'white', marginRight: 30, backgroundColor: 'rgba(157, 141, 241, 0.7)', }}>More</Button>
-                  <Button size='large' style={{ color: 'white', backgroundColor: 'rgba(157, 141, 241, 0.7)', }}>Tickets</Button>
+                <div style={{ display: 'flex', height: '100%', justifyContent: 'space-around', alignItems: 'center' }}>
+                  <Button size='large' style={{ color: 'white', backgroundColor: 'rgba(157, 141, 241, 0.7)', }} onClick={handleClickMore}>More</Button>
+                  <Button size='large' style={{ color: 'white', backgroundColor: 'rgba(157, 141, 241, 0.7)', }} onClick={handleClickTickets}>Tickets</Button>
                 </div>
               </Animated>
             </div>
@@ -147,3 +159,5 @@ export default function EventItem(props) {
     </div>
   )
 }
+
+export default withRouter(EventItem)
