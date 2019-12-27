@@ -17,6 +17,10 @@ const {buyTickets} = props
   const [insuranceDialogOpen, setInsuranceDialogOpen] = useState(false)
 
   function cc_format(value) {
+    console.log(value)
+    if(!/\d/.test(value)){
+      return
+    }
     let v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '')
     let matches = v.match(/\d{4,16}/g);
     let match = matches && matches[0] || ''
@@ -163,7 +167,7 @@ const {buyTickets} = props
 
   return (
     <Fragment>
-      <Modal
+      <Modal zIndex={1000000}
         title={'Insurance information'}
         visible={insuranceDialogOpen}
         onOk={() => setInsuranceDialogOpen(false)}  

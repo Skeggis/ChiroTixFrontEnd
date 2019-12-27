@@ -7,10 +7,13 @@ import './OrderDetails.scss'
 
 export default function OrderDetails(props) {
   const {
-    totalTicketPrice,
-    ticketTypes
+    orderDetails
   } = props
 
+  const receipt = orderDetails.receipt
+  const lines = receipt.lines
+
+  console.log('receipt', receipt)
   const order = {
     no: '23456526372',
 
@@ -33,28 +36,48 @@ export default function OrderDetails(props) {
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
 
             <table style={{ width: '80%' }}>
-              <tr>
-                <th>Ticket</th>
-                <th className='orderDetails__rightAlign'>Price</th>
-                <th className='orderDetails__rightAlign'>Amount</th>
-                <th className='orderDetails__rightAlign'>Total</th>
-              </tr>
-              {ticketTypes.map(ticket => (
-                <Fragment>
-                  {ticket.amount > 0 && (
+              <thead>
+                <tr>
+                  <th>Ticket</th>
+                  <th className='orderDetails__rightAlign'>Price</th>
+                  <th className='orderDetails__rightAlign'>Amount</th>
+                  <th className='orderDetails__rightAlign'>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {lines.map(ticket => (
+                  <Fragment>
+                    {ticket.amount > 0 && (
+                      <tr>
+                        <td>{ticket.name}</td>
+                        <td className='orderDetails__rightAlign'>{`${Number(ticket.price).toFixed(2)}$`}</td>
+                        <td className='orderDetails__rightAlign'>{ticket.amount}</td>
+                        <td className='orderDetails__rightAlign'>{`${Number(ticket.amount * ticket.price).toFixed(2)}$`}</td>
+                      </tr>
+                    )}
+                  </Fragment>
+                ))}
+
+                {orderDetails.insurance && (
+                  <Fragment>
+                    <tr style={{ height: 10 }}></tr>
+                    <tr style={{ borderTop: '1px dashed black' }}><td colSpan='4'></td></tr>
+                    <tr style={{ height: 10 }}></tr>
+
                     <tr>
-                      <td>{ticket.name}</td>
-                      <td className='orderDetails__rightAlign'>{`${Number(ticket.price).toFixed(2)}$`}</td>
-                      <td className='orderDetails__rightAlign'>{ticket.amount}</td>
-                      <td className='orderDetails__rightAlign'>{`${Number(ticket.amount * ticket.price).toFixed(2)}$`}</td>
+                      <th>Insurance</th>
+                      <td className='paymentStep__rightAlign'>{Number(orderDetails.insurancePrice).toFixed(2)}$</td>
+                      <td className='paymentStep__rightAlign'>1</td>
+                      <td className='paymentStep__rightAlign'>{Number(orderDetails.insurancePrice).toFixed(2)}$</td>
                     </tr>
-                  )}
-                </Fragment>
-              ))}
-              <tr style={{ height: 10 }}></tr>
-              <tr >
-                <th className='orderDetails__rightAlign' colSpan='4'>{Number(totalTicketPrice).toFixed(2)}$</th>
-              </tr>
+                  </Fragment>
+                )}
+
+                <tr style={{ height: 10 }}></tr>
+                <tr >
+                  <th className='orderDetails__rightAlign' colSpan='4'>{Number(receipt.amount).toFixed(2)}$</th>
+                </tr>
+              </tbody>
             </table>
           </div>
         </div>
@@ -66,17 +89,17 @@ export default function OrderDetails(props) {
 
             <div className='orderDetails__detailBlock'>
               <h4>Credit card:</h4>
-              <p>Card number: <sup>************</sup>-7721</p>
-              <p>Expiry date: 03/2022</p>
-              <p>Amount: {Number(totalTicketPrice).toFixed(2)}$</p>
+              <p>Card number: <sup>************</sup>-{receipt.cardNumber}</p>
+              <p>Expiry date: {receipt.expiryDate}</p>
+              <p>Amount: {Number(receipt.amount).toFixed(2)}$</p>
             </div>
 
             <div className='orderDetails__detailBlock'>
               <h4>Billing Address:</h4>
-              <p>Róbert Ingi Huldarsson</p>
-              <p>Álfaberg 24</p>
-              <p>221, Hafnarfjörður</p>
-              <p>Iceland</p>
+              <p>{receipt.name}</p>
+              <p>{receipt.address}</p>
+              <p>{receipt.place}</p>
+              <p>{receipt.country}</p>
             </div>
           </div>
         </div>

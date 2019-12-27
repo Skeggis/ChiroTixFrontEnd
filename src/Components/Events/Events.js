@@ -74,7 +74,7 @@ console.log(events[0])
 
 
   return (
-    <Fragment>
+    <div className='events'>
       {eventRows.map((row, i) => (
         <Fragment>
           <Row gutter={[24, 32]}>
@@ -101,7 +101,7 @@ console.log(events[0])
             <Col span={24}>
 
               {/* <div style={{ height: eventIsOpen && selectedEvent.eventRowNumber === i ? 450 : 0, position: 'relative' }} className='events__descriptionItem'> */}
-              <Collapse isOpened={selectedEvent.eventRowNumber === i || eventIsOpen}>
+              <Collapse isOpened={selectedEvent.eventRowNumber === i}>
                 <div style={{ position: 'relative', height: 450 }}>
                   {row.map((event, j) => (
                     <div style={{ height: '100%', width: '100%', position: selectedEvent.id === event.id && eventIsOpen ? 'absolute' : 'absolute', display: selectedEvent.id === event.id && eventIsOpen ? '' : '', top: 0, left: 0, overflow: 'hidden' }}>
@@ -130,6 +130,6 @@ console.log(events[0])
 
         </Fragment>
       ))}
-    </Fragment>
+    </div>
   )
 }

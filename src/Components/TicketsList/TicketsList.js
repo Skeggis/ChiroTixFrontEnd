@@ -6,8 +6,8 @@ import './TicketsList.scss'
 function TicketsList({ ticketTypes = [], location = '', organization = '', handleTicketChange = () => { }, totalTicketPrice=0, interactive=true }) {
     let theTicketTypes = []
     theTicketTypes.push(
-        <List.Item >
-            <Row className='TicketsList__listRow'>
+        <List.Item style={{margin: 0, padding: 0}}>
+            <Row className='TicketsList__listRow' gutter={0}>
                 <Col span={1}></Col>
                 <Col span={4}><h3 className="TicketsList__ticketInfoTitle">Event</h3></Col>
                 <Col span={3}></Col>
@@ -18,13 +18,14 @@ function TicketsList({ ticketTypes = [], location = '', organization = '', handl
                 <Col span={3}><h3 className="TicketsList__ticketInfoTitle rightAlign">Price</h3></Col>
                 <Col span={2}></Col>
                 <Col span={2}><h3 className="TicketsList__ticketInfoTitle" style={{ textAlign: "center" }}>Amount</h3></Col>
+            
             </Row>
         </List.Item>)
         for(let i = 0; i < ticketTypes.length; i++){
             let ticket = ticketTypes[i]
             if(!interactive && ticket.amount === 0){continue}
             theTicketTypes.push(
-                <List.Item style={{ borderColor: "rgba(0,0,0,0.5)", backgroundColor: "rgb(0,0,0,0.1)" }}>
+                <List.Item style={{ }}>
                     <Row className='TicketsList__listRow'>
                         <Col span={1}></Col>
                         <Col span={4} className="TicketsList__ticketTypeInfo"> {ticket.name} </Col>
@@ -55,12 +56,12 @@ function TicketsList({ ticketTypes = [], location = '', organization = '', handl
         }
     
     theTicketTypes.push(
-        <List.Item >
+        <List.Item style={{marginTop: 10}}>
             <Row className='TicketsList__listRow'>
                 <Col span={1}></Col>
                 <Col span={4}><h3 className="TicketsList__ticketInfoTitle">Total</h3></Col>
                 <Col span={17}></Col>
-                <Col span={2}><h3 className="TicketsList__ticketInfoTitle" style={{ textAlign: "center" }}>{parseFloat(totalTicketPrice).toFixed(2)} $</h3></Col>
+                <Col span={2} ><h3 className="TicketsList__ticketInfoTitle" style={{ textAlign: "center" }}>{parseFloat(totalTicketPrice).toFixed(2)} $</h3></Col>
             </Row>
         </List.Item>)
 

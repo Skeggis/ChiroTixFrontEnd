@@ -6,10 +6,11 @@ export default function PaymentStep(props) {
   const {
     ticketTypes,
     totalTicketPrice,
-    buyTickets
+    buyTickets,
+    insuranceSelected,
+    setInsuranceSelected
   } = props
 
-  const [insuranceSelected, setInsuranceSelected] = useState(false)
 
 
   return (

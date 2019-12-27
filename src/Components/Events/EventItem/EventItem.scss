@@ -30,11 +30,13 @@
 
 
     &-hovering{
-      opacity: 0.9;
-      filter: alpha(opacity=90);
+      // opacity: 0.5;
+      // filter: alpha(opacity=50);
       transform: scale(1.1);
     }
   }
+
+  
 
   &__contentWrapper{
     position: absolute;
@@ -54,3 +56,22 @@
     align-items: center;
   }
 }
+
+
+.overlay{
+background-color: none;
+
+
+  &-hover{
+    background-color: rgba($color: #000000, $alpha: .3);
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    transition: all 0.2s ease;
+  }
+}
+

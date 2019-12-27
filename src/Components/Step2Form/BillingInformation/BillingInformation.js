@@ -83,7 +83,7 @@ function BillingInformation(props){
                 </div>
                 
                 
-            <Form.Item {...formItemLayout} label="Full Name">
+            <Form.Item {...formItemLayout} style={{marginBottom: 10}}  label="Full Name">
             {getFieldDecorator('name', {
               initialValue:buyerInfo.name,
                 rules: [
@@ -93,7 +93,7 @@ function BillingInformation(props){
                     whitespace:true
                   },
                 ],
-              })(<Input onChange={(e) => {updateState(e,'name')}}/>)}
+              })(<Input size='large' onChange={(e) => {updateState(e,'name')}}/>)}
               {/* <Row>
                 <Col span={11}>
                 {getFieldDecorator('firstName', {
@@ -119,7 +119,7 @@ function BillingInformation(props){
               </Row> */}
               
             </Form.Item>
-            <Form.Item {...formItemLayout} label="E-mail">
+            <Form.Item {...formItemLayout} style={{marginBottom: 10}}  label="E-mail">
               {getFieldDecorator('email',{
                 initialValue:buyerInfo.email,
                 rules: [
@@ -135,9 +135,9 @@ function BillingInformation(props){
                     validator: validateToConfirmEmail,
                   }
                 ],
-              })(<Input onChange={(e) => {updateState(e,'email')}}/>)}
+              })(<Input size='large' onChange={(e) => {updateState(e,'email')}}/>)}
             </Form.Item>
-            <Form.Item {...formItemLayout} label="Confirm Email" >
+            <Form.Item {...formItemLayout} style={{marginBottom: 10}}  label="Confirm Email" >
               {getFieldDecorator('confirmEmail',{
                 initialValue:buyerInfo.confirmEmail,
                 rules: [
@@ -153,51 +153,52 @@ function BillingInformation(props){
                     validator: compareToEmail,
                   },
                 ],
-              })(<Input onBlur={handleConfirmBlur} onChange={(e) => {updateState(e,'confirmEmail')}}/>)}
+              })(<Input size='large'  onBlur={handleConfirmBlur} onChange={(e) => {updateState(e,'confirmEmail')}}/>)}
             </Form.Item>
-            <Form.Item {...formItemLayout} label="Phone Number">
+            <Form.Item {...formItemLayout} style={{marginBottom: 10}}  label="Phone Number">
               {getFieldDecorator('phone',{
                 initialValue:buyerInfo.phone,
                 rules: [{ required: true, message: 'Please input your phone number!' }],
-              })(<PhoneInput
+              })(<PhoneInput 
+                size='large' 
                 country={'is'}
                 value={props.form.getFieldValue('phone')}
                 onChange={(e) => {updateState(e,'phone')}}
               />)}
             </Form.Item>
-            <Form.Item {...formItemLayout} label="Address">
+            <Form.Item {...formItemLayout} style={{marginBottom: 10}}  label="Address">
               {getFieldDecorator('address',{
                 initialValue:buyerInfo.address,
                 rules: [
                   { type: 'string', required: true, message: 'Please input your address!' },
                 ],
-              })(<Input onChange={(e) => {updateState(e,'address')}}/>)}
+              })(<Input size='large'  onChange={(e) => {updateState(e,'address')}}/>)}
             </Form.Item>
-            <Form.Item {...formItemLayout} label="City">
+            <Form.Item {...formItemLayout} style={{marginBottom: 10}} label="City">
               {getFieldDecorator('city',{
                 initialValue:buyerInfo.city,
                 rules: [
                   { type: 'string', required: true, message: 'Please input your city!' },
                 ],
-              })(<Input onChange={(e) => {updateState(e,'city')}}/>)}
+              })(<Input size='large'  onChange={(e) => {updateState(e,'city')}}/>)}
             </Form.Item>
 
-            <Form.Item {...formItemLayout} label="State">
+            <Form.Item {...formItemLayout} style={{marginBottom: 10}} label="State">
               {getFieldDecorator('state', {
                 initialValue:buyerInfo.state,
                 rules: [
                   { type: 'string', required: true, message: 'Please input your state!' },
                 ],
-              })(<Input onChange={(e) => {updateState(e,'state')}}/>)}
+              })(<Input size='large'  onChange={(e) => {updateState(e,'state')}}/>)}
             </Form.Item>
 
-            <Form.Item {...formItemLayout} label="Zip Code">
+            <Form.Item {...formItemLayout} style={{marginBottom: 10}} label="Zip Code">
               {getFieldDecorator('zipCode', {
                 initialValue:buyerInfo.zipCode,
                 rules: [
                   { type: 'string', required: true, message: 'Please input your zip code!' },
                 ],
-              })(<Input onChange={(e) => {updateState(e,'zipCode')}}/>)}
+              })(<Input size='large'  onChange={(e) => {updateState(e,'zipCode')}}/>)}
             </Form.Item>
             
             <Form.Item {...tailFormItemLayout}>
