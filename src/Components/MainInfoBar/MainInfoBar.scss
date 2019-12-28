@@ -20,6 +20,7 @@
         justify-content: center;
         align-items: stretch;
         height: 100%;
+        margin: '0px 10px'
     }
 
     &__valueDiv{
@@ -46,7 +47,7 @@
         justify-content: center;
         height: 100%;
         margin-top: $subTitleFontSize*(1/16);
-        
+
     }
 
     &__colDiv h2{
@@ -63,7 +64,8 @@
     &__buttonDiv{
         height: 100%;
         display: flex;
-        align-content: center;
+        justify-content: center;
+        align-items: center;
     }
 
     $buttonWidth: 8rem;
@@ -77,7 +79,13 @@
         min-width: 75px;
         height: $buttonWidth*(0.4);
         min-height: 75px*(2/5);
-        
+
         box-shadow: inset;
     }
+
+    &--sticky{
+        position: sticky;
+        top: 0;
+    }
 }
+

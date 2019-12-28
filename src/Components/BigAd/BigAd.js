@@ -1,14 +1,42 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import './BigAd.scss'
+import { Skeleton } from 'antd'
+import Loader from '../Loader/Loader'
 
-function BigAd({ image = '', title = '', minorTitle = '', subTitle = '' }) {
-    return (
-        <div className='BigAd' style={{ backgroundImage: `url('${image}')` }}>
+function getWindowDimensions() {
+    const { innerWidth: width, innerHeight: height } = window;
+    return {
+        width,
+        height
+    };
+}
 
-            <div className='BigAd__organizationTitleDiv'>
-                <h1 className='BigAd__organizationTitle'>{minorTitle}</h1>
+function BigAd({ image = '', title = '', minorTitle = '', subTitle = '', loading = true, mainInfoBarHeight = 0 }) {
+    const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+
+    useEffect(() => {
+        function handleResize() {
+            setWindowDimensions(getWindowDimensions());
+        }
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    const height = windowDimensions.height - mainInfoBarHeight
+
+    if (loading) {
+        return (
+            <div className='BigAd' style={{height}}>
+                <div style={{ height: '100%' }}>
+                    <Loader />
+                </div>
+
             </div>
-
+        )
+    }
+    return (
+        <div className='BigAd' style={{ backgroundImage: `url('${image}')`, height }} >
             <div className="BigAd__flexDiv">
                 <div className="BigAd__bannerDiv">
                     <div className="BigAd__eventTitleDiv">
@@ -17,8 +45,6 @@ function BigAd({ image = '', title = '', minorTitle = '', subTitle = '' }) {
                     </div>
                 </div>
             </div>
-
-
         </div>
     );
 }

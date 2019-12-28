@@ -51,7 +51,7 @@ function ShareButtons({url=''}){
         //         </Row>
         //     </div>
 
-        <div style={{display: 'flex'}}>
+        <div style={{display: 'flex', justifyContent: 'center'}}>
                         <FacebookShareButton url={url} className="ShareButtons__shareButton">
                             <FacebookIcon size={32} round={true} className="ShareButtons__pointer"/>
                             <Typography.Text className="ShareButtons__shareText ShareButtons__pointer" >Share</Typography.Text>

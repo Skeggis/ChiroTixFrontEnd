@@ -1,54 +1,73 @@
-import React from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import { Typography, Row, Col, Button } from 'antd'
+import ScrollDownButton from '../ScrollDownButton/ScrollDownButton'
 import './MainInfoBar.scss'
 
-function MainInfoBar({ priceRange = '', dates = '', handleBuyTickets = () => {} }) {
+function MainInfoBar(props) {
+
+    const {
+        priceRange,
+        dates,
+        handleBuyTickets,
+        setHeight,
+        handleScroll,
+        down
+    } = props
+
+    const ref = useRef(null)
+
+
+    useEffect(() => {
+        setHeight(ref.current.clientHeight)
+    })
     return (
-        <div className='MainInfoBar'>
-            <Row className="MainInfoBar__bar" type="flex">
-            <Col span={6}></Col>
-                <Col span={4}>
-                    <div className="MainInfoBar__colDiv">
 
-                        <div className="MainInfoBar__nameDiv">
-                            <h2 style={{fontSize: '24px'}}>
-                                Price
-                            </h2>
-                        </div>
-                        <div className="MainInfoBar__valueDiv">
-                            <h3 style={{fontSize: '20px'}}>
-                                {priceRange}
-                            </h3>
-                        </div>
 
+        <div ref={ref} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', maxWidth: 1600, }} className='MainInfoBar MainInfoBar--sticky'>
+            {/* <div style={{ display: 'flex', margin: '0 80px'}}> */}
+            {/* <div style={{ display: 'flex',flexGrow: '1', justifyContent: 'flex-start', marginLeft: 50 }}> */}
+
+            <div style={{display: 'flex', justifyContent: 'center', width: '100%',flexWrap: 'wrap'}}>
+
+                <div className="MainInfoBar__colDiv" style={{ marginRight: 30, }}>
+
+                    <div className="MainInfoBar__nameDiv">
+                        <h2 style={{ fontSize: '24px' }}>
+                            Price
+                             </h2>
+                    </div>
+                    <div className="MainInfoBar__valueDiv">
+                        <h3 style={{ fontSize: '20px' }}>
+                            {priceRange}
+                        </h3>
                     </div>
 
-                </Col>
-                <Col span={2}></Col>
-                <Col span={4}>
-                    <div className="MainInfoBar__colDiv">
-                        <div className="MainInfoBar__nameDiv">
-                            <h2 style={{fontSize: '24px'}}>
-                                Dates
-                        </h2>
-                        </div>
-
-                        <div className="MainInfoBar__valueDiv">
-                            <h3 style={{fontSize: '20px'}}>
-                                {dates}
-                            </h3>
-                        </div>
-
+                </div>
+                <div className="MainInfoBar__colDiv" style={{ marginRight: 0 }}>
+                    <div className="MainInfoBar__nameDiv">
+                        <h2 style={{ fontSize: '24px' }}>
+                            Dates
+                         </h2>
                     </div>
 
-                </Col>
-                <Col span={3}></Col>
-                <Col span={3}>
-                    <div className='MainInfoBar__colDiv MainInfoBar__buttonDiv'>
-                        <Button onClick={handleBuyTickets} className="MainInfoBar__button" style={{ backgroundColor: "#6D8791", borderColor: "#6D8791", fontSize: "20px", fontWeight: "400", color: "white" }} >Tickets</Button>
+                    <div className="MainInfoBar__valueDiv">
+                        <h3 style={{ fontSize: '20px' }}>
+                            {dates}
+                        </h3>
                     </div>
-                </Col>
-            </Row>
+
+                </div>
+
+            </div>
+            <div style={{ marginRight: 0 }}>
+                <ScrollDownButton handleClick={handleScroll} down={down} />
+            </div>
+
+            {/* </div> */}
+
+            <div className=' MainInfoBar__buttonDiv' style={{justifyContent: 'flex-end',width: '100%',  }}>
+                <Button onClick={handleBuyTickets} className="MainInfoBar__button" style={{ backgroundColor: "#6D8791", borderColor: "#6D8791", fontSize: "20px", fontWeight: "400", color: "white", marginRight: 150 }} >Tickets</Button>
+            </div>
         </div>
     );
 }

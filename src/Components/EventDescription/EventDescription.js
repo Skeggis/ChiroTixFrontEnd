@@ -3,7 +3,7 @@ import { Typography, Row, Col, List, Tag } from 'antd'
 
 import './EventDescription.scss'
 
-function EventDescription({ description = '', speakers = [], tags = [] }) {
+function EventDescription({ description = '', speakers = [], tags = [], loading=true }) {
 
     let speakersItems = []
     for(let i = 0; i < 1; i++){

@@ -3,6 +3,13 @@ import SearchBar from '../../Components/SearchBar/SearchBar'
 import Events from '../../Components/Events/Events'
 import { useMedia } from 'react-use'
 import axios from 'axios'
+import Loader from '../../Components/Loader/Loader'
+import {
+  Row,
+  Col,
+  Skeleton
+} from 'antd'
+import Header from '../../Components/Header/Header'
 
 
 export default function HomePage(props) {
@@ -17,21 +24,21 @@ export default function HomePage(props) {
 
   useEffect(() => {
     setEvents(events)
-    if (xs) { setSize('xs')}
-    if (sm) { setSize('sm')}
-    if (md) { setSize('md')}
-    if (lg) { setSize('lg')}
+    if (xs) { setSize('xs') }
+    if (sm) { setSize('sm') }
+    if (md) { setSize('md') }
+    if (lg) { setSize('lg') }
     if (xl) { setSize('xl') }
     if (xxl) { setSize('xxl') }
-  }, [xs, sm ,md, lg, xl, xxl])
-    
-    const [searchValues, setSearchValues] = useState({})
-    const [events, setEvents] = useState([])
+  }, [xs, sm, md, lg, xl, xxl])
+
+  const [searchValues, setSearchValues] = useState({})
+  const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
-  
+
 
   useEffect(() => {
-    async function fetchData(){
+    async function fetchData() {
       console.log(process.env.REACT_APP_SERVER_URL)
       const result = await axios.get(`${process.env.REACT_APP_SERVER_URL}/initialSearch`)
       console.log(result)
@@ -43,25 +50,57 @@ export default function HomePage(props) {
     fetchData()
   }, [])
 
-  if (loading) { return null }
+  if (loading) {
+    return (
+      <Fragment>
+        <Header />
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ margin: '50px 0 30px' }}>
+
+            <Row justify='center' type='flex'>
+              <Col xs={24} sm={18} md={12}>
+                <Skeleton active />
+              </Col>
+            </Row>
+          </div>
+          <div>
+
+            <Row gutter={[24, 32]}>
+              {[...Array(6)].map((e, i) => (
+                <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={6}>
+                  <div style={{ height: 300 }}>
+                    <Skeleton active paragraph={{ rows: 6 }} />
+                  </div>
+                </Col>
+              ))}
+            </Row>
+          </div>
+        </div>
+      </Fragment>
+    )
+  }
 
   return (
-    <div style={{ width: '100%' }}>
-      <div style={{ width: '50%', margin: 'auto', marginTop: 30 }}>
-        <SearchBar
-          searchValues={searchValues}
-          setEvents={setEvents}
-        />
-      </div>
-      <div style={{ margin: 'auto', marginTop: 50, padding: '0px 30px', maxWidth: 2400, }}>
-        <Events
-          eventRows={eventRows}
-          setEventRows={setEventRows}
-          size={size}
-          events={events}
-        />
-      </div>
+    <Fragment>
+<Header/>
+      <div style={{ width: '100%' }}>
+        <div style={{ width: '50%', margin: 'auto', marginTop: 30 }}>
+          <SearchBar
+            searchValues={searchValues}
+            setEvents={setEvents}
+          />
+        </div>
+        <div style={{ margin: 'auto', marginTop: 50, padding: '0px 30px', maxWidth: 2400, }}>
+          <Events
+            eventRows={eventRows}
+            setEventRows={setEventRows}
+            size={size}
+            events={events}
+            loading={loading}
+          />
+        </div>
 
-    </div>
+      </div>
+    </Fragment>
   )
 }

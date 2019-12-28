@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, Fragment } from 'react'
 import OrderDetails from '../../Components/OrderDetails/OrderDetails'
 import axios from 'axios'
+import Header from '../../Components/Header/Header'
 
 export default function ReceiptPage(props) {
 
@@ -12,10 +13,10 @@ export default function ReceiptPage(props) {
   } = props
 
   useEffect(() => {
-    async function fetchData(){
+    async function fetchData() {
       const result = await axios.get(`${process.env.REACT_APP_SERVER_URL}/orders/${match.params.orderId}`)
       console.log(result)
-      if(!result.data.success){
+      if (!result.data.success) {
         //TODO handle
         setLoading(false)
         return
@@ -29,8 +30,11 @@ export default function ReceiptPage(props) {
 
   if (loading) { return null }
   return (
-    <div style={{marginTop: 30}}>
-      <OrderDetails orderDetails={orderDetails} />
-    </div>
+    <Fragment>
+      <Header />
+      <div style={{ marginTop: 30 }}>
+        <OrderDetails orderDetails={orderDetails} />
+      </div>
+    </Fragment>
   )
 }

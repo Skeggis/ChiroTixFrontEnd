@@ -9,12 +9,12 @@ import EventPage from './Pages/EventPage/EventPage'
 import TicketsPage from './Pages/TicketsPage/TicketsPage'
 import InsertPage from './Pages/InsertPage/InsertPage'
 import ReceiptPage from './Pages/ReceiptPage/ReceiptPage';
+import NotFoundPage from './Pages/NotFoundPage/NotFoundPage';
 
 
 function App() {
   return (
     <Fragment>
-      <Header/>
       <Switch>
         <Route path='/' exact component={HomePage}/>
         <Route path='/event' exact component={EventPage}/>
@@ -23,6 +23,8 @@ function App() {
         <Route path='/event/:eventId' exact component={EventPage}/>
         <Route path='/tickets/:eventId' exact component={TicketsPage}/>
         <Route path='/orders/:orderId' exact component={ReceiptPage}/>
+
+        <Route exact component={NotFoundPage}/>
       </Switch>
     </Fragment>
   );

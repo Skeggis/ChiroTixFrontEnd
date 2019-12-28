@@ -19,7 +19,7 @@ export default function Events(props) {
     setEventRows,
     size,
     events,
-    setEvents
+    setEvents,
   } = props
 console.log(events[0])
   useEffect(() => {
@@ -104,7 +104,7 @@ console.log(events[0])
               <Collapse isOpened={selectedEvent.eventRowNumber === i}>
                 <div style={{ position: 'relative', height: 450 }}>
                   {row.map((event, j) => (
-                    <div style={{ height: '100%', width: '100%', position: selectedEvent.id === event.id && eventIsOpen ? 'absolute' : 'absolute', display: selectedEvent.id === event.id && eventIsOpen ? '' : '', top: 0, left: 0, overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: '100%', position: selectedEvent.id === event.id && eventIsOpen ? 'absolute' : 'absolute', display: selectedEvent.id === event.id && eventIsOpen ? '' : '', top: 0, left: 0, overflow: 'hidden', zIndex: selectedEvent.id === event.id && eventIsOpen ? 10: 0 }}>
 
                       <Animated
                         animateOnMount={false}

@@ -2,7 +2,7 @@
 .TicketsImage{
     $contentHeight:400px;
 
-    //width: 100%;
+    width: 100%;
     height: $contentHeight;
     overflow:hidden;
 
@@ -19,7 +19,7 @@
         background-position-y: 75%;
         background-repeat: no-repeat;
         overflow:hidden;
-    
+
         position: absolute;
         left: 0;
         right: 0;
@@ -29,7 +29,7 @@
         -moz-filter: blur(2px);
         -o-filter: blur(2px);
         -ms-filter: blur(2px);
-        filter: blur(8px);
+        filter: blur(2px);
          transform: scale(1.02);        // border: 1px solid transparent;
     }
 
@@ -63,6 +63,3 @@
 
 }
 
-html{
-    overflow-x: hidden;
-}

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react'
 import './EventItem.scss'
 import {
   Divider,
-  Button
+  Button,
+  Skeleton
 } from 'antd'
 import { Animated } from "react-animated-css";
 import { withRouter } from 'react-router-dom';
@@ -20,7 +21,7 @@ function EventItem(props) {
     eventColNumber,
     setOldColNumber,
     setEventWasClosed,
-    history
+    history,
   } = props
 
   const [isHovering, setIsHovering] = useState(false)
@@ -79,85 +80,88 @@ function EventItem(props) {
     }
   }, [isHovering])
 
-  function handleClickMore(e){
+  function handleClickMore(e) {
     history.push(`/event/${event.id}`)
   }
 
-  function handleClickTickets(e){
+  function handleClickTickets(e) {
     history.push(`/tickets/${event.id}`)
   }
 
   const selected = selectedEvent.id === event.id
   const cardHover = selected || isHovering ? 'eventItem-hovering' : ''
 
-  return (
-    <div className={`eventItem ${cardHover}`}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
 
-      onClick={() => handleEventClick(event)}
-    >
-      <div className='eventItem__imageContainer'>
-        <img
-          src={event.image}
-          className={`eventItem__image ${(isHovering || selected) && 'eventItem__image-hovering'}`}
-          alt={event.name}
-        />
+    return (
+      <div className={`eventItem ${cardHover}`}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
 
-         <div className={`${cardHover ? 'overlay-hover': 'overlay'}`}>
-        <div style={{ width: '100%', position: 'absolute', top: 0, left: 0 }}>
-          <div className='eventItem__imageContent' style={{ margin: '10px 10px 0 10px', display: 'flex', justifyContent: 'space-between', }}>
-            <div style={{ display: 'flex', flexDirection: 'column',  }}>
-              <Animated animateOnMount={false} isVisible={isHovering || selected} animationIn='fadeInLeft' animationOut='fadeOutLeft' animationInDuration={300} animationOutDuration={300}>
-                <h3 style={{ margin: 0, fontSize: 20, color: 'white' }}>{event.city}</h3>
-              </Animated>
-              <Animated animateOnMount={false} isVisible={isHovering || selected} animationIn='fadeInLeft' animationOut='fadeOutLeft' animationInDelay={80} animationInDuration={300} animationOutDuration={300}>
-                <p style={{ padding: 0, fontSize: 16,color: 'white' }}>{event.country}</p>
-              </Animated>
+        onClick={() => handleEventClick(event)}
+      >
+        <div className='eventItem__imageContainer'>
+          <img
+            src={event.image}
+            className={`eventItem__image ${(isHovering || selected) && 'eventItem__image-hovering'}`}
+            alt={event.name}
+          />
+                  <div className={`${cardHover ? 'overlay-hover' : 'overlay'}`}>
+
+            <div style={{ width: '100%', position: 'absolute', top: 0, left: 0 }}>
+              <div className='eventItem__imageContent' style={{ margin: '10px 10px 0 10px', display: 'flex', justifyContent: 'space-between', }}>
+                <div style={{ display: 'flex', flexDirection: 'column', }}>
+                  <Animated animateOnMount={false} isVisible={isHovering || selected} animationIn='fadeInLeft' animationOut='fadeOutLeft' animationInDuration={300} animationOutDuration={300}>
+                    <h3 style={{ margin: 0, fontSize: 20, color: 'white' }}>{event.city}</h3>
+                  </Animated>
+                  <Animated animateOnMount={false} isVisible={isHovering || selected} animationIn='fadeInLeft' animationOut='fadeOutLeft' animationInDelay={80} animationInDuration={300} animationOutDuration={300}>
+                    <p style={{ padding: 0, fontSize: 16, color: 'white' }}>{event.country}</p>
+                  </Animated>
+                </div>
+                <div>
+                  <Animated animateOnMount={false} isVisible={isHovering || selected} animationIn='fadeInRight' animationOut='fadeOutRight' animationInDuration={300} animationOutDuration={300}>
+                    <h3 style={{ color: 'white' }}>{event.organization}</h3>
+                  </Animated>
+                </div>
+              </div>
             </div>
-            <div>
-              <Animated animateOnMount={false} isVisible={isHovering ||selected} animationIn='fadeInRight' animationOut='fadeOutRight' animationInDuration={300} animationOutDuration={300}>
-                <h3 style={{color: 'white'}}>{event.organization}</h3>
-              </Animated>
             </div>
+
+          <div className='eventItem__contentWrapper'>
+            <div style={{ position: 'relative', width: '100%', height: 80 }}>
+              <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', display: 'flex', width: '100%' }}>
+                <Animated isVisible={!isHovering} animateOnMount={false} animationOut='fadeOutLeft' animationIn='fadeInLeft' animationInDuration={300} animationOutDuration={300}>
+                  <div style={{ display: 'flex', flexDirection: 'column', height: '100%', }}>
+                    <h1 style={{ margin: 0, color: 'white' }}>{event.name}</h1>
+                    <p style={{ color: 'white', fontSize: 16, margin: 0 }}>{new Date(event.startDate).toDateString()}</p>
+                  </div>
+
+                </Animated>
+              </div>
+              <div style={{ position: 'absolute', top: 0, left: 0, height: 80, width: '100%' }}>
+                <Animated style={{ height: '100%' }} isVisible={isHovering} animateOnMount={false} animationOut='fadeOutRight' animationIn='fadeInRight' animationInDuration={300} animationOutDuration={300}>
+                  <div style={{ display: 'flex', height: '100%', justifyContent: 'space-around', alignItems: 'center' }}>
+                    <Button size='large' style={{ color: 'white', backgroundColor: 'rgba(157, 141, 241, 0.7)', }} onClick={handleClickMore}>More</Button>
+                    <Button size='large' style={{ color: 'white', backgroundColor: 'rgba(157, 141, 241, 0.7)', }} onClick={handleClickTickets}>Tickets</Button>
+                  </div>
+                </Animated>
+              </div>
             </div>
           </div>
-        </div>
-        <div className='eventItem__contentWrapper'>
-          <div style={{ position: 'relative', width: '100%', height: 80 }}>
-            <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', display: 'flex', width: '100%' }}>
-              <Animated isVisible={!isHovering} animateOnMount={false} animationOut='fadeOutLeft' animationIn='fadeInLeft' animationInDuration={300} animationOutDuration={300}>
-                <div style={{ display: 'flex', flexDirection: 'column', height: '100%', }}>
-                  <h1 style={{ margin: 0, color: 'white' }}>{event.name}</h1>
-                  <p style={{ color: 'white', fontSize: 16, margin: 0 }}>{event.date}</p>
-                </div>
-
-              </Animated>
-            </div>
-            <div style={{ position: 'absolute', top: 0, left: 0, height: 80, width: '100%' }}>
-              <Animated style={{ height: '100%' }} isVisible={isHovering} animateOnMount={false} animationOut='fadeOutRight' animationIn='fadeInRight' animationInDuration={300} animationOutDuration={300}>
-                <div style={{ display: 'flex', height: '100%', justifyContent: 'space-around', alignItems: 'center' }}>
-                  <Button size='large' style={{ color: 'white', backgroundColor: 'rgba(157, 141, 241, 0.7)', }} onClick={handleClickMore}>More</Button>
-                  <Button size='large' style={{ color: 'white', backgroundColor: 'rgba(157, 141, 241, 0.7)', }} onClick={handleClickTickets}>Tickets</Button>
-                </div>
-              </Animated>
-            </div>
           </div>
-        </div>
 
-      </div>
 
-      {/* <div style={{ margin: 10 }}>
+        {/* <div style={{ margin: 10 }}>
         <h2 style={{ marginBottom: 0 }}>{event.name}</h2>
         <h3 style={{ padding: 0, marginTop: 0 }}>{event.organization}</h3>
       </div> */}
-      {/* <Divider style={{ marginBottom: 0 }} />
+        {/* <Divider style={{ marginBottom: 0 }} />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', margin: 10 }}>
         <Button>More</Button>
         <Button style={{ marginLeft: 5 }}>Tickets</Button>
       </div> */}
-    </div>
-  )
-}
+      </div>
+    )
+  }
+
 
 export default withRouter(EventItem)

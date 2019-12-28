@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, Fragment } from 'react'
 import { Button, Icon, Modal, notification } from 'antd'
 import axios from 'axios'
 import { URL } from '../../Constants'
@@ -14,6 +14,7 @@ import Step2Form from '../../Components/Step2Form/Step2Form'
 import OrderDetails from '../../Components/OrderDetails/OrderDetails'
 import PaymentStep from '../../Components/PaymentStep/PaymentStep'
 import './TicketsPage.scss'
+import Header from '../../Components/Header/Header';
 
 
 
@@ -75,7 +76,7 @@ function TicketsPage(props) {
         agreement: false,
     })
 
-    const [orderDetails, setOrderDetails] = useState({})    
+    const [orderDetails, setOrderDetails] = useState({})
 
     /**
      * ticketsOwnersInfo: [{
@@ -252,7 +253,7 @@ function TicketsPage(props) {
         let result = await axios(post)
         let data = result.data
         console.log("DATA:", data)
-        if (!data.success) { 
+        if (!data.success) {
             showErrors(data.messages, 'Error buying tickets')
             return;
         }
@@ -360,11 +361,11 @@ function TicketsPage(props) {
                 buyerInfo={buyerInfo} setBuyerInfo={setBuyerInfo} stepsController={stepsController} current={current} />
         </div>
     } else if (current === 2) {
-        componentToShow = <PaymentStep 
+        componentToShow = <PaymentStep
             ticketTypes={ticketTypes}
-            totalTicketPrice={totalTicketPrice} 
-            buyTickets={buyTickets} 
-            insuranceSelected={insuranceSelected} 
+            totalTicketPrice={totalTicketPrice}
+            buyTickets={buyTickets}
+            insuranceSelected={insuranceSelected}
             setInsuranceSelected={setInsuranceSelected} />
     } else if (current === 3) {
         componentToShow = <OrderDetails orderDetails={orderDetails} />
@@ -391,26 +392,27 @@ function TicketsPage(props) {
         });
     }
     return (
-
-        <div className="TicketsPage">
-            {/* {modal} */}
-            <div className="TicketsPage__ticketsImage">
-                <TicketsImage imageUrl={defaultImage} title={eventInfo.name} subTitle={eventInfo.dateRange} timer={timer} showTimer={!!releaseTime && current !== 3} />
-            </div>
-            <div className="TicketsPage__page">
-                <div className="TicketsPage__ticketsSteps">
-                    <TicketsSteps current={current} stepsInfo={stepsInfo} />
+        <Fragment>
+            <Header />
+            <div className="TicketsPage">
+                {/* {modal} */}
+                <div className="TicketsPage__ticketsImage">
+                    <TicketsImage imageUrl={defaultImage} title={eventInfo.name} subTitle={eventInfo.dateRange} timer={timer} showTimer={!!releaseTime && current !== 3} />
                 </div>
-                <div >
-                    {componentToShow}
+                <div className="TicketsPage__page">
+                    <div className="TicketsPage__ticketsSteps">
+                        <TicketsSteps current={current} stepsInfo={stepsInfo} />
+                    </div>
+                    <div >
+                        {componentToShow}
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 30 }}>
+                        {backButton}
+                        {continueButton}
+                    </div>
                 </div>
-            <div style={{display: 'flex', justifyContent: 'space-between', marginTop: 30}}>
-            {backButton}
-            {continueButton}
             </div>
-            </div>
-
-        </div>
+        </Fragment>
 
 
     );
