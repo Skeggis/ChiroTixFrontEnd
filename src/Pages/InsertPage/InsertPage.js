@@ -11,12 +11,14 @@ import {
   Upload,
   message,
   notification,
-  Radio
+  Radio,
+  TimePicker
 } from 'antd';
 import axios from 'axios'
-
+import moment from 'moment'
 const { RangePicker } = DatePicker
 const { Option } = Select
+
 
 function InsertPage(props) {
 
@@ -33,6 +35,7 @@ function InsertPage(props) {
   const [values, setValues] = useState({})
   const [availableCities, setAvailableCities] = useState([])
   const [selectedDates, setSelectedDates] = useState([])
+  const [schedule, setSchedule] = useState([])
   const [selectedSellingTime, setSelectedSellingTime] = useState([])
   const [selectedTags, setSelectedTags] = useState([])
   const [selectedImage, setSelectedImage] = useState(null)
@@ -90,6 +93,29 @@ function InsertPage(props) {
     console.log('Her')
   }
 
+  function handleSchedule(timeStamp, index,isStartTime){
+    console.log(schedule)
+    if(isStartTime){ schedule[index].startTime = timeStamp}
+    else {schedule[index].endTime = timeStamp}
+    console.log(schedule)
+    setSchedule(schedule)
+  }
+  function handleDateOfEventChange(dates, dateString){
+    let theSchedule = []
+    if(dates.length === 2){
+      let nr = dates[1].diff(dates[0], 'days')
+      for(let i = 0; i < nr+1; i++){
+        let initialDay = moment(dates[0])
+        theSchedule.push({
+          date: initialDay.add(i,'d').format('YYYY-MM-DD'),
+          startTime: "",
+          endTime:""
+        })
+      }
+    }
+    setSchedule(theSchedule)
+    setSelectedDates(dateString)
+  }
   function handleOwnerInfoLabelChange(i, j, event) {
     const newTickets = JSON.parse(JSON.stringify(tickets))
     newTickets[i].ownerInfo[j].label = event.target.value
@@ -160,7 +186,8 @@ function InsertPage(props) {
               tags: values.tags.map(tag => parseInt(tag)),
               tickets: tickets,
               image: imageUrl,
-              speakers: mySpeakers
+              speakers: mySpeakers,
+              schedule: schedule
             }
           })
           console.log(eventResult)
@@ -204,7 +231,38 @@ function InsertPage(props) {
         message.error(`${info.file.name} file upload failed.`);
       }
     },
-  };
+  };      
+  // <TimePicker use12Hours onChange={onChange} />    
+  // <TimePicker use12Hours format="h:mm:ss A" onChange={onChange} />
+  // <TimePicker use12Hours format="h:mm a" onChange={onChange} />
+
+  let scheduledDivs = []
+  for(let i = 0; i < schedule.length; i++){
+    scheduledDivs.push(
+      <div>
+<h4 style={{fontSize:"15px"}}>{schedule[i].date}</h4>
+      <div style={{display:"flex", flexDirection:"row"}}>
+      <Form.Item label="StartOfDay">
+        {getFieldDecorator(`schedule[${i}].startTime`, {
+          rules: [{ required: true, message: 'Insert schedule for this day' }],
+        })(
+          <TimePicker use12Hours format="h:mm a" onChange={(timeStamp, time) => handleSchedule(timeStamp,i,true)}/>
+        )}
+      </Form.Item>
+
+      <Form.Item label="EndOfDay">
+      {getFieldDecorator(`schedule[${i}].endTime`, {
+        rules: [{ required: true, message: 'Insert schedule for this day' }],
+      })(
+        <TimePicker use12Hours format="h:mm a" onChange={(timeStamp, time) => handleSchedule(timeStamp,i,false)}/>
+      )}
+      </Form.Item>
+      </div>
+      </div>
+    
+      
+    )
+  }
 
   if (loading) { return null }
   return (
@@ -241,11 +299,12 @@ function InsertPage(props) {
 
       <Form.Item label='Date of event'>
         <RangePicker
-          onChange={(date, dateString) => setSelectedDates(dateString)}
+          onChange={(date, dateString) => handleDateOfEventChange(date,dateString)}
           onFocus={e => e.preventDefault()}
           onBlur={e => e.preventDefault()}
         />
       </Form.Item>
+{scheduledDivs}
 
       <Form.Item label='Selling time of event'>
         <RangePicker
