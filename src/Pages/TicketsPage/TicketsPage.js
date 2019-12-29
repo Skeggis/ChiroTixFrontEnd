@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Button, Icon, Modal, notification } from 'antd'
 import axios from 'axios'
-import { URL } from '../../Constants'
+
 import io from 'socket.io-client';
 
 import TicketsImage from '../../Components/TicketsImage/TicketsImage'
@@ -16,7 +16,7 @@ import PaymentStep from '../../Components/PaymentStep/PaymentStep'
 import './TicketsPage.scss'
 
 
-
+const URL = process.env.REACT_APP_SERVER_URL
 
 let stepsInfo = [{
     title: "Tickets"
