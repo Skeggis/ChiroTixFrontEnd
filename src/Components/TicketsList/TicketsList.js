@@ -3,7 +3,7 @@ import { List, Col, Row, Button, Collapse } from 'antd'
 import { useMedia } from 'react-use'
 import './TicketsList.scss'
 
-function TicketsList({ ticketTypes = [], location = '', organization = '', handleTicketChange = () => { }, totalTicketPrice = 0, interactive = true }) {
+function TicketsList({ ticketTypes = [], location = '', organization = '', handleTicketChange = () => { }, totalTicketPrice = 0 }) {
 
     const mobile = useMedia('(max-width: 700px)')
 
@@ -26,7 +26,6 @@ function TicketsList({ ticketTypes = [], location = '', organization = '', handl
         </List.Item>)
     for (let i = 0; i < ticketTypes.length; i++) {
         let ticket = ticketTypes[i]
-        if (!interactive && ticket.amount === 0) { continue }
         theTicketTypes.push(
             <List.Item >
                 <Row align='center' style={{ alignItems: 'center', display: 'flex' }} className='TicketsList__listRow'>
@@ -41,17 +40,9 @@ function TicketsList({ ticketTypes = [], location = '', organization = '', handl
                     <Col span={2}></Col>
                     <Col span={2} className="TicketsList__ticketTypeInfo">
                         <div className="TicketsList__amountDiv">
-                            {/* <div className="TicketsList__roundButton">
-                                <h4>-</h4>
-                            </div> */}
-                            {interactive ? <Button shape="circle" onClick={() => handleTicketChange(ticket.id, false)} size="small">-</Button> : ''}
-
+                            <Button shape="circle" onClick={() => handleTicketChange(ticket.id, false)} size="small">-</Button>
                             <h3 className="TicketsList__amount">{ticket.amount}</h3>
-                            {interactive ? <Button shape="circle" onClick={() => handleTicketChange(ticket.id, true)} size="small">+</Button> : ''}
-                            {/* <div className="TicketsList__roundButton">
-                                <h4>+</h4>
-                            </div> */}
-
+                            <Button shape="circle" onClick={() => handleTicketChange(ticket.id, true)} size="small">+</Button>
                         </div>
                     </Col>
                 </Row>
@@ -77,9 +68,9 @@ function TicketsList({ ticketTypes = [], location = '', organization = '', handl
 
         return (
             <div className="TicketsList__amountDiv">
-                {interactive ? <Button shape="circle" onClick={(event) => handleMobile(event, false)} size="small">-</Button> : ''}
+                <Button shape="circle" onClick={(event) => handleMobile(event, false)} size="small">-</Button>
                 <h3 className="TicketsList__amount">{ticket.amount}</h3>
-                {interactive ? <Button shape="circle" onClick={(event) => handleMobile(event, true)} size="small">+</Button> : ''}
+                <Button shape="circle" onClick={(event) => handleMobile(event, true)} size="small">+</Button> 
             </div>
         )
     }
