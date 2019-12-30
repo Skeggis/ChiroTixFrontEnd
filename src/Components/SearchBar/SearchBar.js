@@ -164,8 +164,8 @@ export default function SearchBar(props) {
           />
         </div>
         <div className='searchBar__card__mainFilters'>
-          <Row gutter={16}>
-            <Col span={5}>
+          <Row gutter={[16, 16]}>
+            <Col sm={12} md={5}>
               <div className='searchBar__card__mainFilters__filter'>
                 <Select
                   style={{ width: '100%' }}
@@ -182,7 +182,7 @@ export default function SearchBar(props) {
                 </Select>
               </div>
             </Col>
-            <Col span={5}>
+            <Col sm={12} md={5}>
               <div className='searchBar__card__mainFilters__filter'>
                 <Select
                   style={{ width: '100%' }}
@@ -198,7 +198,7 @@ export default function SearchBar(props) {
                 </Select>
               </div>
             </Col>
-            <Col span={5}>
+            <Col sm={12} md={5}>
               <div className='searchBar__card__mainFilters__filter'>
                 <Select
                   style={{ width: '100%' }}
@@ -214,7 +214,7 @@ export default function SearchBar(props) {
                 </Select>
               </div>
             </Col>
-            <Col span={9}>
+            <Col sm={12} md={9}>
               <div className='searchBar__card__mainFilters__filter'>
                 <RangePicker
                   style={{ width: '100%' }}

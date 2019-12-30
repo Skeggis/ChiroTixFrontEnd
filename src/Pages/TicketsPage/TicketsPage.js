@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, Fragment } from 'react'
-import { Button, Icon, Modal, notification } from 'antd'
+import { Button, Icon, Modal, notification, Skeleton } from 'antd'
 import axios from 'axios'
 import { URL } from '../../Constants'
 import io from 'socket.io-client';
@@ -29,6 +29,11 @@ let stepsInfo = [{
 ]
 let defaultImage = '../../../tempDefaultImg.jpg'
 function TicketsPage(props) {
+
+    const [loading, setLoading] = useState(true)
+    const [reserveLoading, setReserveLoading] = useState(true)
+    const [releaseLoading, setReleaseLoading] = useState(false)
+    const [submitCardLoading, setSubmitCardLoading] = useState(false)
 
     //position of the steps
     const [current, setCurrent] = useState(0);
@@ -102,6 +107,7 @@ function TicketsPage(props) {
     // useEffect(() => () => console.log("SOCKETCHANGE"), [ref.current])
 
     useEffect(() => {
+        window.scrollTo(0, 0)
         async function fetchData() {
             let eventId = props.match.params.eventId
             let result = await axios.get(URL + `/tickets/info/${eventId}`)
@@ -122,7 +128,8 @@ function TicketsPage(props) {
                 // setModalVisible(true)
                 // stepsController(0)
             })
-
+            setLoading(false)
+            setReserveLoading(false)
         }
         fetchData()
     }, [])
@@ -139,6 +146,7 @@ function TicketsPage(props) {
 
     let reserveTickets = async () => {
         // if(ticketTypes.length === 0){return}
+        setReserveLoading(true)
         let post = {
             url: URL + '/tickets/reserveTickets',
             method: 'POST',
@@ -200,10 +208,12 @@ function TicketsPage(props) {
         console.log(newTicketsOwnersInfo)
         setTicketsOwnersInfo(newTicketsOwnersInfo)
         stepsController(1)
+        setReserveLoading(false)
     }
 
     let releaseTickets = async () => {
         console.log("RELEASE ME!")
+        setReleaseLoading(true)
         // if(ticketTypes.length === 0){return}
         let post = {
             url: URL + '/tickets/releaseTickets',
@@ -225,11 +235,13 @@ function TicketsPage(props) {
         setReleaseTime(undefined)
         stepsController(-1)
         setTimer(0)
+        setReleaseLoading(false)
         if (!data.success) { return console.log("ERROR ON SERVER!")/** TODO: Handle error message from server */ }
 
     }
 
     let buyTickets = async (cardInformation) => {
+        setSubmitCardLoading(true)
         console.log("BUYINGTICKETS!")
         let post = {
             url: URL + '/tickets/buyTickets',
@@ -253,6 +265,7 @@ function TicketsPage(props) {
         let result = await axios(post)
         let data = result.data
         console.log("DATA:", data)
+        setSubmitCardLoading()
         if (!data.success) {
             showErrors(data.messages, 'Error buying tickets')
             return;
@@ -320,7 +333,7 @@ function TicketsPage(props) {
         );
     } else if (current === 0) {
         continueButton = (<div className="TicketsPage__buttonDiv">
-            <Button onClick={() => reserveTickets()} className="TicketsPage__button">
+            <Button loading={loading || reserveLoading} onClick={() => reserveTickets()} className="TicketsPage__button" style={{ marginRight: (reserveLoading || loading) ? 10 : 0 }}>
                 Find tickets
                     <Icon type="arrow-right" />
             </Button>
@@ -332,15 +345,19 @@ function TicketsPage(props) {
 
     if (current === 1) {
         backButton = (<div className="TicketsPage__buttonDiv">
-            <Button onClick={releaseTickets} className="TicketsPage__button">
-                <Icon type="arrow-left" />
+            <Button onClick={releaseTickets} className="TicketsPage__button" loading={releaseLoading} style={{}}>
+                <span style={{ marginRight: 5 }}>
+                    <Icon type="arrow-left" />
+                </span>
                 Back
-        </Button>
+            </Button>
         </div>);
     } else if (current === 2) {
         backButton = (<div className="TicketsPage__buttonDiv">
-            <Button onClick={() => stepsController(-1)} className="TicketsPage__button">
-                <Icon type="arrow-left" />
+            <Button loading={submitCardLoading} onClick={() => stepsController(-1)} className="TicketsPage__button">
+                <span style={{ marginRight: 5 }}>
+                    <Icon type="arrow-left" />
+                </span>
                 Back
         </Button>
         </div>);
@@ -361,12 +378,15 @@ function TicketsPage(props) {
                 buyerInfo={buyerInfo} setBuyerInfo={setBuyerInfo} stepsController={stepsController} current={current} />
         </div>
     } else if (current === 2) {
-        componentToShow = <PaymentStep
-            ticketTypes={ticketTypes}
-            totalTicketPrice={totalTicketPrice}
-            buyTickets={buyTickets}
-            insuranceSelected={insuranceSelected}
-            setInsuranceSelected={setInsuranceSelected} />
+        componentToShow =
+            <PaymentStep
+                ticketTypes={ticketTypes}
+                totalTicketPrice={totalTicketPrice}
+                buyTickets={buyTickets}
+                insuranceSelected={insuranceSelected}
+                setInsuranceSelected={setInsuranceSelected}
+                submitCardLoading={submitCardLoading}
+            />
     } else if (current === 3) {
         componentToShow = <OrderDetails orderDetails={orderDetails} />
     }
@@ -391,21 +411,33 @@ function TicketsPage(props) {
             zIndex: 1000000
         });
     }
+
     return (
         <Fragment>
             <Header />
             <div className="TicketsPage">
                 {/* {modal} */}
-                <div className="TicketsPage__ticketsImage">
-                    <TicketsImage imageUrl={defaultImage} title={eventInfo.name} subTitle={eventInfo.dateRange} timer={timer} showTimer={!!releaseTime && current !== 3} />
-                </div>
+                {/* <div className="TicketsPage__ticketsImage"> */}
+                    <TicketsImage
+                        imageUrl={defaultImage}
+                        title={eventInfo.name}
+                        subTitle={eventInfo.dateRange}
+                        loading={loading}
+                        showTimer={!!releaseTime && current !== 3}
+                        timer={timer}
+                    />
+                {/* </div> */}
                 <div className="TicketsPage__page">
                     <div className="TicketsPage__ticketsSteps">
                         <TicketsSteps current={current} stepsInfo={stepsInfo} />
                     </div>
-                    <div >
-                        {componentToShow}
-                    </div>
+                    {loading ? (
+                        <Skeleton active />
+                    ) : (
+                            <div >
+                                {componentToShow}
+                            </div>
+                        )}
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 30 }}>
                         {backButton}
                         {continueButton}

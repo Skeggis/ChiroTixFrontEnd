@@ -10,9 +10,12 @@ import EventItem from './EventItem/EventItem'
 import EventDescriptionItem from './EventDescriptionItem/EventDescriptionItem'
 import { Animated } from 'react-animated-css'
 import { Collapse } from 'react-collapse'
+import { useMedia } from 'react-use'
 
 import './Events.scss'
 export default function Events(props) {
+
+  const mobile = useMedia('(max-width: 700px)')
 
   const {
     eventRows,
@@ -21,7 +24,7 @@ export default function Events(props) {
     events,
     setEvents,
   } = props
-console.log(events[0])
+  console.log(events[0])
   useEffect(() => {
     let numEvents
     if (size === 'xs') {
@@ -54,8 +57,7 @@ console.log(events[0])
   const [oldColNumber, setOldColNumber] = useState(-1)
   const [eventWasClosed, setEventWasClosed] = useState(true)
 
-
-
+  const [isHovering, setIsHovering] = useState(-1)
 
   let animationIn = selectedEvent.eventColNumber > oldColNumber ? 'fadeInLeft' : "fadeInRight"
   let animationInDirection = selectedEvent.eventColNumber > oldColNumber ? 'left' : 'right'
@@ -72,12 +74,13 @@ console.log(events[0])
     animationOutDirection = 'up'
   }
 
+  const gutter = mobile ? 0 : [24, 32]
 
   return (
     <div className='events'>
       {eventRows.map((row, i) => (
         <Fragment>
-          <Row gutter={[24, 32]}>
+          <Row gutter={gutter}>
             {row.map((event, j) => (
               <Fragment>
                 {event.id && (
@@ -93,38 +96,41 @@ console.log(events[0])
                       eventColNumber={j}
                       setOldColNumber={setOldColNumber}
                       setEventWasClosed={setEventWasClosed}
+                      isHovering={isHovering === event.id}
+                      setIsHovering={setIsHovering}
                     />
                   </Col>
                 )}
               </Fragment>
             ))}
-            <Col span={24}>
+            {!mobile && (
+              <Col span={24}>
 
-              {/* <div style={{ height: eventIsOpen && selectedEvent.eventRowNumber === i ? 450 : 0, position: 'relative' }} className='events__descriptionItem'> */}
-              <Collapse isOpened={selectedEvent.eventRowNumber === i}>
-                <div style={{ position: 'relative', height: 450 }}>
-                  {row.map((event, j) => (
-                    <div style={{ height: '100%', width: '100%', position: selectedEvent.id === event.id && eventIsOpen ? 'absolute' : 'absolute', display: selectedEvent.id === event.id && eventIsOpen ? '' : '', top: 0, left: 0, overflow: 'hidden', zIndex: selectedEvent.id === event.id && eventIsOpen ? 10: 0 }}>
+                {/* <div style={{ height: eventIsOpen && selectedEvent.eventRowNumber === i ? 450 : 0, position: 'relative' }} className='events__descriptionItem'> */}
+                <Collapse isOpened={selectedEvent.eventRowNumber === i}>
+                  <div style={{ position: 'relative', height: 450 }}>
+                    {row.map((event, j) => (
+                      <div style={{ height: '100%', width: '100%', position: selectedEvent.id === event.id && eventIsOpen ? 'absolute' : 'absolute', display: selectedEvent.id === event.id && eventIsOpen ? '' : '', top: 0, left: 0, overflow: 'hidden', zIndex: selectedEvent.id === event.id && eventIsOpen ? 10 : 0 }}>
 
-                      <Animated
-                        animateOnMount={false}
-                        isVisible={selectedEvent.id === event.id && selectedEvent.eventRowNumber === i}
-                        animationIn={selectedEvent.eventRowNumber !== oldRowNumber ? 'fadeInDown' : animationIn}
-                        animationOut={selectedEvent.eventRowNumber !== oldRowNumber ? 'fadeOutUp' : animationOut}>
-                        <EventDescriptionItem
-                          event={event}
-                          animate={selectedEvent.id === event.id}
-                          animationInDirection={selectedEvent.eventRowNumber !== oldRowNumber ? 'down' : animationInDirection}
-                          animationOutDirection={selectedEvent.eventRowNumber !== oldRowNumber ? 'up' : animationOutDirection}
-                        />
-                      </Animated>
-                    </div>
-                  ))}
-                </div>
-              </Collapse>
-              {/* </div> */}
-            </Col>
-
+                        <Animated
+                          animateOnMount={false}
+                          isVisible={selectedEvent.id === event.id && selectedEvent.eventRowNumber === i}
+                          animationIn={selectedEvent.eventRowNumber !== oldRowNumber ? 'fadeInDown' : animationIn}
+                          animationOut={selectedEvent.eventRowNumber !== oldRowNumber ? 'fadeOutUp' : animationOut}>
+                          <EventDescriptionItem
+                            event={event}
+                            animate={selectedEvent.id === event.id}
+                            animationInDirection={selectedEvent.eventRowNumber !== oldRowNumber ? 'down' : animationInDirection}
+                            animationOutDirection={selectedEvent.eventRowNumber !== oldRowNumber ? 'up' : animationOutDirection}
+                          />
+                        </Animated>
+                      </div>
+                    ))}
+                  </div>
+                </Collapse>
+                {/* </div> */}
+              </Col>
+            )}
 
           </Row>
 

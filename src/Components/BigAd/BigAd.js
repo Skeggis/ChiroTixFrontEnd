@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import './BigAd.scss'
 import { Skeleton } from 'antd'
 import Loader from '../Loader/Loader'
+import Header from '../../Components/Header/Header'
 
 function getWindowDimensions() {
     const { innerWidth: width, innerHeight: height } = window;
@@ -27,8 +28,11 @@ function BigAd({ image = '', title = '', minorTitle = '', subTitle = '', loading
 
     if (loading) {
         return (
-            <div className='BigAd' style={{height}}>
+            <div className='BigAd' style={{ height }}>
                 <div style={{ height: '100%' }}>
+                <div style={{position: 'absolute', top: 0, left: 0, width: '100%'}}>
+                <Header eventPage />
+                </div>
                     <Loader />
                 </div>
 

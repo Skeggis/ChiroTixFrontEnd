@@ -28,11 +28,9 @@ function TicketOwnersInformation(props) {
 
     const formItemLayout = {
         labelCol: {
-            // xs: { span: 12 },
             sm: { span: 3 },
         },
         wrapperCol: {
-            // xs: { span: 12 },
             sm: { span: 15 },
         },
     };
@@ -80,7 +78,7 @@ function TicketOwnersInformation(props) {
 
     let ticketsOwnerInfoHTML = []
     ticketsOwnerInfoHTML.push(
-        <div>
+        <div >
             <h2>Attendees' Information</h2>
         </div>
     )
@@ -91,8 +89,9 @@ function TicketOwnersInformation(props) {
         if (!ticketState.ownerInfo) { continue }
         for (let j = 0; j < ticketState.ownerInfo.length; j++) {
             let info = ticketState.ownerInfo[j]
+            console.log(`tickets[${i}].ownerInfo[${j}].${info.label}`)
             ticketInfo.push(
-                <Form.Item {...formItemLayout} label={info.label} style={{ marginBottom: ticketState.ownerInfo.length === j ? 0: 10, display: "flex" }} >
+                <Form.Item {...formItemLayout} label={info.label} style={{ marginBottom: ticketState.ownerInfo.length === j ? 0: 10 }} >
                     {getFieldDecorator(`tickets[${i}].ownerInfo[${j}].${info.label}`, {
                         initialValue: info.value,
                         rules: [
@@ -102,13 +101,13 @@ function TicketOwnersInformation(props) {
                             }
 
                         ],
-                    })(<Input size='large' onChange={(e) => { validate(i, j, e) }} />)}
+                    })(<Input size='large'  onChange={(e) => { validate(i, j, e) }} />)}
                 </Form.Item>
             )
         }
 
         ticketsList.push(
-            <Collapse.Panel header={ticketState.header} key={i + 1} extra={genExtra(ticketState.extra)} style={{ border: 0 }} >
+            <Collapse.Panel header={ticketState.header} key={i + 1} extra={genExtra(ticketState.extra)} >
                 {ticketInfo}
             </Collapse.Panel>
         )
@@ -124,10 +123,9 @@ function TicketOwnersInformation(props) {
 
 
     return (
-        <div>
+        <div className='TicketsOwnersInformation'>
             {ticketsOwnerInfoHTML}
         </div>
-
     );
 }
 

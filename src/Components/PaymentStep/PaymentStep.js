@@ -8,14 +8,15 @@ export default function PaymentStep(props) {
     totalTicketPrice,
     buyTickets,
     insuranceSelected,
-    setInsuranceSelected
+    setInsuranceSelected,
+    submitCardLoading
   } = props
 
 
 
   return (
     <div className='paymentStep'>
-      <div style={{ width: '60%', margin: 'auto' }}>
+      <div className='paymentStep__wrapper'>
         <h3>Order Summary</h3>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
 
@@ -64,8 +65,13 @@ export default function PaymentStep(props) {
         </div>
 
 
-        <div style={{width: '60%', margin: 'auto', marginTop: 50,}}>
-          <PaymentForm setInsuranceSelected={setInsuranceSelected} insuranceSelected={insuranceSelected} buyTickets={buyTickets}/>
+        <div >
+          <PaymentForm 
+            setInsuranceSelected={setInsuranceSelected} 
+            insuranceSelected={insuranceSelected} 
+            buyTickets={buyTickets}
+            submitCardLoading={submitCardLoading}
+          />
         </div>
 
 

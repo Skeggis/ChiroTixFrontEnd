@@ -84,13 +84,11 @@ export default function HomePage(props) {
     <Fragment>
 <Header/>
       <div style={{ width: '100%' }}>
-        <div style={{ width: '50%', margin: 'auto', marginTop: 30 }}>
           <SearchBar
             searchValues={searchValues}
             setEvents={setEvents}
           />
-        </div>
-        <div style={{ margin: 'auto', marginTop: 50, padding: '0px 30px', maxWidth: 2400, }}>
+      
           <Events
             eventRows={eventRows}
             setEventRows={setEventRows}
@@ -98,7 +96,7 @@ export default function HomePage(props) {
             events={events}
             loading={loading}
           />
-        </div>
+      
 
       </div>
     </Fragment>
