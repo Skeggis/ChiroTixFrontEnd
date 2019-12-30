@@ -82,6 +82,7 @@ function TicketsPage(props) {
     })
 
     const [orderDetails, setOrderDetails] = useState({})
+    const [chiroInfo, setChiroInfo] = useState({})
 
     /**
      * ticketsOwnersInfo: [{
@@ -271,6 +272,7 @@ function TicketsPage(props) {
             return;
         }
         setOrderDetails(data.orderDetails)
+        setChiroInfo(data.chiroInfo[0])
         stepsController(1)
     }
 
@@ -388,7 +390,7 @@ function TicketsPage(props) {
                 submitCardLoading={submitCardLoading}
             />
     } else if (current === 3) {
-        componentToShow = <OrderDetails orderDetails={orderDetails} />
+        componentToShow = <OrderDetails orderDetails={orderDetails} chiroInfo={chiroInfo}/>
     }
 
     // let modal = Modal.error()

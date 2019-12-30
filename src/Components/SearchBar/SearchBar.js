@@ -40,9 +40,10 @@ export default function SearchBar(props) {
   const [selectedPrice, setSelectedPrice] = useState([])
   const [selectedCeCredits, setSelectedCeCredits] = useState([])
 
-
+  const [searchLoading, setSearchLoading] = useState(false)
 
   async function handleSearch() {
+    setSearchLoading(true)
     const result = await axios({
       url: `${process.env.REACT_APP_SERVER_URL}/searchEvents`,
       method: 'post',
@@ -71,6 +72,7 @@ export default function SearchBar(props) {
       }
     })
     setEvents(result.data.events)
+    setSearchLoading(false)
   }
 
 
@@ -159,8 +161,9 @@ export default function SearchBar(props) {
             value={searchString}
             onChange={(event) => setSearchString(event.target.value)}
             size='large'
-            enterButton={<Button icon='search'>Search</Button>}
+            enterButton={<Button loading={searchLoading} icon='search'>Search</Button>}
             onSearch={handleSearch}
+            
           />
         </div>
         <div className='searchBar__card__mainFilters'>

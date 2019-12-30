@@ -7,7 +7,8 @@ import './OrderDetails.scss'
 
 export default function OrderDetails(props) {
   const {
-    orderDetails
+    orderDetails,
+    chiroInfo
   } = props
 
   const receipt = orderDetails.receipt
@@ -107,10 +108,10 @@ export default function OrderDetails(props) {
 
 
         <div className='orderDetails__usInfo'>
-          <p>ChiroTix</p>
-          <p>Álfaberg 24</p>
-          <p>221, Hafnarfjörður</p>
-          <p>240697-3789</p>
+          <p>{chiroInfo.companyName}</p>
+          <p>{chiroInfo.location}</p>
+          <p>{chiroInfo.place}</p>
+          <p>{chiroInfo.kennitala}</p>
         </div>
       </div>
     </div>
