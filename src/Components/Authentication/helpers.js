@@ -48,15 +48,13 @@ export const AuthenticatedRoute = ({
     path,
   }) => {
       console.log(isAuthenticated())
-      let theComp = Component
       return (
   <Route
       exact={exact}
       path={path}
       render={props =>
         isAuthenticated() ? (
-        //   <Component {...props} />
-        <theComp />
+          <Component {...props} />
         ) : (
           <AuthenticateBeforeRender render={() => <Component {...props} />} />
         )
