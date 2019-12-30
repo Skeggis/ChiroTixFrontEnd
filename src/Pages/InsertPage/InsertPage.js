@@ -52,6 +52,8 @@ function InsertPage(props) {
     }]
   }])
 
+  console.log(selectedOrganizations)
+
   function addTicket() {
     console.log('asdf')
     const newTickets = JSON.parse(JSON.stringify(tickets))
@@ -423,7 +425,7 @@ function InsertPage(props) {
           {getFieldDecorator('tags', {
             rules: [{ required: true, message: 'Insert event name' }],
           })(
-            <Select mode='tags' placeholder='Tags'>
+            <Select mode='multiple' placeholder='Tags'>
               {values.tags.map(tag => (
                 <Option key={tag.id} value={`${tag.id}`}>{tag.name}</Option>
               ))}

@@ -10,6 +10,7 @@ import EventPage from './Pages/EventPage/EventPage'
 import TicketsPage from './Pages/TicketsPage/TicketsPage'
 import InsertPage from './Pages/InsertPage/InsertPage'
 import ReceiptPage from './Pages/ReceiptPage/ReceiptPage';
+import NotFoundPage from './Pages/NotFoundPage/NotFoundPage';
 import LoginForm from './Components/LoginForm/LoginForm'
 import CreateUserForm from './Components/CreateUserForm/CreateUserForm'
 
@@ -17,7 +18,6 @@ import CreateUserForm from './Components/CreateUserForm/CreateUserForm'
 function App() {
   return (
     <Fragment>
-      <Header/>
       <Switch>
         
         <Route path='/' exact component={HomePage}/>
@@ -29,6 +29,7 @@ function App() {
         <Route path='/tickets/:eventId' exact component={TicketsPage}/>
         <Route path='/orders/:orderId' exact component={ReceiptPage}/>
         <Route path='/login' exact component={LoginForm}/>
+        <Route exact component={NotFoundPage}/>
       </Switch>
     </Fragment>
   );

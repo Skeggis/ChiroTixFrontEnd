@@ -1,9 +1,21 @@
 @import "../../variables";
 .header{
-  height: 80px;
+  height: $headerHeight;
   width: 100%;
   display: flex;
   align-items: center;
   box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.2), 0 4px 10px 0 rgba(0, 0, 0, 0.19);
   background-color: $barBackground;
+
+  &--eventPage{
+    height: $headerHeight;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    padding: 0 20px;
+    background-image: linear-gradient($barBackground, transparent);
+    z-index: 100;
+  }
 }
+

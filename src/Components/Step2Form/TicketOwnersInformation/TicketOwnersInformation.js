@@ -61,7 +61,7 @@ function TicketOwnersInformation(props) {
 
     let ticketsOwnerInfoHTML = []
     ticketsOwnerInfoHTML.push(
-        <div>
+        <div >
             <h2>Attendees' Information</h2>
         </div>
     )
@@ -74,8 +74,9 @@ function TicketOwnersInformation(props) {
 
         for (let j = 0; j < ticketState.ownerInfo.length; j++) {
             let info = ticketState.ownerInfo[j]
+            console.log(`tickets[${i}].ownerInfo[${j}].${info.label}`)
             ticketInfo.push(
-                <Form.Item {...formItemLayout} label={info.label} style={{ marginBottom: ticketState.ownerInfo.length === j ? 0: 10, display: "flex" }} >
+                <Form.Item {...formItemLayout} label={info.label} style={{ marginBottom: ticketState.ownerInfo.length === j ? 0: 10 }} >
                     {getFieldDecorator(`tickets[${i}].ownerInfo[${j}].${info.label}`, {
                         initialValue: info.value,
                         rules: [
@@ -91,7 +92,7 @@ function TicketOwnersInformation(props) {
         }
 
         ticketsList.push(
-            <Collapse.Panel header={ticketState.header} key={i + 1} extra={genExtra(ticketState.extra)} style={{ border: 0 }} >
+            <Collapse.Panel header={ticketState.header} key={i + 1} extra={genExtra(ticketState.extra)} >
                 {ticketInfo}
             </Collapse.Panel>
         )
@@ -105,10 +106,9 @@ function TicketOwnersInformation(props) {
     </div>)
     
     return (
-        <div>
+        <div className='TicketsOwnersInformation'>
             {ticketsOwnerInfoHTML}
         </div>
-
     );
 }
 

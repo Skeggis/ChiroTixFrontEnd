@@ -1,6 +1,9 @@
 .ShareButtons{
     &__shareDiv{
-        width: 100%;
+
+        @media(max-width: 900px){
+            width: 50%
+        }
     }
 
     &__pointer:hover{
@@ -11,7 +14,11 @@
         display:flex;
         flex-direction: row;
         align-items: center;
-        margin: 0 10px
+        margin: 5px 15px;
+
+        @media(max-width: 900px){
+            margin: 5px 0px
+        }
     }
 
     &__shareText{

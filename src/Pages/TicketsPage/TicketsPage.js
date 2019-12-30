@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { Button, Icon, Modal, notification } from 'antd'
+import React, { useState, useEffect, useRef, Fragment } from 'react'
+import { Button, Icon, Modal, notification, Skeleton } from 'antd'
 import axios from 'axios'
 
 import io from 'socket.io-client';
@@ -14,6 +14,7 @@ import Step2Form from '../../Components/Step2Form/Step2Form'
 import OrderDetails from '../../Components/OrderDetails/OrderDetails'
 import PaymentStep from '../../Components/PaymentStep/PaymentStep'
 import './TicketsPage.scss'
+import Header from '../../Components/Header/Header';
 
 
 const URL = process.env.REACT_APP_SERVER_URL
@@ -28,6 +29,11 @@ let stepsInfo = [{
 ]
 let defaultImage = '../../../tempDefaultImg.jpg'
 function TicketsPage(props) {
+
+    const [loading, setLoading] = useState(true)
+    const [reserveLoading, setReserveLoading] = useState(true)
+    const [releaseLoading, setReleaseLoading] = useState(false)
+    const [submitCardLoading, setSubmitCardLoading] = useState(false)
 
     //position of the steps
     const [current, setCurrent] = useState(0);
@@ -55,7 +61,8 @@ function TicketsPage(props) {
     const [openPanels, setOpenPanels] = useState([1])
     const [buyerInfo, setBuyerInfo] = useState({})
 
-    const [orderDetails, setOrderDetails] = useState({})    
+    const [orderDetails, setOrderDetails] = useState({})
+    const [chiroInfo, setChiroInfo] = useState({})
     const [insuranceSelected, setInsuranceSelected] = useState(false)
 
     /**
@@ -87,14 +94,15 @@ function TicketsPage(props) {
     }, [timer, releaseTime])
 
     useEffect(() => {
+        window.scrollTo(0, 0)
         async function fetchData() {
             let eventId = props.match.params.eventId
             let result = await axios.get(URL + `/tickets/info/${eventId}`)
             let data = result.data
 
-            if(!data.success){return showErrors(data.messages)}
+            if (!data.success) { return showErrors(data.messages) }
 
-            data.ticketTypes.sort((a,b) => { return a.id > b.id ? 1: (a.id < b.id) ? -1:0 })
+            data.ticketTypes.sort((a, b) => { return a.id > b.id ? 1 : (a.id < b.id) ? -1 : 0 })
 
             setEventInfo(data.eventInfo)
             setBuyerId(data.buyerId)
@@ -102,7 +110,15 @@ function TicketsPage(props) {
 
             ref.current.socket = io.connect(URL, { query: { buyerId: data.buyerId, eventId: eventId } })
             ref.current.socket.on('connect', () => { console.log("COONNNEST!") })
-            ref.current.socket.on('timerDone', () => { showTimerDoneModal() })
+
+            ref.current.socket.on('timerDone', () => {
+
+                showTimerDoneModal()
+                // setModalVisible(true)
+                // stepsController(0)
+            })
+            setLoading(false)
+            setReserveLoading(false)
         }
         fetchData()
     }, [props.match.params.eventId])
@@ -119,7 +135,7 @@ function TicketsPage(props) {
                 } else if (newTicketTypes[i].amount > 0) {//decrement the amount of tickets for this type
                     newTicketTypes[i].amount--
                     setTotalTicketPrice(totalTicketPrice - parseFloat(newTicketTypes[i].price))
-                    if(ticketsOwnersInfo.length > 0){ //If the buyer has been to the billingInformation page then we want to delete from ticketsOwnersInfo
+                    if (ticketsOwnersInfo.length > 0) { //If the buyer has been to the billingInformation page then we want to delete from ticketsOwnersInfo
                         ticketsOwnersInfo.reverse() //reverse to delete the "last" ticket that fits this types id
                         let ticketToDelete = ticketsOwnersInfo.find(ticket => ticket.id === ticketId)
                         let index = ticketsOwnersInfo.indexOf(ticketToDelete)
@@ -135,6 +151,8 @@ function TicketsPage(props) {
     }
 
     let reserveTickets = async () => {
+        // if(ticketTypes.length === 0){return}
+        setReserveLoading(true)
         let post = {
             url: URL + '/tickets/reserveTickets',
             method: 'POST',
@@ -163,9 +181,9 @@ function TicketsPage(props) {
         for (let i = 0; i < reservedTickets.length; i++) {
             let reservedTicket = reservedTickets[i]
             let ownerInfoForThisTicket = JSON.parse(JSON.stringify(reservedTicket.ownerInfo))
-            for(let j = 0; j < oldTicketsOwnersInfo.length; j++){
+            for (let j = 0; j < oldTicketsOwnersInfo.length; j++) {
                 let oldTicket = oldTicketsOwnersInfo[j]
-                if(oldTicket.ticketTypeId === reservedTicket.ticketTypeId && !oldTicket.used){//If there is a ticket of this kind already (perhaps with data)
+                if (oldTicket.ticketTypeId === reservedTicket.ticketTypeId && !oldTicket.used) {//If there is a ticket of this kind already (perhaps with data)
                     oldTicket.used = true
                     ownerInfoForThisTicket = oldTicket.ownerInfo
                     break;
@@ -182,9 +200,13 @@ function TicketsPage(props) {
         }
         setTicketsOwnersInfo(newTicketsOwnersInfo)
         stepsController(1)
+        setReserveLoading(false)
     }
 
     let releaseTickets = async () => {
+        console.log("RELEASE ME!")
+        setReleaseLoading(true)
+        // if(ticketTypes.length === 0){return}
         let post = {
             url: URL + '/tickets/releaseTickets',
             method: 'POST',
@@ -208,6 +230,7 @@ function TicketsPage(props) {
         setReleaseTime(undefined)
         stepsController(-1)
         setTimer(0)
+        setReleaseLoading(false)
     }
 
     let handleBillingInformationSubmit = () => {
@@ -215,7 +238,7 @@ function TicketsPage(props) {
         let open = []
         for (let i = 0; i < list.length; i++) {
             list[i].extra = true //if true then the icon for this panel will be shown (success vs error vs empty)
-            for (let j = 0; j < list[i].ownerInfo.length; j++) { list[i].extra = !!list[i].ownerInfo[j].value /**Extra is true iff value is non-empty*/}
+            for (let j = 0; j < list[i].ownerInfo.length; j++) { list[i].extra = !!list[i].ownerInfo[j].value /**Extra is true iff value is non-empty*/ }
             if (!list[i].extra) { open.push(i + 1) }
         }
         setOpenPanels(open)
@@ -223,6 +246,8 @@ function TicketsPage(props) {
     }
 
     let buyTickets = async (cardInformation) => {
+        setSubmitCardLoading(true)
+        console.log("BUYINGTICKETS!")
         let post = {
             url: URL + '/tickets/buyTickets',
             method: 'POST',
@@ -244,11 +269,16 @@ function TicketsPage(props) {
 
         let result = await axios(post)
         let data = result.data
-
-        if (!data.success) { return showErrors(data.messages, 'Error buying tickets') }
-
+        console.log("DATA:", data)
+        setSubmitCardLoading()
+        if (!data.success) {
+            showErrors(data.messages, 'Error buying tickets')
+            return;
+        }
         setOrderDetails(data.orderDetails)
+        setChiroInfo(data.chiroInfo[0])
         stepsController(1)
+
     }
 
     let stepsController = (direction) => {
@@ -267,7 +297,7 @@ function TicketsPage(props) {
     }
 
     function showErrors(messages, title) {
-        if(!messages || messages.length === 0){return}
+        if (!messages || messages.length === 0) { return }
         messages.forEach(message => {
             notification.error({
                 message: message.title || title || "Error!",
@@ -277,27 +307,9 @@ function TicketsPage(props) {
         })
     }
 
-    let componentToShow = <TicketsList ticketTypes={ticketTypes} organization={eventInfo.organization}
-    location={`${eventInfo.city}, ${eventInfo.country}`} handleTicketChange={handleTicketChange} totalTicketPrice={totalTicketPrice} />;
-    if (current === 1) {
-        componentToShow = <div className="TicketsPage__billingInfo">
-            <Step2Form
-                openPanels={openPanels} setOpenPanels={setOpenPanels}
-                ticketsOwnersInfo={ticketsOwnersInfo} setTicketsOwnersInfo={setTicketsOwnersInfo}
-                buyerInfo={buyerInfo} setBuyerInfo={setBuyerInfo} stepsController={stepsController} current={current} />
-        </div>
-    } else if (current === 2) {
-        componentToShow = <PaymentStep 
-            ticketTypes={ticketTypes}
-            totalTicketPrice={totalTicketPrice} 
-            buyTickets={buyTickets} 
-            insuranceSelected={insuranceSelected} 
-            setInsuranceSelected={setInsuranceSelected} />
-    } else if (current === 3) {
-        componentToShow = <OrderDetails orderDetails={orderDetails} />
-    }
 
-    let continueButton="";
+
+    let continueButton = "";
     if (current === 1) {
         continueButton = (
             <div className="TicketsPage__buttonDiv">
@@ -309,7 +321,7 @@ function TicketsPage(props) {
         );
     } else if (current === 0) {
         continueButton = (<div className="TicketsPage__buttonDiv">
-            <Button onClick={() => reserveTickets()} className="TicketsPage__button">
+            <Button loading={loading || reserveLoading} onClick={() => reserveTickets()} className="TicketsPage__button" style={{ marginRight: (reserveLoading || loading) ? 10 : 0 }}>
                 Find tickets
                     <Icon type="arrow-right" />
             </Button>
@@ -320,38 +332,106 @@ function TicketsPage(props) {
     let backButton = <div></div>;
     if (current === 1) {
         backButton = (<div className="TicketsPage__buttonDiv">
-            <Button onClick={releaseTickets} className="TicketsPage__button">
-                <Icon type="arrow-left" />
+            <Button onClick={releaseTickets} className="TicketsPage__button" loading={releaseLoading} style={{}}>
+                <span style={{ marginRight: 5 }}>
+                    <Icon type="arrow-left" />
+                </span>
                 Back
-        </Button>
+            </Button>
         </div>);
     } else if (current === 2) {
         backButton = (<div className="TicketsPage__buttonDiv">
-            <Button onClick={() => stepsController(-1)} className="TicketsPage__button">
-                <Icon type="arrow-left" />
+            <Button loading={submitCardLoading} onClick={() => stepsController(-1)} className="TicketsPage__button">
+                <span style={{ marginRight: 5 }}>
+                    <Icon type="arrow-left" />
+                </span>
                 Back
         </Button>
         </div>);
     }
 
-    return (
-        <div className="TicketsPage">
-            <div className="TicketsPage__ticketsImage">
-                <TicketsImage imageUrl={defaultImage} title={eventInfo.name} subTitle={eventInfo.dateRange} timer={timer} showTimer={!!releaseTime && current !== 3} />
-            </div>
-            <div className="TicketsPage__page">
-                <div className="TicketsPage__ticketsSteps">
-                    <TicketsSteps current={current} stepsInfo={stepsInfo} />
-                </div>
-                <div >
-                    {componentToShow}
-                </div>
-            <div style={{display: 'flex', justifyContent: 'space-between', marginTop: 30}}>
-            {backButton}
-            {continueButton}
-            </div>
-            </div>
+
+
+    let componentToShow;
+    if (current === 0) {
+        componentToShow = <TicketsList ticketTypes={ticketTypes} organization={eventInfo.organization}
+            location={`${eventInfo.city}, ${eventInfo.country}`} handleTicketChange={handleTicketChange} totalTicketPrice={totalTicketPrice} />
+    } else if (current === 1) {
+        console.log("SHOWME!")
+        componentToShow = <div className="TicketsPage__billingInfo">
+            <Step2Form
+                openPanels={openPanels} setOpenPanels={setOpenPanels}
+                ticketsOwnersInfo={ticketsOwnersInfo} setTicketsOwnersInfo={setTicketsOwnersInfo}
+                buyerInfo={buyerInfo} setBuyerInfo={setBuyerInfo} stepsController={stepsController} current={current} />
         </div>
+    } else if (current === 2) {
+        componentToShow =
+            <PaymentStep
+                ticketTypes={ticketTypes}
+                totalTicketPrice={totalTicketPrice}
+                buyTickets={buyTickets}
+                insuranceSelected={insuranceSelected}
+                setInsuranceSelected={setInsuranceSelected}
+                submitCardLoading={submitCardLoading}
+            />
+    } else if (current === 3) {
+        componentToShow = <OrderDetails orderDetails={orderDetails} chiroInfo={chiroInfo} />
+    }
+
+    // let modal = Modal.error()
+    // modal.update({
+    //     title: "You took too long",
+    //     content: "The tickets you reserved have been unreserved so you have to start over again if you want to buy a ticket",
+    //     onOk: () => {setModalVisible(false)},
+    //     visible: isModalVisible,
+    //     afterClose: () => {setCurrent(0)},
+    //     okText: "Ok",
+    //     centered: true
+    // })
+
+    // let showErrorModal = () => {
+    //     Modal.error({
+    //         title: "You took too long",
+    //         content: "The tickets you reserved have been unreserved so you have to start over again if you want to buy a ticket",
+    //         onOk: () => { setCurrent(0) },
+    //         centered: true,
+    //         zIndex: 1000000
+    //     });
+    // }
+
+    return (
+        <Fragment>
+            <Header />
+            <div className="TicketsPage">
+              
+                <TicketsImage
+                    imageUrl={defaultImage}
+                    title={eventInfo.name}
+                    subTitle={eventInfo.dateRange}
+                    loading={loading}
+                    showTimer={!!releaseTime && current !== 3}
+                    timer={timer}
+                />
+                <div className="TicketsPage__page">
+                    <div className="TicketsPage__ticketsSteps">
+                        <TicketsSteps current={current} stepsInfo={stepsInfo} />
+                    </div>
+                    {loading ? (
+                        <Skeleton active />
+                    ) : (
+                            <div >
+                                {componentToShow}
+                            </div>
+                        )}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 30 }}>
+                        {backButton}
+                        {continueButton}
+                    </div>
+
+
+                </div>
+            </div>
+        </Fragment>
     );
 }
 
