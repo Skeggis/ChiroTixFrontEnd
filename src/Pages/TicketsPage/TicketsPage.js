@@ -36,7 +36,7 @@ function TicketsPage(props) {
     const [submitCardLoading, setSubmitCardLoading] = useState(false)
 
     //position of the steps
-    const [current, setCurrent] = useState(2);
+    const [current, setCurrent] = useState(0);
     const [buyerId, setBuyerId] = useState(undefined)
 
     const [timer, setTimer] = useState(1)

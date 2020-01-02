@@ -37,7 +37,7 @@ function LoginForm(props){
     
     let postRequest = async (email, password) => {
         let post = {
-            url: 'http://localhost:5000/login',
+            url: `${process.env.REACT_APP_SERVER_URL}/login`,
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

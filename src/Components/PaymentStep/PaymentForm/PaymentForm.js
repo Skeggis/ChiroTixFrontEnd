@@ -1,6 +1,6 @@
-import React, { useEffect, useState, Fragment } from 'react'
+import React, { useEffect, useState, Fragment, useRef } from 'react'
 import { Form, Icon, Input, Button, Checkbox, Modal, Divider, notification } from 'antd';
-import { PayPalButton } from 'react-paypal-button-v2'
+import makeAsyncScriptLoader from "react-async-script";
 
 import './PaymentForm.scss'
 
@@ -19,11 +19,37 @@ function PaymentForm(props) {
 
 
 
+  const paypalRef = useRef()
+
+  function test (){
+    console.log('script Loaded!')
+  }
+
+  useEffect(() => {
+
+    setTimeout(() => {
+    window.paypal.Buttons({
+      createOrder: function (data, actions) {
+        // This function sets up the details of the transaction, including the amount and line item details.
+        return actions.order.create({
+          purchase_units: [{
+            amount: {
+              value: '0.01'
+            }
+          }]
+        });
+      }
+    }).render(paypalRef.current)
+
+  }, 1000)
+  }, [])
+
   const [card, setCard] = useState({ value: '', triedToSubmit: false })
   const [date, setDate] = useState({ value: '', triedToSubmit: false })
   const [insuranceDialogOpen, setInsuranceDialogOpen] = useState(false)
   const [termsDialogOpen, setTermsDialogOpen] = useState(false)
   const [verifyInsuranceOpen, setVerifyInsuranceOpen] = useState(false)
+  const [borgun, setBorgun] = useState(null) //If true => pay with borgun, else pay with paypal
 
   function cc_format(value) {
     console.log(value)
@@ -73,7 +99,7 @@ function PaymentForm(props) {
   }
 
 
-  function showError(title, message){
+  function showError(title, message) {
     notification.error({
       message: title,
       description: message,
@@ -82,28 +108,28 @@ function PaymentForm(props) {
   }
 
 
-  function getToken(insuranceVerifiedValue){
+  function getBorgunToken(insuranceVerifiedValue) {
     const expMonth = date.split('/')[0].trim()
     const expYear = date.split('/')[1].trim()
     const pan = card.value.replace('-', '')
-    const verifyCard = { cvc: props.form.getFieldValue('cvc')}
+    const verifyCard = { cvc: props.form.getFieldValue('cvc') }
 
-    window.BAPIjs.getToken({pan, expMonth, expYear, verifyCard}, (result, data) => {
-      if(result.statusCode === 201){
+    window.BAPIjs.getToken({ pan, expMonth, expYear, verifyCard }, (result, data) => {
+      if (result.statusCode === 201) {
         buyTickets(data.Token, insuranceVerifiedValue)
-      } else if (result.statusCode === 401){
+      } else if (result.statusCode === 401) {
         showError('Error processing payment', 'The payment could not be processed. Try again later.')
-      } else if (result.statusCode){
+      } else if (result.statusCode) {
         showError('Error processing payment', `${result.statusCode} - ${result.message}`)
       } else {
         showError('Error processing payment', `Unable to connect to server ${result.message}`)
       }
     })
-    
+
   }
 
 
-  function handleSubmit(e, insuranceVerified = false, insuranceVerifiedValue = insuranceSelected) {
+  function handleSubmit(e, borgun, insuranceVerified = false, insuranceVerifiedValue = insuranceSelected) {
     e.preventDefault();
     let error = false
     if (date.value.length === 0) {
@@ -131,10 +157,15 @@ function PaymentForm(props) {
         console.log('Received values of form: ', values);
         if (!insuranceSelected && !insuranceVerified) {
           setVerifyInsuranceOpen(true)
+          setBorgun(borgun)
           return
         }
         buyTickets(values, insuranceVerifiedValue)
-        //getToken(insuranceVerifiedValue)
+        if (borgun) {
+         // getBorgunToken(insuranceVerifiedValue)
+        } else {
+
+        }
       }
     });
   };
@@ -212,16 +243,16 @@ function PaymentForm(props) {
     setTermsDialogOpen(prev => !prev)
   }
 
-  function handleVerifyInsurance(verify, event){
+  function handleVerifyInsurance(verify, event) {
     console.log('neinie')
-    if(verify){
+    if (verify) {
       setInsuranceSelected(true)
       setVerifyInsuranceOpen(false)
-      handleSubmit(event, true, verify)
+      handleSubmit(event, borgun, true, verify)
 
     } else {
       setVerifyInsuranceOpen(false)
-      handleSubmit(event, true, verify)
+      handleSubmit(event, borgun, true, verify)
     }
   }
 
@@ -256,11 +287,11 @@ function PaymentForm(props) {
       >
         <div style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
           <h2>Would you like insurance?</h2>
-          <p style={{marginBottom: 20}}>Insurance costs 35$ and without it you are not elligable for a full refund</p>
+          <p style={{ marginBottom: 20 }}>Insurance costs 35$ and without it you are not elligable for a full refund</p>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 30, flexWrap: 'wrap' }}>
-            <Button style={{marginTop: 5}} onClick={(event) => handleVerifyInsurance(false, event)}>No, I don't want insurance</Button>
+            <Button style={{ marginTop: 5 }} onClick={(event) => handleVerifyInsurance(false, event)}>No, I don't want insurance</Button>
             <div style={{ width: 20 }}></div>
-            <Button style={{marginTop: 5}} onClick={(event) => handleVerifyInsurance(true, event)}>Yes, I want insurance</Button>
+            <Button style={{ marginTop: 5 }} onClick={(event) => handleVerifyInsurance(true, event)}>Yes, I want insurance</Button>
           </div>
         </div>
 
@@ -268,15 +299,13 @@ function PaymentForm(props) {
       </Modal>
 
       <div className='paymentForm'>
-        <Form onSubmit={handleSubmit} >
+        <Form onSubmit={(e) => handleSubmit(e, true)} >
 
           <Form.Item style={{ marginBottom: 10 }}
             validateStatus={card.validateStatus}
             help={card.errorMsg}
           >
-            {/* {getFieldDecorator('card', {
-          rules: [{ required: true, message: 'Enter card number' }],
-        })( */}
+
             <Input
               value={card.value}
               onChange={handleCardChange}
@@ -327,7 +356,7 @@ function PaymentForm(props) {
             </Form.Item>
           </div>
 
-          <Form.Item style={{marginBottom: 0}}>
+          <Form.Item style={{ marginBottom: 0 }}>
             {getFieldDecorator('insurance', {
               valuePropName: 'checked',
               initialValue: false
@@ -338,7 +367,7 @@ function PaymentForm(props) {
             )}
           </Form.Item>
 
-          <Form.Item style={{ marginTop: 5, textAlign: 'right' }}  labelAlign='right'>
+          <Form.Item style={{ marginTop: 5, textAlign: 'right' }} labelAlign='right'>
             {getFieldDecorator('agreement', {
               rules: [
                 {
@@ -347,7 +376,7 @@ function PaymentForm(props) {
               ],
             })(
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Checkbox style={{ display: 'flex', flexDirection: 'row-reverse', alignItems: 'center', fontSize: 16 }}> I have read the  <a onClick={handleToggleTermsDialog} style={{margin: 0}}>terms and conditions</a></Checkbox>
+                <Checkbox style={{ display: 'flex', flexDirection: 'row-reverse', alignItems: 'center', fontSize: 16 }}> I have read the  <a onClick={handleToggleTermsDialog} style={{ margin: 0 }}>terms and conditions</a></Checkbox>
 
               </div>
           ,
@@ -363,23 +392,11 @@ function PaymentForm(props) {
           </div>
         </Form>
         <Divider style={{ marginBottom: 50, color: 'black' }}>Or</Divider>
-        <div style={{ width: '100%', textAlign: 'center' }}>
+        <div style={{ width: '100%', textAlign: 'center', margin: 'auto' }}>
 
-          <PayPalButton
-            style={{ width: '100%' }}
-            amount="0.01"
-            // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
-            onSuccess={(details, data) => {
-              alert("Transaction completed by " + details.payer.name.given_name);
-
-              // OPTIONAL: Call your server to save the transaction
-              return fetch("/paypal-transaction-complete", {
-                method: "post",
-                body: JSON.stringify({
-                  orderID: data.orderID
-                })
-              });
-            }}
+          <div
+            style={{ width: '80%' }}
+            ref={paypalRef}
           />
         </div>
       </div>
@@ -390,5 +407,5 @@ function PaymentForm(props) {
 
 const WrappedPaymentForm = Form.create({ name: 'normal_login' })(PaymentForm);
 
-export default WrappedPaymentForm
+export default makeAsyncScriptLoader('https://www.paypal.com/sdk/js?client-id=AdmeHDdVieCtGNml2iCNsWqGaWyPW_puc4XIPUifsXXHWXSU8ynPbbLAL5rTgh9rtvnAkztDsHQlZsGw', {callbackName: 'test'})(WrappedPaymentForm)
 
