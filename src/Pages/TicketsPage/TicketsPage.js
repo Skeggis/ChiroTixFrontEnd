@@ -111,16 +111,13 @@ function TicketsPage(props) {
             ref.current.socket = io.connect(URL, { query: { buyerId: data.buyerId, eventId: eventId } })
             ref.current.socket.on('connect', () => { console.log("COONNNEST!") })
 
-            ref.current.socket.on('timerDone', () => {
-
-                showTimerDoneModal()
-                // setModalVisible(true)
-                // stepsController(0)
-            })
+            ref.current.socket.on('timerDone', () => { showTimerDoneModal() })
             setLoading(false)
             setReserveLoading(false)
         }
         fetchData()
+
+        return () => { ref.current.socket.disconnect(true) }
     }, [props.match.params.eventId])
 
     //Handle when buyer presses the plus (addTicket=true) or minus (addTickets=false) buttons
@@ -171,8 +168,8 @@ function TicketsPage(props) {
         let result = await axios(post)
         let data = result.data
         let { reservedTickets } = data
-
         setReserveLoading(false)
+        
         if (!data.success) { return showErrors(data.messages, 'Error reserving tickets') }
         ref.current.socket.emit('timer')
         setReleaseTime(data.releaseTime)
@@ -378,28 +375,8 @@ function TicketsPage(props) {
             />
     } else if (current === 3) {
         componentToShow = <OrderDetails orderDetails={orderDetails} chiroInfo={chiroInfo} />
+        ref.current.socket.disconnect(true)
     }
-
-    // let modal = Modal.error()
-    // modal.update({
-    //     title: "You took too long",
-    //     content: "The tickets you reserved have been unreserved so you have to start over again if you want to buy a ticket",
-    //     onOk: () => {setModalVisible(false)},
-    //     visible: isModalVisible,
-    //     afterClose: () => {setCurrent(0)},
-    //     okText: "Ok",
-    //     centered: true
-    // })
-
-    // let showErrorModal = () => {
-    //     Modal.error({
-    //         title: "You took too long",
-    //         content: "The tickets you reserved have been unreserved so you have to start over again if you want to buy a ticket",
-    //         onOk: () => { setCurrent(0) },
-    //         centered: true,
-    //         zIndex: 1000000
-    //     });
-    // }
 
     return (
         <Fragment>
