@@ -77,7 +77,7 @@ export const AuthenticatedRoute = ({
 
   const getAccess = async (accessToken) => {
     let post = {
-        url: 'http://localhost:5000/authenticate',
+        url: `${process.env.REACT_APP_SERVER_URL}/authenticate`,
         method: 'POST',
         headers: {
             'Accept': 'application/json',
