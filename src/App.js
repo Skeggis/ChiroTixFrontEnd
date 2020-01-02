@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {Fragment} from 'react'
 import {Route, Switch, withRouter} from 'react-router-dom'
 import {AuthenticatedRoute} from './Components/Authentication/helpers'
@@ -17,6 +17,11 @@ import EventsInfoPage from './Pages/EventsInfoPage/EventsInfoPage'
 
 
 function App() {
+
+  useEffect(() => {
+    window.BAPIjs.setPublicToken('myToken')
+  }, [])
+
   return (
     <Fragment>
       <Switch>

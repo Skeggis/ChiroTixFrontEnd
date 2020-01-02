@@ -71,6 +71,7 @@ export default function PaymentStep(props) {
             insuranceSelected={insuranceSelected} 
             buyTickets={buyTickets}
             submitCardLoading={submitCardLoading}
+            setInsuranceSelected={setInsuranceSelected}
           />
         </div>
 
