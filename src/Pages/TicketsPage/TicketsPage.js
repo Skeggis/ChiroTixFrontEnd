@@ -36,10 +36,10 @@ function TicketsPage(props) {
     const [submitCardLoading, setSubmitCardLoading] = useState(false)
 
     //position of the steps
-    const [current, setCurrent] = useState(0);
+    const [current, setCurrent] = useState(2);
     const [buyerId, setBuyerId] = useState(undefined)
 
-    const [timer, setTimer] = useState(0)
+    const [timer, setTimer] = useState(1)
     const [releaseTime, setReleaseTime] = useState(undefined)
     const [eventInfo, setEventInfo] = useState({})
 
@@ -172,6 +172,7 @@ function TicketsPage(props) {
         let data = result.data
         let { reservedTickets } = data
 
+        setReserveLoading(false)
         if (!data.success) { return showErrors(data.messages, 'Error reserving tickets') }
         ref.current.socket.emit('timer')
         setReleaseTime(data.releaseTime)
@@ -200,7 +201,6 @@ function TicketsPage(props) {
         }
         setTicketsOwnersInfo(newTicketsOwnersInfo)
         stepsController(1)
-        setReserveLoading(false)
     }
 
     let releaseTickets = async () => {
@@ -245,7 +245,7 @@ function TicketsPage(props) {
         setTicketsOwnersInfo(list)
     }
 
-    let buyTickets = async (cardInformation) => {
+    let buyTickets = async (cardInformation, verifiedInsuranceValue = insuranceSelected) => {
         setSubmitCardLoading(true)
         console.log("BUYINGTICKETS!")
         let post = {
@@ -261,9 +261,11 @@ function TicketsPage(props) {
                 tickets: ticketsOwnersInfo,
                 buyerInfo,
                 cardInformation,
-                insurance: insuranceSelected,
+                //Token,
+                insurance: verifiedInsuranceValue,
                 insurancePrice: 35, //-------------Todo: get insurance price from settings table,
-                ticketTypes
+                ticketTypes,
+                socketId: ref.current.socket.id
             }
         }
 

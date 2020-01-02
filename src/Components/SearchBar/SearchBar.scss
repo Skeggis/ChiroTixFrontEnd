@@ -1,4 +1,8 @@
 .searchBar {
+
+  & .ant-card-body{
+    padding-bottom: 10px
+  }
   width: 100%;
   max-width: 700px;
   margin: 0px auto;

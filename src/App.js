@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {Fragment} from 'react'
 import {Route, Switch, withRouter} from 'react-router-dom'
 import {AuthenticatedRoute} from './Components/Authentication/helpers'
@@ -16,6 +16,11 @@ import CreateUserForm from './Components/CreateUserForm/CreateUserForm'
 
 
 function App() {
+
+  useEffect(() => {
+    window.BAPIjs.setPublicToken('myToken')
+  }, [])
+
   return (
     <Fragment>
       <Switch>
@@ -24,7 +29,7 @@ function App() {
         <Route path='/event' exact component={EventPage}/>
         <Route path='/tickets' exact component={TicketsPage}/>
         <Route path='/createUser' exact component={CreateUserForm}/>
-        <AuthenticatedRoute path='/insert' exact component={InsertPage}/>
+        <Route path='/insert' exact component={InsertPage}/>
         <Route path='/event/:eventId' exact component={EventPage}/>
         <Route path='/tickets/:eventId' exact component={TicketsPage}/>
         <Route path='/orders/:orderId' exact component={ReceiptPage}/>

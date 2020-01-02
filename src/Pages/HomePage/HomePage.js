@@ -63,19 +63,17 @@ export default function HomePage(props) {
               </Col>
             </Row>
           </div>
-          <div>
 
-            <Row gutter={[24, 32]}>
+            <Row gutter={[24, 32]} style={{width: '100%'}}>
               {[...Array(6)].map((e, i) => (
                 <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={6}>
-                  <div style={{ height: 300 }}>
+                  <div style={{ height: 300,padding: 10 }}>
                     <Skeleton active paragraph={{ rows: 6 }} />
                   </div>
                 </Col>
               ))}
             </Row>
           </div>
-        </div>
       </Fragment>
     )
   }

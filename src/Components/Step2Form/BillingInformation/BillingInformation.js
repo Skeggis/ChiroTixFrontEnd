@@ -16,7 +16,6 @@ import {
 function BillingInformation(props) {
 
   const [confirmDirty, setConfirmDirty] = useState(false)
-  const [termsDialogOpen, setTermsDialogOpen] = useState(false)
   const { getFieldDecorator } = props.form;
   const { buyerInfo, setBuyerInfo } = props
 
@@ -61,7 +60,6 @@ function BillingInformation(props) {
     setBuyerInfo(newBuyer)
   }
 
-  function handleToggleTermsDialog(){ setTermsDialogOpen(prev => !prev) }
 
   return (
     <div className="BillingInformation">
@@ -170,39 +168,7 @@ function BillingInformation(props) {
         })(<Input size='large' onChange={(e) => { updateState(e, 'zipCode') }} />)}
       </Form.Item>
 
-      <Form.Item {...tailFormItemLayout}>
-        {getFieldDecorator('agreement', {
-          initialValue: buyerInfo.agreement,
-          valuePropName: 'checked', rules: [
-            {
-              validator: async (rule, value, callback) => {
-                let newBuyerInfo = JSON.parse(JSON.stringify(buyerInfo))
-                newBuyerInfo.agreement = value
-                setBuyerInfo(newBuyerInfo)
-                if (value) { callback() }
-                else { callback("Fail") }
-              }, message: 'Please agree to the agreement!', type: "boolean"
-            },
-          ],
-        })(
-          <div className="BillingInformation__checkboxDiv">
-            <Checkbox> I have read the</Checkbox>
-            <div className="BillingInformation__clickable themeColor" onClick={handleToggleTermsDialog}><b>agreement</b> <Icon type="file-text" style={{marginLeft: 0, fontSize: 16}} /></div>
-          </div>
-          ,
-        )}
-      </Form.Item>
-      <Modal zIndex={1000000}
-        title={'Tickets terms'}
-        visible={termsDialogOpen}
-        centered
-        onOk={() => setTermsDialogOpen(false)}  
-        onCancel={() => setTermsDialogOpen(false)}
-        footer={[<Button onClick={() => setTermsDialogOpen(false)}>Ok</Button>]}
-      >
-        <p>Some information about the terms here</p>
-      </Modal>
-      
+     
     </div>
 
   );

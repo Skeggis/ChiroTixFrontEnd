@@ -42,7 +42,7 @@ export default function SearchBar(props) {
 
   const [searchLoading, setSearchLoading] = useState(false)
 
-  async function handleSearch() {
+  async function handleSearch(event) {
     setSearchLoading(true)
     const result = await axios({
       url: `${process.env.REACT_APP_SERVER_URL}/searchEvents`,
@@ -154,16 +154,17 @@ export default function SearchBar(props) {
     return `${value} $`
   }
   return (
-    <div className='searchBar'>
+    <Fragment>
+    <form className='searchBar' onSubmit={handleSearch}>
       <Card className='searchBar__card' hoverable >
         <div className='searchBar__card__input'>
           <Input.Search
             value={searchString}
             onChange={(event) => setSearchString(event.target.value)}
             size='large'
-            enterButton={<Button loading={searchLoading} icon='search'>Search</Button>}
+            enterButton={<Button loading={searchLoading} icon='search' style={{width: 50}}></Button>}
             onSearch={handleSearch}
-            
+
           />
         </div>
         <div className='searchBar__card__mainFilters'>
@@ -230,7 +231,7 @@ export default function SearchBar(props) {
           <Button type='link' onClick={handleSeeMore} >{!seeMore ? ('See more') : ('See less')}</Button>
         </Divider>
         <Collapse isOpened={seeMore}>
-          <div style={{ paddingTop: 20 }}>
+          <div style={{ paddingTop: 20, paddingBottom: 10 }}>
             <Row gutter={16} style={{ marginTop: 0 }}>
               <Col span={8}>
                 <Select
@@ -298,11 +299,16 @@ export default function SearchBar(props) {
             </Row>
           </div>
         </Collapse>
+        <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+          <Button loading={searchLoading} onClick={handleSearch}>Search</Button>
+
+        </div>
 
       </Card>
+          </form>
 
-    </div>
 
+</Fragment>
   )
 }
 

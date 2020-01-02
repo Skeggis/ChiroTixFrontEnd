@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Fragment } from 'react'
-import { Form, Icon, Input, Button, Checkbox, Modal, Divider } from 'antd';
+import { Form, Icon, Input, Button, Checkbox, Modal, Divider, notification } from 'antd';
 import { PayPalButton } from 'react-paypal-button-v2'
 
 import './PaymentForm.scss'
@@ -13,12 +13,17 @@ function PaymentForm(props) {
   const {
     buyTickets,
     insuranceSelected,
-    submitCardLoading
+    submitCardLoading,
+    setInsuranceSelected
   } = props
+
+
 
   const [card, setCard] = useState({ value: '', triedToSubmit: false })
   const [date, setDate] = useState({ value: '', triedToSubmit: false })
   const [insuranceDialogOpen, setInsuranceDialogOpen] = useState(false)
+  const [termsDialogOpen, setTermsDialogOpen] = useState(false)
+  const [verifyInsuranceOpen, setVerifyInsuranceOpen] = useState(false)
 
   function cc_format(value) {
     console.log(value)
@@ -68,9 +73,37 @@ function PaymentForm(props) {
   }
 
 
+  function showError(title, message){
+    notification.error({
+      message: title,
+      description: message,
+      placement: 'bottomLeft'
+    })
+  }
 
 
-  function handleSubmit(e) {
+  function getToken(insuranceVerifiedValue){
+    const expMonth = date.split('/')[0].trim()
+    const expYear = date.split('/')[1].trim()
+    const pan = card.value.replace('-', '')
+    const verifyCard = { cvc: props.form.getFieldValue('cvc')}
+
+    window.BAPIjs.getToken({pan, expMonth, expYear, verifyCard}, (result, data) => {
+      if(result.statusCode === 201){
+        buyTickets(data.Token, insuranceVerifiedValue)
+      } else if (result.statusCode === 401){
+        showError('Error processing payment', 'The payment could not be processed. Try again later.')
+      } else if (result.statusCode){
+        showError('Error processing payment', `${result.statusCode} - ${result.message}`)
+      } else {
+        showError('Error processing payment', `Unable to connect to server ${result.message}`)
+      }
+    })
+    
+  }
+
+
+  function handleSubmit(e, insuranceVerified = false, insuranceVerifiedValue = insuranceSelected) {
     e.preventDefault();
     let error = false
     if (date.value.length === 0) {
@@ -96,7 +129,12 @@ function PaymentForm(props) {
     props.form.validateFields((err, values) => {
       if (!err && !error) {
         console.log('Received values of form: ', values);
-        buyTickets(values)
+        if (!insuranceSelected && !insuranceVerified) {
+          setVerifyInsuranceOpen(true)
+          return
+        }
+        buyTickets(values, insuranceVerifiedValue)
+        //getToken(insuranceVerifiedValue)
       }
     });
   };
@@ -169,6 +207,25 @@ function PaymentForm(props) {
     setInsuranceDialogOpen(prev => !prev)
   }
 
+  function handleToggleTermsDialog(event) {
+    event.preventDefault()
+    setTermsDialogOpen(prev => !prev)
+  }
+
+  function handleVerifyInsurance(verify, event){
+    console.log('neinie')
+    if(verify){
+      setInsuranceSelected(true)
+      setVerifyInsuranceOpen(false)
+      handleSubmit(event, true, verify)
+
+    } else {
+      setVerifyInsuranceOpen(false)
+      handleSubmit(event, true, verify)
+    }
+  }
+
+
   return (
     <Fragment>
       <Modal zIndex={1000000}
@@ -177,23 +234,42 @@ function PaymentForm(props) {
         onOk={() => setInsuranceDialogOpen(false)}
         onCancel={() => setInsuranceDialogOpen(false)}
         footer={[<Button onClick={() => setInsuranceDialogOpen(false)}>Ok</Button>]}
+        centered
       >
         <p>Some information about insurance here</p>
       </Modal>
+      <Modal zIndex={1000000}
+        title={'Terms & conditions'}
+        visible={termsDialogOpen}
+        onOk={() => setTermsDialogOpen(false)}
+        onCancel={() => setTermsDialogOpen(false)}
+        centerd
+        footer={[<Button onClick={() => setTermsDialogOpen(false)}>Ok</Button>]}
+      >
+        <p>Some information about terms and conditions here</p>
+      </Modal>
+      <Modal zIndex={1000000}
+        title={'Are you sure?'}
+        visible={verifyInsuranceOpen}
+        footer={null}
+        centered
+      >
+        <div style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+          <h2>Would you like insurance?</h2>
+          <p style={{marginBottom: 20}}>Insurance costs 35$ and without it you are not elligable for a full refund</p>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 30, flexWrap: 'wrap' }}>
+            <Button style={{marginTop: 5}} onClick={(event) => handleVerifyInsurance(false, event)}>No, I don't want insurance</Button>
+            <div style={{ width: 20 }}></div>
+            <Button style={{marginTop: 5}} onClick={(event) => handleVerifyInsurance(true, event)}>Yes, I want insurance</Button>
+          </div>
+        </div>
+
+
+      </Modal>
+
       <div className='paymentForm'>
         <Form onSubmit={handleSubmit} >
-          <Form.Item style={{ marginBottom: 10 }}
-            help={'Without insurance you can not expect a full refund'}
-          >
-            {getFieldDecorator('insurance', {
-              valuePropName: 'checked',
-              initialValue: false
-            })(<div style={{ display: 'flex', alignItems: 'center' }}>
-              <Checkbox checked={insuranceSelected} onChange={handleCheckChange} style={{ fontSize: 16 }} size='large'>Insurance</Checkbox>
-              <Icon type='question-circle-o' style={{ marginLeft: 10, fontSize: 16 }} onClick={handleToggleInsuranceDialog} />
-            </div>
-            )}
-          </Form.Item>
+
           <Form.Item style={{ marginBottom: 10 }}
             validateStatus={card.validateStatus}
             help={card.errorMsg}
@@ -238,7 +314,7 @@ function PaymentForm(props) {
             </Form.Item>
             <div style={{ width: 10 }}></div>
             <Form.Item style={{ width: '100%' }}>
-              {getFieldDecorator('cvv', {
+              {getFieldDecorator('cvc', {
                 rules: [{ required: true, message: 'Enter security code' }],
               })(
                 <Input
@@ -250,6 +326,34 @@ function PaymentForm(props) {
               )}
             </Form.Item>
           </div>
+
+          <Form.Item style={{marginBottom: 0}}>
+            {getFieldDecorator('insurance', {
+              valuePropName: 'checked',
+              initialValue: false
+            })(<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row-reverse', justifySelf: 'flex-end' }}>
+              <Checkbox checked={insuranceSelected} onChange={handleCheckChange} style={{ fontSize: 16, display: 'flex', flexDirection: 'row-reverse', alignItems: 'center', textAlign: 'center' }} size='large'>Insurance</Checkbox>
+              <Icon type='question-circle-o' style={{ marginLeft: 10, fontSize: 16 }} onClick={handleToggleInsuranceDialog} />
+            </div>
+            )}
+          </Form.Item>
+
+          <Form.Item style={{ marginTop: 5, textAlign: 'right' }}  labelAlign='right'>
+            {getFieldDecorator('agreement', {
+              rules: [
+                {
+                  required: true, message: 'Please agree to the terms and conditions'
+                },
+              ],
+            })(
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Checkbox style={{ display: 'flex', flexDirection: 'row-reverse', alignItems: 'center', fontSize: 16 }}> I have read the  <a onClick={handleToggleTermsDialog} style={{margin: 0}}>terms and conditions</a></Checkbox>
+
+              </div>
+          ,
+            )}
+          </Form.Item>
+
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Form.Item>
               <Button htmlType='submit' size='large' loading={submitCardLoading}>
@@ -259,25 +363,25 @@ function PaymentForm(props) {
           </div>
         </Form>
         <Divider style={{ marginBottom: 50, color: 'black' }}>Or</Divider>
-        <div style={{width: '100%', textAlign: 'center'}}>
+        <div style={{ width: '100%', textAlign: 'center' }}>
 
-        <PayPalButton
-        style={{width: '100%'}}
-          amount="0.01"
-          // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
-          onSuccess={(details, data) => {
-            alert("Transaction completed by " + details.payer.name.given_name);
-            
-            // OPTIONAL: Call your server to save the transaction
-            return fetch("/paypal-transaction-complete", {
-              method: "post",
-              body: JSON.stringify({
-                orderID: data.orderID
-              })
-            });
-          }}
+          <PayPalButton
+            style={{ width: '100%' }}
+            amount="0.01"
+            // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
+            onSuccess={(details, data) => {
+              alert("Transaction completed by " + details.payer.name.given_name);
+
+              // OPTIONAL: Call your server to save the transaction
+              return fetch("/paypal-transaction-complete", {
+                method: "post",
+                body: JSON.stringify({
+                  orderID: data.orderID
+                })
+              });
+            }}
           />
-          </div>
+        </div>
       </div>
     </Fragment>
   );
