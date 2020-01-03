@@ -29,7 +29,7 @@ function EventPage(props) {
         let fetchEvent = async () => {
             let eventId = props.match.params.eventId
             setUrl(URL + `/event/${eventId}`)
-            let result = await axios.get(URL + `/event/${eventId}`)
+            let result = await axios.get(process.env.REACT_APP_SERVER_URL + `/event/${eventId}`)
             console.log(result.data)
             setEvent(result.data.eventInfo)
             window.scrollTo(0,0)
