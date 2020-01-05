@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react'
-import Header from '../../Components/Header/Header'
 import { Button } from 'antd'
 import './NotFoundPage.scss'
 import {withRouter} from 'react-router-dom'
@@ -8,7 +7,6 @@ function NotFoundPage(props) {
 
   return (
     <Fragment>
-    <Header/>
     <div className='notFound'>
       <div className='notFound__content'>
         <div className='notFound__wrapper'>

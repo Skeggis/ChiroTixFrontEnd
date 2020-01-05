@@ -14,7 +14,6 @@ import Step2Form from '../../Components/Step2Form/Step2Form'
 import OrderDetails from '../../Components/OrderDetails/OrderDetails'
 import PaymentStep from '../../Components/PaymentStep/PaymentStep'
 import './TicketsPage.scss'
-import Header from '../../Components/Header/Header';
 
 
 const URL = process.env.REACT_APP_SERVER_URL
@@ -29,6 +28,11 @@ let stepsInfo = [{
 ]
 let defaultImage = '../../../tempDefaultImg.jpg'
 function TicketsPage(props) {
+    const {
+        setTime,
+        setShowTimer
+    } = props
+
 
     const [loading, setLoading] = useState(true)
     const [reserveLoading, setReserveLoading] = useState(true)
@@ -39,7 +43,7 @@ function TicketsPage(props) {
     const [current, setCurrent] = useState(0);
     const [buyerId, setBuyerId] = useState(undefined)
 
-    const [timer, setTimer] = useState(1)
+    const [timer, setTimer] = useState(0)
     const [releaseTime, setReleaseTime] = useState(undefined)
     const [eventInfo, setEventInfo] = useState({})
 
@@ -86,10 +90,22 @@ function TicketsPage(props) {
 
     useEffect(() => {
         setTimeout(() => {
-            if (!releaseTime) { return setTimer(0) }
+            if (!releaseTime) { return setTime('') }
             let now = new Date()
             if (new Date(releaseTime) - now < 0) { return setReleaseTime(undefined) }
-            setTimer(new Date(releaseTime) - now)
+
+            let currentTimer = new Date(releaseTime) - now
+            setTimer(currentTimer)
+            let time = "00:00"
+            if (currentTimer !== 0) {
+                let minutes = parseInt(currentTimer / 60000)
+                let seconds = parseInt((currentTimer % 60000) / 1000)
+                if (minutes < 10) { time = `0${minutes}:` }
+                else { time = minutes + ":" }
+                if (seconds < 10) { time += `0${seconds}` }
+                else { time += seconds }
+            }
+            setTime(time)
         }, 1000)
     }, [timer, releaseTime])
 
@@ -169,7 +185,7 @@ function TicketsPage(props) {
         let data = result.data
         let { reservedTickets } = data
         setReserveLoading(false)
-        
+
         if (!data.success) { return showErrors(data.messages, 'Error reserving tickets') }
         ref.current.socket.emit('timer')
         setReleaseTime(data.releaseTime)
@@ -306,6 +322,9 @@ function TicketsPage(props) {
         })
     }
 
+    setShowTimer(!!releaseTime && current !== 3)
+
+
 
 
     let continueButton = "";
@@ -380,16 +399,13 @@ function TicketsPage(props) {
 
     return (
         <Fragment>
-            <Header />
             <div className="TicketsPage">
-              
+
                 <TicketsImage
                     imageUrl={defaultImage}
                     title={eventInfo.name}
                     subTitle={eventInfo.dateRange}
                     loading={loading}
-                    showTimer={!!releaseTime && current !== 3}
-                    timer={timer}
                 />
                 <div className="TicketsPage__page">
                     <div className="TicketsPage__ticketsSteps">

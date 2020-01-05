@@ -146,7 +146,7 @@ function EventItem(props) {
         <div className='eventItem__contentWrapper'>
           <div className='eventItem__secondContentWrapper'>
             <div className='eventItem__nameContentWrapper'>
-              <Animated isVisible={!isHovering} animateOnMount={false} animationOut='fadeOutLeft' animationIn='fadeInLeft' animationInDuration={300} animationOutDuration={300}>
+              <Animated isVisible={!isHovering} animateOnMount={false} animationOut='fadeOutLeft' animationIn='fadeInLeft' animationInDuration={300} animationOutDuration={300} style={{width: '100%'}}>
                 <div className='eventItem__nameContentSecondWrapper'>
                   <h1 className='eventItem__name'>{event.name}</h1>
                   <p className='eventItem__date'>{new Date(event.startDate).toDateString()}</p>

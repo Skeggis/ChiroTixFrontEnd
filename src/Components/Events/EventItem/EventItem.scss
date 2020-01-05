@@ -76,11 +76,15 @@ $titleBoxHeight: 80px;
     display: flex;
     flex-direction: column;
     height: 100%;
+    width: 100%
   }
-
+  
   &__name{
+    overflow: hidden;
+    white-space: nowrap;
     margin: 0;
     color: white;
+    text-overflow: ellipsis;
   }
 
   &__date{

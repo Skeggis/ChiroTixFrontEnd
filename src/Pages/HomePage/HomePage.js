@@ -53,7 +53,6 @@ export default function HomePage(props) {
   if (loading) {
     return (
       <Fragment>
-        <Header />
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ margin: '50px 0 30px' }}>
 
@@ -80,7 +79,6 @@ export default function HomePage(props) {
 
   return (
     <Fragment>
-<Header/>
       <div style={{ width: '100%' }}>
           <SearchBar
             searchValues={searchValues}

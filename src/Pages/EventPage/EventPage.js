@@ -13,10 +13,12 @@ import {
 } from 'antd'
 
 import './EventPage.scss'
-import Header from '../../Components/Header/Header'
 
 function EventPage(props) {
 
+    const {
+        setOrganization
+    } = props
 
     const [event, setEvent] = useState({})
     const [loading, setLoading] = useState(true)
@@ -32,6 +34,7 @@ function EventPage(props) {
             let result = await axios.get(process.env.REACT_APP_SERVER_URL + `/event/${eventId}`)
             console.log(result.data)
             setEvent(result.data.eventInfo)
+            setOrganization(result.data.eventInfo.organization)
             window.scrollTo(0,0)
             setLoading(false)
         }
@@ -75,10 +78,7 @@ function EventPage(props) {
 
     return (
         <Fragment>
-            <div className="EventPage">
-            <div ref={headerRef} style={{width: '100%', position: 'absolute', top: 0, left: 0, zIndex: 100}}>
-                <Header eventPage={true} organization={event.organization} />
-            </div>
+            <div className="EventPage" ref={headerRef}>
 
                 <BigAd
                     image={event.image || '../../../tempImg.jpg'}

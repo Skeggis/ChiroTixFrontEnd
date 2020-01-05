@@ -65,20 +65,25 @@ function EventDescriptionItem(props) {
           <Animated isVisible={animate} animateOnMount={true} animationIn={descriptionAnimationIn} animationOut={descriptionAnimationOut} animationDuration={300} animationInDelay={140}>
             <p>{event.shortDescription}</p>
           </Animated>
-          <Animated isVisible={animate} animateOnMount={true} animationIn={descriptionAnimationIn} animationOut={descriptionAnimationOut} animationDuration={300} animationInDelay={180}>
-            <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-              <h2 style={{ fontSize: 20 }}>Price: <span style={{ fontSize: 20, marginLeft: 5, fontWeight: 400 }}>{priceRange}</span></h2>
-              <h2 style={{ fontSize: 20 }}>CE Credits: <span style={{ fontSize: 20, marginLeft: 5, fontWeight: 400 }}>{event.CECredits}</span></h2>
+        </div>
+
+        <div>
+          <div style={{ marginBottom: 30 }}>
+            <Animated isVisible={animate} animateOnMount={true} animationIn={descriptionAnimationIn} animationOut={descriptionAnimationOut} animationDuration={300} animationInDelay={180}>
+              <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                <h2 style={{ fontSize: 20 }}>Price: <span style={{ fontSize: 20, marginLeft: 5, fontWeight: 400 }}>{priceRange}</span></h2>
+                <h2 style={{ fontSize: 20 }}>CE Credits: <span style={{ fontSize: 20, marginLeft: 5, fontWeight: 400 }}>{event.CECredits}</span></h2>
+              </div>
+            </Animated>
+          </div>
+
+          <Animated isVisible={animate} animateOnMount={true} animationIn={descriptionAnimationIn} animationOut={descriptionAnimationOut} animationDuration={300} animationInDelay={220}>
+            <div className='eventDescItem__actionsWrapper'>
+              <Button size='large' style={{ marginRight: 10 }} onClick={() => props.history.push(`/event/${event.id}`)}>More</Button>
+              <Button size='large' onClick={() => props.history.push(`/tickets/${event.id}`)}>Tickets</Button>
             </div>
           </Animated>
         </div>
-
-        <Animated isVisible={animate} animateOnMount={true} animationIn={descriptionAnimationIn} animationOut={descriptionAnimationOut} animationDuration={300} animationInDelay={220}>
-          <div className='eventDescItem__actionsWrapper'>
-            <Button size='large' style={{ marginRight: 10 }} onClick={() => props.history.push(`/event/${event.id}`)}>More</Button>
-            <Button size='large' onClick={() => props.history.push(`/tickets/${event.id}`)}>Tickets</Button>
-          </div>
-        </Animated>
       </div>
 
     </div>
