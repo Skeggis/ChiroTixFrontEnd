@@ -18,15 +18,16 @@
 
     
     &__bannerDiv{
-        background-color: rgba($color: $barBackground, $alpha: 0.5);
-        padding-left: 9%;
+       // background-color: rgba($color: $barBackground, $alpha: 0.5);
+        //padding-left: 9%;
        // overflow: auto;
         margin-bottom: 10px;
         display: inline-block;
-        padding-right: 100px;
+        //padding-right: 100px;
         max-width: 85.5%;
         border-radius: 7px;
         margin-left: -5px;
+        padding-left: 30px;
     }
 
 //Hide the scrollbar for the event title if it is too long for the bannerDiv
@@ -36,6 +37,7 @@
     } 
 
     &__eventTitle{
+        text-shadow: 1px 0px 3px black;
         color: $titleFontColor;
         font-size: $titleFontSize;
         margin-bottom:0;
@@ -44,6 +46,7 @@
     }
 
     &__subTitle{
+        text-shadow: 2px 0px 3px black;
         font-size: $titleFontSize*0.4;
         color: $titleFontColor;
         font-weight: $subTitleWeight;

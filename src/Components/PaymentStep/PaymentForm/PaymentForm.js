@@ -1,8 +1,9 @@
-import React, { useEffect, useState, Fragment, useRef } from 'react'
+import React, { useEffect, useState, Fragment, useRef, createRef } from 'react'
 import { Form, Icon, Input, Button, Checkbox, Modal, Divider, notification } from 'antd';
 import makeAsyncScriptLoader from "react-async-script";
 
 import './PaymentForm.scss'
+import Loader from '../../Loader/Loader';
 
 
 function PaymentForm(props) {
@@ -14,42 +15,105 @@ function PaymentForm(props) {
     buyTickets,
     insuranceSelected,
     submitCardLoading,
-    setInsuranceSelected
+    setInsuranceSelected,
+    totalPrice
   } = props
 
 
 
   const paypalRef = useRef()
+  const [paypalLoading, setPaypalLoading] = useState(true)
 
-  function test (){
-    console.log('script Loaded!')
-  }
 
-  useEffect(() => {
+  async function loadButtons() {
 
-    setTimeout(() => {
     window.paypal.Buttons({
+      onInit: function (data, actions) {
+        actions.disable()
+        function initButtons(event) {
+          if (event.target.checked) {
+            actions.enable();
+          } else {
+            actions.disable();
+          }
+        }
+        document.querySelector('#termscheckbox').addEventListener('change', (event) => initButtons(event));
+      },
+      onClick: function (data, actions) {
+        if (!document.querySelector('#termscheckbox').checked) {
+          props.form.validateFields(['agreement'], (error, values) => { })
+        } 
+        //possibly verify insurance selection
+      },
       createOrder: function (data, actions) {
         // This function sets up the details of the transaction, including the amount and line item details.
         return actions.order.create({
           purchase_units: [{
             amount: {
-              value: '0.01'
+              currency_code: 'USD',
+              value: totalPrice
             }
           }]
         });
+      },
+      onApprove: function (data, actions) {
+        // This function captures the funds from the transaction.
+        return actions.order.capture().then(function (details) {
+          // This function shows a transaction success message to your buyer.
+          alert('Transaction completed by ' + details.payer.name.given_name);
+          buyTickets({ method: 'paypal', orderId: data.orderID })
+        });
+      },
+      onError: function (err) {
+        console.log(err)
       }
-    }).render(paypalRef.current)
+    }).render(document.getElementById('paypalButtonContainer'))
+  }
 
-  }, 1000)
-  }, [])
+  useEffect(() => {
+
+    async function fetchData() {
+      const existingScript = document.getElementById('paypalScript');
+      // var element = document.getElementById('paypalButtonContainer'),
+      //   clone = element.cloneNode(true);
+
+      // element.parentNode.replaceChild(clone, element);
+      if (!existingScript) {
+        const script = document.createElement('script');
+        script.src = 'https://www.paypal.com/sdk/js?client-id=AdmeHDdVieCtGNml2iCNsWqGaWyPW_puc4XIPUifsXXHWXSU8ynPbbLAL5rTgh9rtvnAkztDsHQlZsGw&disable-funding=credit,card,venmo,sepa,bancontact,eps,giropay,ideal,mybank,p24,sofort';
+        script.id = 'paypalScript';
+        document.body.appendChild(script);
+
+        script.onload = () => {
+          loadButtons()
+          setPaypalLoading(false)
+        };
+      }
+
+
+
+
+      if (existingScript) {
+        var list = document.getElementById("paypalButtonContainer");
+        if (list.hasChildNodes()) {
+          list.removeChild(list.childNodes[0]);
+        }
+        // document.getElementById('paypalButtonContainer').removeEventListener('change', testFunc)
+        await loadButtons()
+        setPaypalLoading(false)
+      }
+    }
+    fetchData()
+
+
+
+  }, [insuranceSelected])
 
   const [card, setCard] = useState({ value: '', triedToSubmit: false })
   const [date, setDate] = useState({ value: '', triedToSubmit: false })
   const [insuranceDialogOpen, setInsuranceDialogOpen] = useState(false)
   const [termsDialogOpen, setTermsDialogOpen] = useState(false)
   const [verifyInsuranceOpen, setVerifyInsuranceOpen] = useState(false)
-  const [borgun, setBorgun] = useState(null) //If true => pay with borgun, else pay with paypal
 
   function cc_format(value) {
     console.log(value)
@@ -116,7 +180,7 @@ function PaymentForm(props) {
 
     window.BAPIjs.getToken({ pan, expMonth, expYear, verifyCard }, (result, data) => {
       if (result.statusCode === 201) {
-        buyTickets(data.Token, insuranceVerifiedValue)
+        buyTickets({ method: 'borgun', token: data.Token, insurance: insuranceVerifiedValue })
       } else if (result.statusCode === 401) {
         showError('Error processing payment', 'The payment could not be processed. Try again later.')
       } else if (result.statusCode) {
@@ -129,8 +193,7 @@ function PaymentForm(props) {
   }
 
 
-  function handleSubmit(e, borgun, insuranceVerified = false, insuranceVerifiedValue = insuranceSelected) {
-    e.preventDefault();
+  function handleSubmit(insuranceVerified = false, insuranceVerifiedValue = insuranceSelected) {
     let error = false
     if (date.value.length === 0) {
       error = true
@@ -157,22 +220,17 @@ function PaymentForm(props) {
         console.log('Received values of form: ', values);
         if (!insuranceSelected && !insuranceVerified) {
           setVerifyInsuranceOpen(true)
-          setBorgun(borgun)
           return
         }
         buyTickets(values, insuranceVerifiedValue)
-        if (borgun) {
-         // getBorgunToken(insuranceVerifiedValue)
-        } else {
+        // getBorgunToken(insuranceVerifiedValue)
 
-        }
+
       }
     });
   };
 
-  function handleCheckChange() {
-    props.setInsuranceSelected(old => !old)
-  }
+
 
   function handleCardChange(event) {
 
@@ -248,27 +306,17 @@ function PaymentForm(props) {
     if (verify) {
       setInsuranceSelected(true)
       setVerifyInsuranceOpen(false)
-      handleSubmit(event, borgun, true, verify)
+      handleSubmit(true, verify)
 
     } else {
       setVerifyInsuranceOpen(false)
-      handleSubmit(event, borgun, true, verify)
+      handleSubmit(true, verify)
     }
   }
 
 
   return (
     <Fragment>
-      <Modal zIndex={1000000}
-        title={'Insurance information'}
-        visible={insuranceDialogOpen}
-        onOk={() => setInsuranceDialogOpen(false)}
-        onCancel={() => setInsuranceDialogOpen(false)}
-        footer={[<Button onClick={() => setInsuranceDialogOpen(false)}>Ok</Button>]}
-        centered
-      >
-        <p>Some information about insurance here</p>
-      </Modal>
       <Modal zIndex={1000000}
         title={'Terms & conditions'}
         visible={termsDialogOpen}
@@ -299,7 +347,7 @@ function PaymentForm(props) {
       </Modal>
 
       <div className='paymentForm'>
-        <Form onSubmit={(e) => handleSubmit(e, true)} >
+        <Form onSubmit={(e) => handleSubmit(true)} >
 
           <Form.Item style={{ marginBottom: 10 }}
             validateStatus={card.validateStatus}
@@ -356,17 +404,6 @@ function PaymentForm(props) {
             </Form.Item>
           </div>
 
-          <Form.Item style={{ marginBottom: 0 }}>
-            {getFieldDecorator('insurance', {
-              valuePropName: 'checked',
-              initialValue: false
-            })(<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row-reverse', justifySelf: 'flex-end' }}>
-              <Checkbox checked={insuranceSelected} onChange={handleCheckChange} style={{ fontSize: 16, display: 'flex', flexDirection: 'row-reverse', alignItems: 'center', textAlign: 'center' }} size='large'>Insurance</Checkbox>
-              <Icon type='question-circle-o' style={{ marginLeft: 10, fontSize: 16 }} onClick={handleToggleInsuranceDialog} />
-            </div>
-            )}
-          </Form.Item>
-
           <Form.Item style={{ marginTop: 5, textAlign: 'right' }} labelAlign='right'>
             {getFieldDecorator('agreement', {
               rules: [
@@ -376,7 +413,7 @@ function PaymentForm(props) {
               ],
             })(
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Checkbox style={{ display: 'flex', flexDirection: 'row-reverse', alignItems: 'center', fontSize: 16 }}> I have read the  <a onClick={handleToggleTermsDialog} style={{ margin: 0 }}>terms and conditions</a></Checkbox>
+                <Checkbox id='termscheckbox' style={{ display: 'flex', flexDirection: 'row-reverse', alignItems: 'center', fontSize: 16 }}> I have read the  <a onClick={handleToggleTermsDialog} style={{ margin: 0 }}>terms and conditions</a></Checkbox>
 
               </div>
           ,
@@ -393,11 +430,15 @@ function PaymentForm(props) {
         </Form>
         <Divider style={{ marginBottom: 50, color: 'black' }}>Or</Divider>
         <div style={{ width: '100%', textAlign: 'center', margin: 'auto' }}>
-
+          {(paypalLoading || submitCardLoading) && (
+            <Loader />
+          )}
           <div
-            style={{ width: '80%' }}
+            style={{ width: '80%', margin: 'auto' }}
             ref={paypalRef}
+            id='paypalButtonContainer'
           />
+
         </div>
       </div>
     </Fragment>
@@ -407,5 +448,4 @@ function PaymentForm(props) {
 
 const WrappedPaymentForm = Form.create({ name: 'normal_login' })(PaymentForm);
 
-export default makeAsyncScriptLoader('https://www.paypal.com/sdk/js?client-id=AdmeHDdVieCtGNml2iCNsWqGaWyPW_puc4XIPUifsXXHWXSU8ynPbbLAL5rTgh9rtvnAkztDsHQlZsGw', {callbackName: 'test'})(WrappedPaymentForm)
-
+export default WrappedPaymentForm
