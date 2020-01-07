@@ -10,6 +10,7 @@ import {
   Skeleton
 } from 'antd'
 import Header from '../../Components/Header/Header'
+import Hero from '../../Components/Hero/Hero'
 
 
 export default function HomePage(props) {
@@ -80,10 +81,15 @@ export default function HomePage(props) {
   return (
     <Fragment>
       <div style={{ width: '100%' }}>
-          <SearchBar
+
+        <Hero
+          searchValues={searchValues}
+          setEvents={setEvents}
+        />
+          {/* <SearchBar
             searchValues={searchValues}
             setEvents={setEvents}
-          />
+          /> */}
       
           <Events
             eventRows={eventRows}

@@ -11,8 +11,16 @@
     margin: 30px auto 10px;
   }
 
-
+  
+  
   &__card {
+    border-radius: 5px;
+    padding: 30px;
+    transition: background-color .4s ease;
+
+    &--hovering{
+      background-color: white;
+    }
 
     &__input {
       width: 100%;
@@ -23,13 +31,26 @@
       }
 
       & .ant-input-group-addon{
-        background: none
+        background: none;
+        
+        & button{
+          background: none
+        }
       }
     }
 
     &__input .ant-input {
       border-radius: 20px;
       padding: 0 15px;
+      background: none;
+      color: white
+    }
+
+    &__input--hovering .ant-input{
+      border-radius: 20px;
+      padding: 0 15px;
+      background: none;
+      color: black
     }
 
     &__mainFilters {

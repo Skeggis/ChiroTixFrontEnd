@@ -158,7 +158,7 @@ function EventItem(props) {
               <Animated style={{ height: '100%' }} isVisible={isHovering} animateOnMount={false} animationOut='fadeOutRight' animationIn='fadeInRight' animationInDuration={300} animationOutDuration={300}>
                 <div className='eventItem__buttonsSecondContainer'>
                   <Button size='large' style={{ color: 'white', backgroundColor: 'rgba(157, 141, 241, 0.7)', }} onClick={() => handleClickMore()}>More</Button>
-                  <Button size='large' style={{ color: 'white', backgroundColor: 'rgba(157, 141, 241, 0.7)', }} onClick={(event) => handleClickTickets(event)}>Tickets</Button>
+                  <Button size='large' style={{ color: 'white', backgroundColor: 'rgba(157, 141, 241, 0.7)', marginLeft: 30}} onClick={(event) => handleClickTickets(event)}>Tickets</Button>
                 </div>
               </Animated>
             </div>

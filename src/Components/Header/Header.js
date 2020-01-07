@@ -15,7 +15,7 @@ function Header(props) {
   }, [history.location.pathname])
 
   const [location, setLocation] = useState(history.location.pathname.split('/')[1])
-  if (location === 'event') {
+  if (location === 'event' || location === '') {
     return (
       <div className='header--eventPage'>
         <Link to='/' >

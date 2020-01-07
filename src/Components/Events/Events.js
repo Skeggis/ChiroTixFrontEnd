@@ -80,7 +80,7 @@ export default function Events(props) {
     <div className='events'>
       {eventRows.map((row, i) => (
         <Fragment>
-          <Row gutter={gutter}>
+          <Row style={{margin: 0}}>
             {row.map((event, j) => (
               <Fragment>
                 {event.id && (
