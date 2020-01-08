@@ -15,7 +15,16 @@ function Header(props) {
   }, [history.location.pathname])
 
   const [location, setLocation] = useState(history.location.pathname.split('/')[1])
-  if (location === 'event' || location === '') {
+
+  if (location === '') {
+    return (
+      <div className='header--eventPage'>
+        <Link to='/' >
+          <h2 style={{ color: 'white', margin: 0, marginLeft: 20, }}>ChiroTix</h2>
+        </Link>
+      </div>
+    )
+  } else if (location === 'event') {
     return (
       <div className='header--eventPage'>
         <Link to='/' >

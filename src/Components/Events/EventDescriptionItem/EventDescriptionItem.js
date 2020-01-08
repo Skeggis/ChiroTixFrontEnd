@@ -68,7 +68,7 @@ function EventDescriptionItem(props) {
         </div>
 
         <div>
-          <div style={{ marginBottom: 30 }}>
+          <div style={{ marginBottom: 30, overflow: 'hidden' }}>
             <Animated isVisible={animate} animateOnMount={true} animationIn={descriptionAnimationIn} animationOut={descriptionAnimationOut} animationDuration={300} animationInDelay={180}>
               <div style={{ display: 'flex', justifyContent: 'space-around' }}>
                 <h2 style={{ fontSize: 20 }}>Price: <span style={{ fontSize: 20, marginLeft: 5, fontWeight: 400 }}>{priceRange}</span></h2>
