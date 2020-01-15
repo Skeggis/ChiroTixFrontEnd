@@ -365,7 +365,7 @@ function PaymentForm(props) {
         <Divider style={{ marginBottom: 50, color: 'black' }}>Or</Divider>
         <div style={{ width: '100%', textAlign: 'center' }}>
 
-          <PayPalButton
+          {/* <PayPalButton
             style={{ width: '100%' }}
             amount="0.01"
             // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
@@ -380,7 +380,7 @@ function PaymentForm(props) {
                 })
               });
             }}
-          />
+          /> */}
         </div>
       </div>
     </Fragment>

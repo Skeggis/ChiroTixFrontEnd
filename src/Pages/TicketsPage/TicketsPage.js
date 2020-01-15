@@ -128,6 +128,8 @@ function TicketsPage(props) {
             ref.current.socket.on('connect', () => { console.log("COONNNEST!") })
 
             ref.current.socket.on('timerDone', () => { showTimerDoneModal() })
+
+            ref.current.socket.on('paymentProcessed', (data) => showReceipt(data))
             setLoading(false)
             setReserveLoading(false)
         }
@@ -135,6 +137,19 @@ function TicketsPage(props) {
 
         return () => { ref.current.socket.disconnect(true) }
     }, [props.match.params.eventId])
+
+    let showReceipt = (data) => {
+        console.log('PAYMENT PROCESSED EMIT')
+        if(data.success){
+            setLoading(false)
+            setReleaseLoading(false)
+            setOrderDetails(data.orderDetails)
+            setCurrent(current => current+=1)
+        } else {
+            //TODO
+            console.log('handle this')
+        }
+    }
 
     //Handle when buyer presses the plus (addTicket=true) or minus (addTickets=false) buttons
     let handleTicketChange = (ticketId, addTicket) => {
@@ -285,14 +300,14 @@ function TicketsPage(props) {
         let result = await axios(post)
         let data = result.data
         console.log("DATA:", data)
-        setSubmitCardLoading()
-        if (!data.success) {
-            showErrors(data.messages, 'Error buying tickets')
-            return;
-        }
-        setOrderDetails(data.orderDetails)
-        setChiroInfo(data.chiroInfo[0])
-        stepsController(1)
+      //  setSubmitCardLoading()
+        // if (!data.success) {
+        //     showErrors(data.messages, 'Error buying tickets')
+        //     return;
+        // }
+        // setOrderDetails(data.orderDetails)
+        // setChiroInfo(data.chiroInfo[0])
+        // stepsController(1)
 
     }
 
