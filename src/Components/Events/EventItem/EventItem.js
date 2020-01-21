@@ -22,13 +22,15 @@ function EventItem(props) {
     setOldColNumber,
     setEventWasClosed,
     history,
-    isHovering,
-    setIsHovering
+    //isHovering,
+    //setIsHovering
   } = props
+
+  const [isHovering, setIsHovering] = useState(false)
 
 
   function handleMouseEnter() {
-    setIsHovering(event.id)
+    setIsHovering(true)
   }
 
   function handleTouch(event) {
@@ -45,7 +47,7 @@ function EventItem(props) {
   }
 
   function handleMouseLeave() {
-    setIsHovering(-1)
+    setIsHovering(false)
   }
 
   function handleEventClick(event) {

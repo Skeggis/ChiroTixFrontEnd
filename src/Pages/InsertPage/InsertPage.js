@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Fragment } from 'react'
 import {
   Form,
   Icon,
@@ -35,11 +35,12 @@ function InsertPage(props) {
   const [values, setValues] = useState({})
   const [availableCities, setAvailableCities] = useState([])
   const [selectedDates, setSelectedDates] = useState([])
-  const [schedule, setSchedule] = useState([])
+  const [schedule, setSchedule] = useState([])
   const [selectedSellingTime, setSelectedSellingTime] = useState([])
   const [selectedTags, setSelectedTags] = useState([])
   const [selectedImage, setSelectedImage] = useState(null)
   const [selectedOrganizations, setSelectedOrganizations] = useState([])
+  const [newSpeakers, setNewSpeakers] = useState([{ name: '', image: null }])
 
   const [tickets, setTickets] = useState([{
     name: '',
@@ -52,8 +53,7 @@ function InsertPage(props) {
     }]
   }])
 
-  console.log(selectedOrganizations)
-
+  console.log(newSpeakers)
   function addTicket() {
     console.log('asdf')
     const newTickets = JSON.parse(JSON.stringify(tickets))
@@ -67,13 +67,13 @@ function InsertPage(props) {
     setTickets(newTickets)
   }
 
-  function addOwnerInfoItem(i){
+  function addOwnerInfoItem(i) {
     const newTickets = JSON.parse(JSON.stringify(tickets))
-    newTickets[i].ownerInfo.push({required: false, type: '', label: ''})
+    newTickets[i].ownerInfo.push({ required: false, type: '', label: '' })
     setTickets(newTickets)
   }
 
-  function removeOwnerInfoItem(i){
+  function removeOwnerInfoItem(i) {
     const newTickets = JSON.parse(JSON.stringify(tickets))
     newTickets[i].ownerInfo.pop()
     setTickets(newTickets)
@@ -95,23 +95,23 @@ function InsertPage(props) {
     console.log('Her')
   }
 
-  function handleSchedule(timeStamp, index,isStartTime){
+  function handleSchedule(timeStamp, index, isStartTime) {
     console.log(schedule)
-    if(isStartTime){ schedule[index].startTime = timeStamp}
-    else {schedule[index].endTime = timeStamp}
+    if (isStartTime) { schedule[index].startTime = timeStamp }
+    else { schedule[index].endTime = timeStamp }
     console.log(schedule)
     setSchedule(schedule)
   }
-  function handleDateOfEventChange(dates, dateString){
+  function handleDateOfEventChange(dates, dateString) {
     let theSchedule = []
-    if(dates.length === 2){
+    if (dates.length === 2) {
       let nr = dates[1].diff(dates[0], 'days')
-      for(let i = 0; i < nr+1; i++){
+      for (let i = 0; i < nr + 1; i++) {
         let initialDay = moment(dates[0])
         theSchedule.push({
-          date: initialDay.add(i,'d').format('YYYY-MM-DD'),
+          date: initialDay.add(i, 'd').format('YYYY-MM-DD'),
           startTime: "",
-          endTime:""
+          endTime: ""
         })
       }
     }
@@ -124,13 +124,13 @@ function InsertPage(props) {
     setTickets(newTickets)
   }
 
-  function handleOwnerInfoRequiredChange(i, j, event){
+  function handleOwnerInfoRequiredChange(i, j, event) {
     const newTickets = JSON.parse(JSON.stringify(tickets))
     newTickets[i].ownerInfo[j].required = event.target.checked
     setTickets(newTickets)
   }
 
-  function handleOwnerInfoTypeChanged(i, j, event){
+  function handleOwnerInfoTypeChanged(i, j, event) {
     const newTickets = JSON.parse(JSON.stringify(tickets))
     newTickets[i].ownerInfo[j].type = event.target.value === 1 ? 'input' : 'checkbox'
     setTickets(newTickets)
@@ -153,22 +153,34 @@ function InsertPage(props) {
       console.log(values)
 
       if (!err) {
+        const formData = new FormData();
+
+        formData.append('images', selectedImage.originFileObj);
+        for(let i = 0; i<newSpeakers.length; i++){
+          console.log(i)
+          console.log(newSpeakers[i].image)
+          formData.append('images', newSpeakers[i].image.originFileObj)
+        }
         async function uploadEvent() {
-          var formData = new FormData();
-          console.log(selectedImage)
-          formData.append("image", selectedImage.originFileObj);
+
+
           const result = await axios.post(`${process.env.REACT_APP_SERVER_URL}/eventImage`, formData, {
             headers: {
               'Content-type': 'multipart/form-data'
             }
           })
           console.log(result)
-          const imageUrl = result.data.secure_url
+          console.log(result.data)
+          const imageUrl = result.data.data[0].url
 
           const myOrganization = parseInt(selectedOrganizations[0]) ? { id: parseInt(selectedOrganizations[0]) } : { name: selectedOrganizations[0] }
           console.log(values.speakers)
 
-          const mySpeakers = values.speakers.map(sp => parseInt(sp) ? { id: parseInt(sp) } : { name: sp })
+          const mySpeakers = values.speakers.map(sp => { return { id: parseInt(sp) } })
+
+          for (let i = 0; i < newSpeakers.length; i++) {
+            mySpeakers.push({ name: newSpeakers[i].name, image: result.data.data[i+1].url })
+          }
           console.log(mySpeakers)
           const eventResult = await axios.post(`${process.env.REACT_APP_SERVER_URL}/events`, {
             data: {
@@ -214,8 +226,9 @@ function InsertPage(props) {
       setSelectedOrganizations(value)
     }
   }
+
   console.log(selectedOrganizations)
-  const uploadProps = {
+  const eventImageUploadProps = {
     name: 'image',
     action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
     headers: {
@@ -233,36 +246,73 @@ function InsertPage(props) {
         message.error(`${info.file.name} file upload failed.`);
       }
     },
-  };      
+  };
+
+  function handleAddSpeaker() {
+    setNewSpeakers(temp =>[...temp, {name: '', image: null}])
+  }
+
+  function handleRemoveSpeaker() {
+    setNewSpeakers(temp => { temp.pop(); return [...temp]})
+  }
+
+  function handleChangeSpeakerName(name, i) {
+    setNewSpeakers(temp => {temp[i].name = name; return temp})
+  }
+
+  function handleChangeSpeakerImage(i) {
+    return {
+      name: 'speaker',
+      action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+      headers: {
+        authorization: 'authorization-text'
+      },
+      onChange(info) {
+        if (info.file.status !== 'uploading') {
+          console.log(info.file, info.fileList);
+        }
+        if (info.file.status === 'done') {
+          message.success(`${info.file.name} file uploaded successfully`);
+          console.log(info.file)
+          console.log('temp', newSpeakers)
+          setNewSpeakers(temp => { temp[i].image = info.file; return temp})
+        } else if (info.file.status === 'error') {
+          message.error(`${info.file.name} file upload failed.`);
+        }
+      },
+    }
+  }
+  console.log('newSpaekers', newSpeakers)
+
   // <TimePicker use12Hours onChange={onChange} />    
   // <TimePicker use12Hours format="h:mm:ss A" onChange={onChange} />
   // <TimePicker use12Hours format="h:mm a" onChange={onChange} />
 
   let scheduledDivs = []
-  for(let i = 0; i < schedule.length; i++){
+  for (let i = 0; i < schedule.length; i++) {
     scheduledDivs.push(
       <div>
-<h4 style={{fontSize:"15px"}}>{schedule[i].date}</h4>
-      <div style={{display:"flex", flexDirection:"row"}}>
-      <Form.Item label="StartOfDay">
-        {getFieldDecorator(`schedule[${i}].startTime`, {
-          rules: [{ required: true, message: 'Insert schedule for this day' }],
-        })(
-          <TimePicker use12Hours format="h:mm a" onChange={(timeStamp, time) => handleSchedule(timeStamp,i,true)}/>
-        )}
-      </Form.Item>
+        <h4 style={{ fontSize: "15px" }}>{schedule[i].date}</h4>
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          <Form.Item label="StartOfDay">
+            {getFieldDecorator(`schedule[${i}].startTime`, {
+              rules: [{ required: true, message: 'Insert schedule for this day' }],
+            })(
+              <TimePicker use12Hours format="h:mm a" onChange={(timeStamp, time) => handleSchedule(timeStamp, i, true)} />
+            )}
+          </Form.Item>
 
-      <Form.Item label="EndOfDay">
-      {getFieldDecorator(`schedule[${i}].endTime`, {
-        rules: [{ required: true, message: 'Insert schedule for this day' }],
-      })(
-        <TimePicker use12Hours format="h:mm a" onChange={(timeStamp, time) => handleSchedule(timeStamp,i,false)}/>
-      )}
-      </Form.Item>
+          <Form.Item label="EndOfDay">
+            {getFieldDecorator(`schedule[${i}].endTime`, {
+              rules: [{ required: true, message: 'Insert schedule for this day' }],
+            })(
+              <TimePicker use12Hours format="h:mm a" onChange={(timeStamp, time) => handleSchedule(timeStamp, i, false)} />
+            )}
+          </Form.Item>
+        </div>
       </div>
-      </div>
-    
-      
+
+
     )
   }
 
@@ -301,12 +351,12 @@ function InsertPage(props) {
 
       <Form.Item label='Date of event'>
         <RangePicker
-          onChange={(date, dateString) => handleDateOfEventChange(date,dateString)}
+          onChange={(date, dateString) => handleDateOfEventChange(date, dateString)}
           onFocus={e => e.preventDefault()}
           onBlur={e => e.preventDefault()}
         />
       </Form.Item>
-{scheduledDivs}
+      {scheduledDivs}
 
       <Form.Item label='Selling time of event'>
         <RangePicker
@@ -437,7 +487,7 @@ function InsertPage(props) {
           {getFieldDecorator('speakers', {
             rules: [{ required: true, message: 'Insert event name' }],
           })(
-            <Select mode='tags' placeholder='Speakers'>
+            <Select mode='multiple' placeholder='Speakers'>
               {values.speakers.map(speaker => (
                 <Option key={speaker.id} value={`${speaker.id}`}>{speaker.name}</Option>
               ))}
@@ -446,13 +496,58 @@ function InsertPage(props) {
         </Form.Item>
 
         <Form.Item>
-          <Upload {...uploadProps}>
+          <Upload {...eventImageUploadProps}>
             <Button>
               <Icon type="upload" /> Click to Upload
            </Button>
           </Upload>
         </Form.Item>
       </div>
+
+      <h4>New Speakers</h4>
+      <div>
+        {newSpeakers.map((speaker, i) => (
+          <div style={{ display: 'flex' }}>
+            <Input onChange={e => handleChangeSpeakerName(e.target.value, i)} placeholder='Name' style={{ width: '100%' }} />
+            <Upload {...handleChangeSpeakerImage(i)}>
+              <Button>
+                <Icon type='upload' /> Click to Upload
+              </Button>
+            </Upload>
+          </div>
+        ))}
+
+        {newSpeakers.length === 1 ? (
+          <Button onClick={handleAddSpeaker}>
+            <Icon type='plus' />
+          </Button>
+        ) : (
+            <div style={{ display: 'flex' }}>
+              <Button onClick={handleRemoveSpeaker}>
+                <Icon type='minus' />
+              </Button>
+              <Button onClick={handleAddSpeaker}>
+                <Icon type='plus' />
+              </Button>
+            </div>
+          )}
+
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {newSpeakers.map((speaker, i) => (
+            <div style={{ display: 'flex' }}>
+              {speaker.image && (
+                <Fragment>
+                  <b>Name: </b>
+                  <p>{speaker.name} </p>
+                  <b>Image: </b>
+                  <p>{speaker.image.name}</p>
+                </Fragment>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
 
 
       <h4>Tickets</h4>
@@ -465,17 +560,17 @@ function InsertPage(props) {
           </div>
           <div styl={{ display: 'felx', flexDirection: 'column' }}>
             {ticket.ownerInfo.map((ownerInfo, j) => (
-            <div style={{ marginLeft: 50, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-              <Input placeholder='Label' style={{ width: 150 }} onChange={(event) => handleOwnerInfoLabelChange(i, j, event)}/>
-              <Checkbox style={{ marginLeft: 10 }} onChange={(event) => handleOwnerInfoRequiredChange(i, j, event)}>Required</Checkbox>
-              <Radio.Group style={{ marginLeft: 10 }} onChange={(event) =>handleOwnerInfoTypeChanged(i, j, event)}>
-                <Radio value={1}>Input</Radio>
-                <Radio value={2}>Checkbox</Radio>
-              </Radio.Group>
-            </div>
+              <div style={{ marginLeft: 50, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                <Input placeholder='Label' style={{ width: 150 }} onChange={(event) => handleOwnerInfoLabelChange(i, j, event)} />
+                <Checkbox style={{ marginLeft: 10 }} onChange={(event) => handleOwnerInfoRequiredChange(i, j, event)}>Required</Checkbox>
+                <Radio.Group style={{ marginLeft: 10 }} onChange={(event) => handleOwnerInfoTypeChanged(i, j, event)}>
+                  <Radio value={1}>Input</Radio>
+                  <Radio value={2}>Checkbox</Radio>
+                </Radio.Group>
+              </div>
             ))}
 
-            <div style={{marginLeft: 50}}>
+            <div style={{ marginLeft: 50 }}>
               <Button onClick={() => addOwnerInfoItem(i)} style={{ marginRight: 5 }}>
                 <Icon type='plus'></Icon>
               </Button>
