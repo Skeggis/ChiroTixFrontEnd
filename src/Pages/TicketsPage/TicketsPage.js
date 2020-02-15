@@ -124,7 +124,7 @@ console.log(data)
             setEventInfo(data.eventInfo)
             setBuyerId(data.buyerId)
             setTicketTypes(data.ticketTypes)
-            setInsurancePercentage(data.eventInfo.insurancePercentage)
+            setInsurancePercentage(data.insurancePercentage)
 
             ref.current.socket = io.connect(URL, { query: { buyerId: data.buyerId, eventId: eventId } })
             ref.current.socket.on('connect', () => { console.log("COONNNEST!") })
