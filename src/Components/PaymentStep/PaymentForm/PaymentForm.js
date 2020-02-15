@@ -193,7 +193,8 @@ function PaymentForm(props) {
   }
 
 
-  function handleSubmit(insuranceVerified = false, insuranceVerifiedValue = insuranceSelected) {
+  function handleSubmit(e, insuranceVerified = false, insuranceVerifiedValue = insuranceSelected) {
+    e.preventDefault()
     let error = false
     if (date.value.length === 0) {
       error = true
@@ -347,7 +348,7 @@ function PaymentForm(props) {
       </Modal>
 
       <div className='paymentForm'>
-        <Form onSubmit={(e) => handleSubmit(true)} >
+        <Form onSubmit={(e) => handleSubmit(e, true)} >
 
           <Form.Item style={{ marginBottom: 10 }}
             validateStatus={card.validateStatus}

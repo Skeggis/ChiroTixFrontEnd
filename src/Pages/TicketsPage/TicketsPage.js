@@ -112,18 +112,20 @@ function TicketsPage(props) {
 
     useEffect(() => {
         window.scrollTo(0, 0)
+        let theSocket = null
         async function fetchData() {
             let eventId = props.match.params.eventId
             let result = await axios.get(URL + `/tickets/info/${eventId}`)
             let data = result.data
+            let event = data.event
 
             if (!data.success) { return showErrors(data.messages) }
 
-            data.ticketTypes.sort((a, b) => { return a.id > b.id ? 1 : (a.id < b.id) ? -1 : 0 })
+            event.ticketTypes.sort((a, b) => { return a.id > b.id ? 1 : (a.id < b.id) ? -1 : 0 })
 
-            setEventInfo(data.eventInfo)
+            setEventInfo(event.eventInfo)
             setBuyerId(data.buyerId)
-            setTicketTypes(data.ticketTypes)
+            setTicketTypes(event.ticketTypes)
             setInsurancePercentage(data.insurancePercentage)
 
             ref.current.socket = io.connect(URL, { query: { buyerId: data.buyerId, eventId: eventId } })
@@ -134,10 +136,11 @@ function TicketsPage(props) {
             ref.current.socket.on('paymentProcessed', (data) => showReceipt(data))
             setLoading(false)
             setReserveLoading(false)
+            theSocket = ref.current.socket
         }
         fetchData()
 
-        return () => { ref.current.socket.disconnect(true) }
+        return () => { if(theSocket){theSocket.disconnect(true)} }
     }, [props.match.params.eventId])
 
     let showReceipt = (data) => {
@@ -308,15 +311,17 @@ function TicketsPage(props) {
 
         let result = await axios(post)
         let data = result.data
+
         console.log("DATA:", data)
-      //  setSubmitCardLoading()
-        // if (!data.success) {
-        //     showErrors(data.messages, 'Error buying tickets')
-        //     return;
-        // }
-        // setOrderDetails(data.orderDetails)
-        // setChiroInfo(data.chiroInfo[0])
-        // stepsController(1)
+        setSubmitCardLoading()
+
+        if (!data.success) {
+            showErrors(data.messages, 'Error buying tickets')
+            return;
+        }
+        setOrderDetails(data.orderDetails)
+        setChiroInfo(data.chiroInfo[0])
+        stepsController(1)
 
     }
 

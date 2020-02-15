@@ -9,7 +9,8 @@ import MainInfoBar from '../../Components/MainInfoBar/MainInfoBar'
 import EventDescription from '../../Components/EventDescription/EventDescription'
 import ShareButtons from '../../Components/ShareButtons/ShareButtons'
 import {
-    Skeleton
+    Skeleton,
+    notification
 } from 'antd'
 
 import './EventPage.scss'
@@ -32,7 +33,8 @@ function EventPage(props) {
             let eventId = props.match.params.eventId
             setUrl(URL + `/event/${eventId}`)
             let result = await axios.get(process.env.REACT_APP_SERVER_URL + `/event/${eventId}`)
-            console.log(result.data)
+            console.log("HERE!:", result.data)
+            if(!result.data.success){ return props.history.push('/notFound') }
             setEvent(result.data.eventInfo)
             setOrganization(result.data.eventInfo.organization)
             window.scrollTo(0,0)
@@ -43,6 +45,17 @@ function EventPage(props) {
         window.addEventListener('scroll', () => setScrollHeight(window.scrollY));
         return () => window.removeEventListener('scroll', () => setScrollHeight(window.scrollY));
     }, [])
+
+    function showErrors(messages, title) {
+        if (!messages || messages.length === 0) { return }
+        messages.forEach(message => {
+            notification.error({
+                message: message.title || title || "Error!",
+                description: message.message,
+                placement: 'bottomLeft'
+            })
+        })
+    }
 
     const mainInfoRef = useRef(null)
     const headerRef = useRef(null)
