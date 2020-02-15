@@ -9,7 +9,7 @@
 // }
 
 .events{
-  margin: auto; 
+  //margin: auto; 
  // margin-top: 50px;
   //padding: 0px 30px;
   //max-width: 2400px;
@@ -21,6 +21,8 @@
   &__descriptionItem{
     transition: height 0.8s ease
   }
+
+  
 }
 
 .events .ReactCollapse--collapse {

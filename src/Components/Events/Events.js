@@ -80,11 +80,11 @@ export default function Events(props) {
     <div className='events'>
       {eventRows.map((row, i) => (
         <Fragment>
-          <Row style={{margin: 0}}>
+          <Row>
             {row.map((event, j) => (
               <Fragment>
                 {event.id && (
-                  <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={6}>
+                  <Col style={{padding: '15px 10px'}} xs={24} sm={24} md={12} lg={8} xl={8} xxl={6}>
                     <EventItem
                       event={event}
                       eventIsOpen={eventIsOpen}
