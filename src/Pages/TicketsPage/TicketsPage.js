@@ -120,11 +120,11 @@ function TicketsPage(props) {
             if (!data.success) { return showErrors(data.messages) }
 
             data.ticketTypes.sort((a, b) => { return a.id > b.id ? 1 : (a.id < b.id) ? -1 : 0 })
-
+console.log(data)
             setEventInfo(data.eventInfo)
             setBuyerId(data.buyerId)
             setTicketTypes(data.ticketTypes)
-            setInsurancePercentage(data.insurancePercentage)
+            setInsurancePercentage(data.eventInfo.insurancePercentage)
 
             ref.current.socket = io.connect(URL, { query: { buyerId: data.buyerId, eventId: eventId } })
             ref.current.socket.on('connect', () => { console.log("COONNNEST!") })
