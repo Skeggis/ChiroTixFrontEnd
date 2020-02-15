@@ -68,6 +68,7 @@ function TicketsPage(props) {
     const [orderDetails, setOrderDetails] = useState({})
     const [chiroInfo, setChiroInfo] = useState({})
     const [insuranceSelected, setInsuranceSelected] = useState(false)
+    const [insurancePercentage, setInsurancePercentage] = useState(null)
 
     /**
      * ticketsOwnersInfo: [{
@@ -123,6 +124,7 @@ function TicketsPage(props) {
             setEventInfo(data.eventInfo)
             setBuyerId(data.buyerId)
             setTicketTypes(data.ticketTypes)
+            setInsurancePercentage(data.insurancePercentage)
 
             ref.current.socket = io.connect(URL, { query: { buyerId: data.buyerId, eventId: eventId } })
             ref.current.socket.on('connect', () => { console.log("COONNNEST!") })
@@ -273,7 +275,16 @@ function TicketsPage(props) {
         setTicketsOwnersInfo(list)
     }
 
-    let buyTickets = async (cardInformation, verifiedInsuranceValue = insuranceSelected) => {
+    /**
+     * paymentOptions: {
+     *      method: String ('borgun' || 'paypal')
+     *      insuranceVerified: Boolean (only if method is borgun)
+     *      Token: String (only if method is borgun)
+     *      orderId: String (only if method is paypal)
+     * }
+     * 
+     */
+    let buyTickets = async (paymentOptions) => {
         setSubmitCardLoading(true)
         console.log("BUYINGTICKETS!")
         let post = {
@@ -288,10 +299,8 @@ function TicketsPage(props) {
                 eventId: eventInfo.id,
                 tickets: ticketsOwnersInfo,
                 buyerInfo,
-                cardInformation,
-                //Token,
-                insurance: verifiedInsuranceValue,
-                insurancePrice: 35, //-------------Todo: get insurance price from settings table,
+                paymentOptions,
+                insurance: paymentOptions.insuranceVerified ? paymentOptions.insuranceVerified : insuranceSelected,
                 ticketTypes,
                 socketId: ref.current.socket.id
             }
@@ -406,6 +415,7 @@ function TicketsPage(props) {
                 insuranceSelected={insuranceSelected}
                 setInsuranceSelected={setInsuranceSelected}
                 submitCardLoading={submitCardLoading}
+                insurancePercentage={insurancePercentage}
             />
     } else if (current === 3) {
         componentToShow = <OrderDetails orderDetails={orderDetails} chiroInfo={chiroInfo} />
