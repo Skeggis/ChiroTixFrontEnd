@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {Fragment} from 'react'
 import {Route, Switch, withRouter} from 'react-router-dom'
 import {AuthenticatedRoute} from './Components/Authentication/helpers'
@@ -18,22 +18,30 @@ import EventsInfoPage from './Pages/EventsInfoPage/EventsInfoPage'
 
 function App() {
 
+  const [organization, setOrganization] = useState('')
+  const [ticketTime, setTicketTime] = useState('')
+  const [showTimer, setShowTimer] = useState(false)
+
   useEffect(() => {
     window.BAPIjs.setPublicToken('myToken')
   }, [])
 
   return (
     <Fragment>
+      <Header 
+        organization={organization} 
+        ticketTime={ticketTime}
+        showTimer={showTimer}
+      />
       <Switch>
-        
         <Route path='/' exact component={HomePage}/>
         <Route path='/event' exact component={EventPage}/>
         <Route path='/tickets' exact component={TicketsPage}/>
         <Route path='/createUser' exact component={CreateUserForm}/>
         <AuthenticatedRoute path='/insert' exact component={InsertPage}/>
         <AuthenticatedRoute path='/eventsInfo' component={EventsInfoPage}/>
-        <Route path='/event/:eventId' exact component={EventPage}/>
-        <Route path='/tickets/:eventId' exact component={TicketsPage}/>
+        <Route path='/event/:eventId' exact render={routeProps => <EventPage {...routeProps} setOrganization={setOrganization}/>}/>
+        <Route path='/tickets/:eventId' exact render={routeProps => <TicketsPage {...routeProps} setTime={setTicketTime} setShowTimer={setShowTimer}/>}/>
         <Route path='/orders/:orderId' exact component={ReceiptPage}/>
         <Route path='/login' exact component={LoginForm}/>
         <Route exact component={NotFoundPage}/>

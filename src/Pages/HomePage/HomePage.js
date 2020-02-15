@@ -10,6 +10,7 @@ import {
   Skeleton
 } from 'antd'
 import Header from '../../Components/Header/Header'
+import Hero from '../../Components/Hero/Hero'
 
 
 export default function HomePage(props) {
@@ -53,7 +54,6 @@ export default function HomePage(props) {
   if (loading) {
     return (
       <Fragment>
-        <Header />
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ margin: '50px 0 30px' }}>
 
@@ -80,12 +80,16 @@ export default function HomePage(props) {
 
   return (
     <Fragment>
-<Header/>
       <div style={{ width: '100%' }}>
-          <SearchBar
+
+        <Hero
+          searchValues={searchValues}
+          setEvents={setEvents}
+        />
+          {/* <SearchBar
             searchValues={searchValues}
             setEvents={setEvents}
-          />
+          /> */}
       
           <Events
             eventRows={eventRows}

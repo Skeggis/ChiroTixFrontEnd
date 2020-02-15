@@ -1,7 +1,6 @@
 import React, { useEffect, useState, Fragment } from 'react'
 import OrderDetails from '../../Components/OrderDetails/OrderDetails'
 import axios from 'axios'
-import Header from '../../Components/Header/Header'
 import { notification } from 'antd'
 import Loader from '../../Components/Loader/Loader'
 
@@ -42,14 +41,12 @@ export default function ReceiptPage(props) {
     return (
 
       <div style={{height: '80vh'}}>
-        <Header />
         <Loader />
       </div>
     )
   }
   return (
     <Fragment>
-      <Header />
       <div style={{ marginTop: 30 }}>
         <OrderDetails orderDetails={orderDetails} chiroInfo={chiroInfo} />
       </div>
