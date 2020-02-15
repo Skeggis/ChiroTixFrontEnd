@@ -155,7 +155,7 @@ function PaymentForm(props) {
     if (values[0]) values[0] = checkValue(values[0], 12);
     //if (values[1]) values[1] = checkValue(values[1], 31);
     var output = values.map(function (v, i) {
-      return v.length == 2 && i < 2 ? v + ' / ' : v;
+      return v.length === 2 && i < 2 ? v + ' / ' : v;
     });
     const newValue = output.join('').substr(0, 7);
 
@@ -438,7 +438,25 @@ function PaymentForm(props) {
             ref={paypalRef}
             id='paypalButtonContainer'
           />
+        </div>
+        <div style={{ width: '100%', textAlign: 'center' }}>
 
+          {/* <PayPalButton
+            style={{ width: '100%' }}
+            amount="0.01"
+            // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
+            onSuccess={(details, data) => {
+              alert("Transaction completed by " + details.payer.name.given_name);
+
+              // OPTIONAL: Call your server to save the transaction
+              return fetch("/paypal-transaction-complete", {
+                method: "post",
+                body: JSON.stringify({
+                  orderID: data.orderID
+                })
+              });
+            }}
+          /> */}
         </div>
       </div>
     </Fragment>

@@ -22,13 +22,15 @@ function EventItem(props) {
     setOldColNumber,
     setEventWasClosed,
     history,
-    isHovering,
-    setIsHovering
+    //isHovering,
+    //setIsHovering
   } = props
+
+  const [isHovering, setIsHovering] = useState(false)
 
 
   function handleMouseEnter() {
-    setIsHovering(event.id)
+    setIsHovering(true)
   }
 
   function handleTouch(event) {
@@ -45,7 +47,7 @@ function EventItem(props) {
   }
 
   function handleMouseLeave() {
-    setIsHovering(-1)
+    setIsHovering(false)
   }
 
   function handleEventClick(event) {
@@ -85,15 +87,15 @@ function EventItem(props) {
   const [textDisplay, setTextDisplay] = useState('flex')
   const [buttonsDisplay, setButtonsDisplay] = useState('none')
 
-  useEffect(() => {
-    if (isHovering) {
-      setTimeout(() => {
-        setTextDisplay('none')
-      }, 300)
+  // useEffect(() => {
+  //   if (isHovering) {
+  //     setTimeout(() => {
+  //       setTextDisplay('none')
+  //     }, 300)
 
-      setButtonsDisplay('flex')
-    }
-  }, [isHovering])
+  //     setButtonsDisplay('flex')
+  //   }
+  // }, [isHovering])
 
   function handleClickMore(e) {
     history.push(`/event/${event.id}`)
@@ -106,7 +108,6 @@ function EventItem(props) {
 
   const selected = selectedEvent.id === event.id
   const cardHover = selected || isHovering ? 'eventItem-hovering' : ''
-
 
   return (
     <div className={`eventItem ${cardHover}`}
@@ -146,7 +147,7 @@ function EventItem(props) {
         <div className='eventItem__contentWrapper'>
           <div className='eventItem__secondContentWrapper'>
             <div className='eventItem__nameContentWrapper'>
-              <Animated isVisible={!isHovering} animateOnMount={false} animationOut='fadeOutLeft' animationIn='fadeInLeft' animationInDuration={300} animationOutDuration={300}>
+              <Animated isVisible={!isHovering && !selected} animateOnMount={false} animationOut='fadeOutLeft' animationIn='fadeInLeft' animationInDuration={300} animationOutDuration={300} style={{width: '100%'}}>
                 <div className='eventItem__nameContentSecondWrapper'>
                   <h1 className='eventItem__name'>{event.name}</h1>
                   <p className='eventItem__date'>{new Date(event.startDate).toDateString()}</p>
@@ -155,10 +156,10 @@ function EventItem(props) {
               </Animated>
             </div>
             <div className='eventItem__buttonsContainer'>
-              <Animated style={{ height: '100%' }} isVisible={isHovering} animateOnMount={false} animationOut='fadeOutRight' animationIn='fadeInRight' animationInDuration={300} animationOutDuration={300}>
+              <Animated style={{ height: '100%' }} isVisible={isHovering || selected} animateOnMount={false} animationOut='fadeOutRight' animationIn='fadeInRight' animationInDuration={300} animationOutDuration={300}>
                 <div className='eventItem__buttonsSecondContainer'>
                   <Button size='large' style={{ color: 'white', backgroundColor: 'rgba(157, 141, 241, 0.7)', }} onClick={() => handleClickMore()}>More</Button>
-                  <Button size='large' style={{ color: 'white', backgroundColor: 'rgba(157, 141, 241, 0.7)', }} onClick={(event) => handleClickTickets(event)}>Tickets</Button>
+                  <Button size='large' style={{ color: 'white', backgroundColor: 'rgba(157, 141, 241, 0.7)', marginLeft: 30}} onClick={(event) => handleClickTickets(event)}>Tickets</Button>
                 </div>
               </Animated>
             </div>
