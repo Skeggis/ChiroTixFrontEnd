@@ -11,7 +11,7 @@ function getWindowDimensions() {
     };
 }
 
-function BigAd({ image = '', title = '', minorTitle = '', subTitle = '', loading = true, mainInfoBarHeight = 0 }) {
+function BigAd({ image = '', title = '', minorTitle = '', subTitle = '', loading = true, mainInfoBarHeight = 0, isSoldOut = false }) {
     const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
 
     useEffect(() => {
@@ -39,6 +39,11 @@ function BigAd({ image = '', title = '', minorTitle = '', subTitle = '', loading
     }
     return (
         <div className='BigAd' style={{ backgroundImage: `url('${image}')`, height }} >
+            <div className="BigAd__soldOutDiv" style={isSoldOut ? {}:{visibility:"hidden"}}>
+                <h1 className="BigAd__soldOutTitle">Sold Out</h1>
+            </div>
+
+            
             <div className="BigAd__flexDiv">
                 <div className="BigAd__bannerDiv">
                     <div className="BigAd__eventTitleDiv">

@@ -161,7 +161,8 @@ function PaymentForm(props) {
   }
 
 
-  function handleSubmit(insuranceVerified = false, insuranceVerifiedValue = insuranceSelected) {
+  function handleSubmit(e, insuranceVerified = false, insuranceVerifiedValue = insuranceSelected) {
+    e.preventDefault()
     let error = false
     if (date.value.length === 0) {
       error = true
