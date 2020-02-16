@@ -4,15 +4,17 @@ import {
   Divider
 } from 'antd'
 import './OrderDetails.scss'
+import ShareButtons from '../ShareButtons/ShareButtons'
 
 export default function OrderDetails(props) {
   const {
     orderDetails,
+    tickets,
     chiroInfo
   } = props
 
   const receipt = orderDetails.receipt
-  const lines = receipt.lines
+  const lines = tickets
 
   console.log('receipt', receipt)
   const order = {
@@ -113,6 +115,10 @@ export default function OrderDetails(props) {
           <p>{chiroInfo.place}</p>
           <p>{chiroInfo.kennitala}</p>
         </div>
+      </div>
+
+      <div className='orderDetails__infoContainer'>
+        <ShareButtons />
       </div>
     </div>
   )

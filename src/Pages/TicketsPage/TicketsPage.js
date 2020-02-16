@@ -70,6 +70,8 @@ function TicketsPage(props) {
     const [insuranceSelected, setInsuranceSelected] = useState(false)
     const [insurancePercentage, setInsurancePercentage] = useState(null)
 
+    const [paypalProcessingLoading, setPaypalProcessingLoading] = useState(false)
+
     /**
      * ticketsOwnersInfo: [{
      *          id: Integer, (the id of the ticketType),
@@ -143,8 +145,10 @@ console.log(data)
     let showReceipt = (data) => {
         console.log('PAYMENT PROCESSED EMIT')
         if(data.success){
+            console.log('EMITDATA, ',data)
             setLoading(false)
             setReleaseLoading(false)
+            setPaypalProcessingLoading(false)
             setOrderDetails(data.orderDetails)
             setCurrent(current => current+=1)
         } else {
@@ -309,6 +313,14 @@ console.log(data)
         let result = await axios(post)
         let data = result.data
         console.log("DATA:", data)
+        if (!data.success){
+            showErrors(data.messages, 'Error buying tickets')
+            setPaypalProcessingLoading(false)
+            setLoading(false)
+            setSubmitCardLoading(false)
+        } else {
+            //Do nothing if successful?
+        }
       //  setSubmitCardLoading()
         // if (!data.success) {
         //     showErrors(data.messages, 'Error buying tickets')
@@ -416,9 +428,11 @@ console.log(data)
                 setInsuranceSelected={setInsuranceSelected}
                 submitCardLoading={submitCardLoading}
                 insurancePercentage={insurancePercentage}
+                paypalProcessingLoading={paypalProcessingLoading}
+                setPaypalProcessingLoading={setPaypalProcessingLoading}
             />
     } else if (current === 3) {
-        componentToShow = <OrderDetails orderDetails={orderDetails} chiroInfo={chiroInfo} />
+        componentToShow = <OrderDetails orderDetails={orderDetails} chiroInfo={chiroInfo} tickets={ticketTypes} />
         ref.current.socket.disconnect(true)
     }
 
