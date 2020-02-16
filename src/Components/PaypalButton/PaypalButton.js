@@ -61,7 +61,7 @@ class PaypalButton extends React.Component {
           onInit={(data, actions) => this.props.onInit(data, actions)}
           onClick={(data, actions) => this.props.onClick(data, actions)}
           onError={(err) => this.props.onError(err)}
-          onCancel={(data) => { }}
+          onCancel={(data) => { console.log(data)}}
           />
           )}
       </div>

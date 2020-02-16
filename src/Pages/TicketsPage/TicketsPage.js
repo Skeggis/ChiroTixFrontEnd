@@ -124,7 +124,6 @@ function TicketsPage(props) {
             if (!data.success) { return showErrors(data.messages) }
 
             event.ticketTypes.sort((a, b) => { return a.id > b.id ? 1 : (a.id < b.id) ? -1 : 0 })
-console.log(data)
             setEventInfo(event.eventInfo)
             setBuyerId(data.buyerId)
             setTicketTypes(event.ticketTypes)

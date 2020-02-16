@@ -159,7 +159,9 @@ function InsertPage(props) {
         for(let i = 0; i<newSpeakers.length; i++){
           console.log(i)
           console.log(newSpeakers[i].image)
-          formData.append('images', newSpeakers[i].image.originFileObj)
+          if(newSpeakers[i].name !== ''){
+            formData.append('images', newSpeakers[i].image.originFileObj)
+          }
         }
         async function uploadEvent() {
 
@@ -179,7 +181,9 @@ function InsertPage(props) {
           const mySpeakers = values.speakers.map(sp => { return { id: parseInt(sp) } })
 
           for (let i = 0; i < newSpeakers.length; i++) {
-            mySpeakers.push({ name: newSpeakers[i].name, image: result.data.data[i+1].url })
+            if(newSpeakers[i].name !== ''){
+              mySpeakers.push({ name: newSpeakers[i].name, image: result.data.data[i+1].url })
+            }
           }
           console.log(mySpeakers)
           const eventResult = await axios.post(`${process.env.REACT_APP_SERVER_URL}/events`, {

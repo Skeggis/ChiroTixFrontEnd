@@ -26,12 +26,18 @@ function PaymentForm(props) {
 
 
   const onInit = (data, actions) => {
-    actions.disable()
+    if (!termsSelected) {
+      actions.disable()
+    } else {
+      actions.enable()
+    }
     function initButtons(event) {
       if (event.target.checked) {
         actions.enable();
+        console.log('enabled')
       } else {
         actions.disable();
+        console.log('disable')
       }
     }
     document.querySelector('#termscheckbox').addEventListener('change', (event) => { initButtons(event); console.log('init') });
@@ -40,10 +46,9 @@ function PaymentForm(props) {
   const onClick = (data, actions) => {
     console.log(!document.querySelector('#termscheckbox').checked)
     //if (!document.querySelector('#termscheckbox').checked) {
-    console.log('Validate')
-    props.form.validateFields(['agreement'], (error, values) => {
-
-    })
+    if (!termsSelected) {
+      setTermsMessage('Please accept the terms and conditions')
+    }
     //} 
     //possibly verify insurance selection
   }
@@ -82,6 +87,8 @@ function PaymentForm(props) {
   const [insuranceDialogOpen, setInsuranceDialogOpen] = useState(false)
   const [termsDialogOpen, setTermsDialogOpen] = useState(false)
   const [verifyInsuranceOpen, setVerifyInsuranceOpen] = useState(false)
+  const [termsSelected, setTermsSelected] = useState(false)
+  const [termsMessage, setTermsMessage] = useState('')
 
   function cc_format(value) {
     console.log(value)
@@ -270,7 +277,7 @@ function PaymentForm(props) {
     setTermsDialogOpen(prev => !prev)
   }
 
-  function handleInsuranceChange(){
+  function handleInsuranceChange() {
     setInsuranceSelected(prev => !prev)
   }
 
@@ -287,11 +294,15 @@ function PaymentForm(props) {
     }
   }
 
+  function handleTermsChange() {
+    setTermsSelected(prev => !prev)
+    setTermsMessage('')
+  }
 
   return (
     <Fragment>
       {paypalProcessingLoading && (
-        <FullscreenLoading/>
+        <FullscreenLoading />
       )}
       <Modal zIndex={1000000}
         title={'Insurance information'}
@@ -422,30 +433,21 @@ function PaymentForm(props) {
             style={{ width: '80%', margin: 'auto' }}
           >
             <React.Fragment>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent:'flex-end', width: '100%' }}>
-              <Icon type='question-circle-o' style={{ marginLeft: 10, fontSize: 16 }} onClick={handleToggleInsuranceDialog} />
-              <Checkbox checked={insuranceSelected} onChange={handleInsuranceChange} style={{ display: 'flex', flexDirection: 'row-reverse', alignItems: 'center', fontSize: 16 }} size='large'>Insurance</Checkbox>
-            </div>
-              <Form>
-                <Form.Item style={{ marginTop: 5, textAlign: 'right' }} labelAlign='right'>
-                  {getFieldDecorator('agreement', {
-                    rules: [
-                      {
-                        required: true,
-                        transform: value => (value || undefined),
-                        type: 'boolean',
-                        message: 'Please agree to the terms and conditions'
-                      },
-                    ],
-                  })(
-                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                      <Checkbox id='termscheckbox' style={{ display: 'flex', flexDirection: 'row-reverse', alignItems: 'center', fontSize: 16 }}> 
-                        I have read the  <a onClick={handleToggleTermsDialog} style={{ margin: 0 }}>terms and conditions</a>
-                      </Checkbox>
-                    </div>
-                  )}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', width: '100%' }}>
+                <Icon type='question-circle-o' style={{ marginLeft: 10, fontSize: 16 }} onClick={handleToggleInsuranceDialog} />
+                <Checkbox checked={insuranceSelected} onChange={handleInsuranceChange} style={{ display: 'flex', flexDirection: 'row-reverse', alignItems: 'center', fontSize: 16 }} size='large'>Insurance</Checkbox>
+              </div>
+              <Form labelAlign='right'>
+
+                <Form.Item validateStatus={termsMessage !== '' ? 'error' : ''} help={(<div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>{termsMessage}</div>)}>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <Checkbox checked={termsSelected} onChange={handleTermsChange} id='termscheckbox' style={{ display: 'flex', flexDirection: 'row-reverse', alignItems: 'center', fontSize: 16 }}>
+                      I have read the  <a onClick={handleToggleTermsDialog} style={{ margin: 0 }}>terms and conditions</a>
+                    </Checkbox>
+                  </div>
                 </Form.Item>
               </Form>
+
               <PaypalButton
                 onInit={onInit}
                 onApprove={onApprove}
