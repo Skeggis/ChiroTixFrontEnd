@@ -17,39 +17,24 @@ export default function PaymentStep(props) {
     insuranceSelected,
     setInsuranceSelected,
     submitCardLoading,
-    insurancePercentage
+    insurancePercentage,
+    paypalProcessingLoading,
+    setPaypalProcessingLoading
   } = props
 
 
   const insurancePrice = Number((insurancePercentage * totalTicketPrice)).toFixed(2)
   const totalPrice = insuranceSelected ? Number(totalTicketPrice + Number(insurancePrice)).toFixed(2) : Number(totalTicketPrice).toFixed(2)
 
-  const [insuranceDialogOpen ,setInsuranceDialogOpen] = useState(false)
 
 
-  function handleCheckChange() {
-    setInsuranceSelected(prev => !prev)
-  }
 
-  function handleToggleInsuranceDialog() {
-    handleToggleInsuranceDialog(prev => !prev)
-  }
+
 
   return (
     <Fragment>
-
-      <Modal zIndex={1000000}
-        title={'Insurance information'}
-        visible={insuranceDialogOpen}
-        onOk={() => setInsuranceDialogOpen(false)}
-        onCancel={() => setInsuranceDialogOpen(false)}
-        footer={[<Button onClick={() => setInsuranceDialogOpen(false)}>Ok</Button>]}
-        centered
-      >
-        <p>Some information about insurance here</p>
-      </Modal>
       <div className='paymentStep'>
-        <div className='paymentStep__wrapper' style={{ width: '80%' }}>
+        <div className='paymentStep__wrapper' style={{ width: '70%' }}>
           <h3>Order Summary</h3>
           <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', marginTop: 20 }}>
 
@@ -97,10 +82,7 @@ export default function PaymentStep(props) {
               </tbody>
             </table>
 
-            <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-              <Checkbox checked={insuranceSelected} onChange={handleCheckChange} style={{ fontSize: 16,  }} size='large'>Insurance</Checkbox>
-              <Icon type='question-circle-o' style={{ marginLeft: 10, fontSize: 16 }} onClick={handleToggleInsuranceDialog} />
-            </div>
+
           </div>
 
 
@@ -111,6 +93,8 @@ export default function PaymentStep(props) {
               buyTickets={buyTickets}
               submitCardLoading={submitCardLoading}
               totalPrice={totalPrice}
+              paypalProcessingLoading={paypalProcessingLoading}
+              setPaypalProcessingLoading={setPaypalProcessingLoading}
             />
           </div>
 

@@ -1,9 +1,10 @@
 import React, { useEffect, useState, Fragment, useRef, createRef } from 'react'
 import { Form, Icon, Input, Button, Checkbox, Modal, Divider, notification } from 'antd';
 import makeAsyncScriptLoader from "react-async-script";
-
+import PaypalButton from '../../PaypalButton/PaypalButton'
 import './PaymentForm.scss'
 import Loader from '../../Loader/Loader';
+import FullscreenLoading from '../../FullscreenLoading/FullscreenLoading'
 
 
 function PaymentForm(props) {
@@ -16,98 +17,65 @@ function PaymentForm(props) {
     insuranceSelected,
     submitCardLoading,
     setInsuranceSelected,
-    totalPrice
+    totalPrice,
+    setPaypalProcessingLoading,
+    paypalProcessingLoading
   } = props
 
 
 
-  const paypalRef = useRef()
-  const [paypalLoading, setPaypalLoading] = useState(true)
 
-
-  async function loadButtons() {
-
-    window.paypal.Buttons({
-      onInit: function (data, actions) {
-        actions.disable()
-        function initButtons(event) {
-          if (event.target.checked) {
-            actions.enable();
-          } else {
-            actions.disable();
-          }
-        }
-        document.querySelector('#termscheckbox').addEventListener('change', (event) => initButtons(event));
-      },
-      onClick: function (data, actions) {
-        if (!document.querySelector('#termscheckbox').checked) {
-          props.form.validateFields(['agreement'], (error, values) => { })
-        } 
-        //possibly verify insurance selection
-      },
-      createOrder: function (data, actions) {
-        // This function sets up the details of the transaction, including the amount and line item details.
-        return actions.order.create({
-          purchase_units: [{
-            amount: {
-              currency_code: 'USD',
-              value: totalPrice
-            }
-          }]
-        });
-      },
-      onApprove: function (data, actions) {
-        // This function captures the funds from the transaction.
-        return actions.order.capture().then(function (details) {
-          // This function shows a transaction success message to your buyer.
-          alert('Transaction completed by ' + details.payer.name.given_name);
-          buyTickets({ method: 'paypal', orderId: data.orderID })
-        });
-      },
-      onError: function (err) {
-        console.log(err)
-      }
-    }).render(document.getElementById('paypalButtonContainer'))
-  }
-
-  useEffect(() => {
-
-    async function fetchData() {
-      const existingScript = document.getElementById('paypalScript');
-      // var element = document.getElementById('paypalButtonContainer'),
-      //   clone = element.cloneNode(true);
-
-      // element.parentNode.replaceChild(clone, element);
-      if (!existingScript) {
-        const script = document.createElement('script');
-        script.src = 'https://www.paypal.com/sdk/js?client-id=AdmeHDdVieCtGNml2iCNsWqGaWyPW_puc4XIPUifsXXHWXSU8ynPbbLAL5rTgh9rtvnAkztDsHQlZsGw&disable-funding=credit,card,venmo,sepa,bancontact,eps,giropay,ideal,mybank,p24,sofort';
-        script.id = 'paypalScript';
-        document.body.appendChild(script);
-
-        script.onload = () => {
-          loadButtons()
-          setPaypalLoading(false)
-        };
-      }
-
-
-
-
-      if (existingScript) {
-        var list = document.getElementById("paypalButtonContainer");
-        if (list.hasChildNodes()) {
-          list.removeChild(list.childNodes[0]);
-        }
-        // document.getElementById('paypalButtonContainer').removeEventListener('change', testFunc)
-        await loadButtons()
-        setPaypalLoading(false)
+  const onInit = (data, actions) => {
+    actions.disable()
+    function initButtons(event) {
+      if (event.target.checked) {
+        actions.enable();
+      } else {
+        actions.disable();
       }
     }
-    fetchData()
+    document.querySelector('#termscheckbox').addEventListener('change', (event) => { initButtons(event); console.log('init') });
+  }
+
+  const onClick = (data, actions) => {
+    console.log(!document.querySelector('#termscheckbox').checked)
+    //if (!document.querySelector('#termscheckbox').checked) {
+    console.log('Validate')
+    props.form.validateFields(['agreement'], (error, values) => {
+
+    })
+    //} 
+    //possibly verify insurance selection
+  }
+
+  const createOrder = (data, actions) => {
+    // This function sets up the details of the transaction, including the amount and line item details.
+    return actions.order.create({
+      purchase_units: [{
+        amount: {
+          currency_code: 'USD',
+          value: totalPrice
+        }
+      }]
+    });
+  }
+
+  const onApprove = (data, actions) => {
+    // This function captures the funds from the transaction.
+    setPaypalProcessingLoading(true)
+    return actions.order.capture().then(function (details) {
+      // This function shows a transaction success message to your buyer.
+      buyTickets({ method: 'paypal', orderId: data.orderID })
+    });
+  }
+
+  const onError = (err) => {
+    console.log(err)
+  }
 
 
 
-  }, [insuranceSelected])
+
 
   const [card, setCard] = useState({ value: '', triedToSubmit: false })
   const [date, setDate] = useState({ value: '', triedToSubmit: false })
@@ -301,6 +269,10 @@ function PaymentForm(props) {
     setTermsDialogOpen(prev => !prev)
   }
 
+  function handleInsuranceChange(){
+    setInsuranceSelected(prev => !prev)
+  }
+
   function handleVerifyInsurance(verify, event) {
     console.log('neinie')
     if (verify) {
@@ -317,6 +289,19 @@ function PaymentForm(props) {
 
   return (
     <Fragment>
+      {paypalProcessingLoading && (
+        <FullscreenLoading/>
+      )}
+      <Modal zIndex={1000000}
+        title={'Insurance information'}
+        visible={insuranceDialogOpen}
+        onOk={() => setInsuranceDialogOpen(false)}
+        onCancel={() => setInsuranceDialogOpen(false)}
+        footer={[<Button onClick={() => setInsuranceDialogOpen(false)}>Ok</Button>]}
+        centered
+      >
+        <p>Some information about insurance here</p>
+      </Modal>
       <Modal zIndex={1000000}
         title={'Terms & conditions'}
         visible={termsDialogOpen}
@@ -347,7 +332,7 @@ function PaymentForm(props) {
       </Modal>
 
       <div className='paymentForm'>
-        <Form onSubmit={(e) => handleSubmit(true)} >
+        {/* <Form onSubmit={(e) => handleSubmit(true)} >
 
           <Form.Item style={{ marginBottom: 10 }}
             validateStatus={card.validateStatus}
@@ -428,16 +413,49 @@ function PaymentForm(props) {
             </Form.Item>
           </div>
         </Form>
-        <Divider style={{ marginBottom: 50, color: 'black' }}>Or</Divider>
+        <Divider style={{ marginBottom: 50, color: 'black' }}>Or</Divider> */}
         <div style={{ width: '100%', textAlign: 'center', margin: 'auto' }}>
-          {(paypalLoading || submitCardLoading) && (
-            <Loader />
-          )}
+
+
           <div
             style={{ width: '80%', margin: 'auto' }}
-            ref={paypalRef}
-            id='paypalButtonContainer'
-          />
+          >
+            <React.Fragment>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent:'flex-end', width: '100%' }}>
+              <Icon type='question-circle-o' style={{ marginLeft: 10, fontSize: 16 }} onClick={handleToggleInsuranceDialog} />
+              <Checkbox checked={insuranceSelected} onChange={handleInsuranceChange} style={{ display: 'flex', flexDirection: 'row-reverse', alignItems: 'center', fontSize: 16 }} size='large'>Insurance</Checkbox>
+            </div>
+              <Form>
+                <Form.Item style={{ marginTop: 5, textAlign: 'right' }} labelAlign='right'>
+                  {getFieldDecorator('agreement', {
+                    rules: [
+                      {
+                        required: true,
+                        transform: value => (value || undefined),
+                        type: 'boolean',
+                        message: 'Please agree to the terms and conditions'
+                      },
+                    ],
+                  })(
+                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                      <Checkbox id='termscheckbox' style={{ display: 'flex', flexDirection: 'row-reverse', alignItems: 'center', fontSize: 16 }}> 
+                        I have read the  <a onClick={handleToggleTermsDialog} style={{ margin: 0 }}>terms and conditions</a>
+                      </Checkbox>
+                    </div>
+                  )}
+                </Form.Item>
+              </Form>
+              <PaypalButton
+                onInit={onInit}
+                onApprove={onApprove}
+                onClick={onClick}
+                createOrder={createOrder}
+                onError={onError}
+              />
+
+            </React.Fragment>
+          </div>
+
         </div>
         <div style={{ width: '100%', textAlign: 'center' }}>
 

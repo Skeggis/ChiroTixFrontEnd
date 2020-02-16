@@ -67,10 +67,6 @@ function ShareButtons({url=''}){
                             <WhatsappIcon size={32} round={true} className="ShareButtons__pointer"/>
                             <Typography.Text className="ShareButtons__shareText ShareButtons__pointer">WhatsApp</Typography.Text>
                         </WhatsappShareButton>
-                        <PinterestShareButton url={url} className="ShareButtons__shareButton ShareButtons__shareDiv">
-                            <PinterestIcon size={32} round={true} className="ShareButtons__pointer"/>
-                            <Typography.Text className="ShareButtons__shareText ShareButtons__pointer">Pinterest</Typography.Text>
-                        </PinterestShareButton>
                         <EmailShareButton url={url} className="ShareButtons__shareButton ShareButtons__shareDiv">
                             <EmailIcon size={32} round={true} className="ShareButtons__pointer"/>
                             <Typography.Text className="ShareButtons__shareText ShareButtons__pointer">Send</Typography.Text>

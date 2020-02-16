@@ -1,6 +1,7 @@
 .orderDetails{
   display: flex;
-  justify-content: center;
+  align-items: center;
+  flex-direction: column;
   
   &__container{
     position: relative;
@@ -50,4 +51,14 @@
     }
   }
   
+  &__infoContainer{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  &__shareButtonsContainer{
+    display: flex;
+    justify-content: space-around;
+  }
 }

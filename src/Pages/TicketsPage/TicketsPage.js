@@ -70,6 +70,8 @@ function TicketsPage(props) {
     const [insuranceSelected, setInsuranceSelected] = useState(false)
     const [insurancePercentage, setInsurancePercentage] = useState(null)
 
+    const [paypalProcessingLoading, setPaypalProcessingLoading] = useState(false)
+
     /**
      * ticketsOwnersInfo: [{
      *          id: Integer, (the id of the ticketType),
@@ -120,7 +122,7 @@ function TicketsPage(props) {
             if (!data.success) { return showErrors(data.messages) }
 
             data.ticketTypes.sort((a, b) => { return a.id > b.id ? 1 : (a.id < b.id) ? -1 : 0 })
-
+console.log(data)
             setEventInfo(data.eventInfo)
             setBuyerId(data.buyerId)
             setTicketTypes(data.ticketTypes)
@@ -143,8 +145,10 @@ function TicketsPage(props) {
     let showReceipt = (data) => {
         console.log('PAYMENT PROCESSED EMIT')
         if(data.success){
+            console.log('EMITDATA, ',data)
             setLoading(false)
             setReleaseLoading(false)
+            setPaypalProcessingLoading(false)
             setOrderDetails(data.orderDetails)
             setCurrent(current => current+=1)
         } else {
@@ -309,6 +313,14 @@ function TicketsPage(props) {
         let result = await axios(post)
         let data = result.data
         console.log("DATA:", data)
+        if (!data.success){
+            showErrors(data.messages, 'Error buying tickets')
+            setPaypalProcessingLoading(false)
+            setLoading(false)
+            setSubmitCardLoading(false)
+        } else {
+            //Do nothing if successful?
+        }
       //  setSubmitCardLoading()
         // if (!data.success) {
         //     showErrors(data.messages, 'Error buying tickets')
@@ -416,9 +428,11 @@ function TicketsPage(props) {
                 setInsuranceSelected={setInsuranceSelected}
                 submitCardLoading={submitCardLoading}
                 insurancePercentage={insurancePercentage}
+                paypalProcessingLoading={paypalProcessingLoading}
+                setPaypalProcessingLoading={setPaypalProcessingLoading}
             />
     } else if (current === 3) {
-        componentToShow = <OrderDetails orderDetails={orderDetails} chiroInfo={chiroInfo} />
+        componentToShow = <OrderDetails orderDetails={orderDetails} chiroInfo={chiroInfo} tickets={ticketTypes} />
         ref.current.socket.disconnect(true)
     }
 
