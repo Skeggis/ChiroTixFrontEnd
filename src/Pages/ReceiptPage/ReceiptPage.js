@@ -28,6 +28,7 @@ export default function ReceiptPage(props) {
         console.log('her')
         return
       }
+      console.log(result.data)
       setOrderDetails(result.data.orderDetails)
       setChiroInfo(result.data.chiroInfo[0])
       setLoading(false)
@@ -48,7 +49,7 @@ export default function ReceiptPage(props) {
   return (
     <Fragment>
       <div style={{ marginTop: 30 }}>
-        <OrderDetails orderDetails={orderDetails} chiroInfo={chiroInfo} />
+        <OrderDetails orderDetails={orderDetails} chiroInfo={chiroInfo} tickets={orderDetails.lines}/>
       </div>
     </Fragment>
   )
