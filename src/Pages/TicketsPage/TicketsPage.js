@@ -121,11 +121,11 @@ function TicketsPage(props) {
 
             if (!data.success) { return showErrors(data.messages) }
 
-            data.ticketTypes.sort((a, b) => { return a.id > b.id ? 1 : (a.id < b.id) ? -1 : 0 })
-console.log(data)
-            setEventInfo(data.eventInfo)
+            console.log(data)
+            data.event.ticketTypes.sort((a, b) => { return a.id > b.id ? 1 : (a.id < b.id) ? -1 : 0 })
+            setEventInfo(data.event.eventInfo)
             setBuyerId(data.buyerId)
-            setTicketTypes(data.ticketTypes)
+            setTicketTypes(data.event.ticketTypes)
             setInsurancePercentage(data.insurancePercentage)
 
             ref.current.socket = io.connect(URL, { query: { buyerId: data.buyerId, eventId: eventId } })
