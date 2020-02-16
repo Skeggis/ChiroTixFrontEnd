@@ -173,13 +173,13 @@ console.log("BOYO")
                     <Button onClick={() => onDownload(eventInfo.id)} >Download</Button>
                 </Col>
                 <Col span={6}>
-                    <Button onClick={() => handleChangeEventState(eventInfo.id, !eventInfo.isSelling, eventInfo.isVisible, eventInfo.isSoldOut)} style={eventInfo.isSelling ? {backgroundColor:"red"}:{backgroundColor:"green"}}>isSelling={eventInfo.isSelling ? "TRUE":"FALSE"}</Button>
+                    <Button onClick={() => handleChangeEventState(eventInfo.id, !eventInfo.adminIsSelling, eventInfo.isVisible, eventInfo.isSoldOut)} style={eventInfo.adminIsSelling ? {backgroundColor:"red"}:{backgroundColor:"green"}}>isSelling={eventInfo.adminIsSelling ? "TRUE":"FALSE"}</Button>
                 </Col>
                 <Col span={6}>
-                    <Button onClick={() => handleChangeEventState(eventInfo.id, eventInfo.isSelling, !eventInfo.isVisible, eventInfo.isSoldOut)} style={eventInfo.isVisible ? {backgroundColor:"red"}:{backgroundColor:"green"}}>isVisible={eventInfo.isVisible ? "TRUE":"FALSE"}</Button>
+                    <Button onClick={() => handleChangeEventState(eventInfo.id, eventInfo.adminIsSelling, !eventInfo.isVisible, eventInfo.isSoldOut)} style={eventInfo.isVisible ? {backgroundColor:"red"}:{backgroundColor:"green"}}>isVisible={eventInfo.isVisible ? "TRUE":"FALSE"}</Button>
                 </Col>
                 <Col span={6}>
-                    <Button onClick={() => handleChangeEventState(eventInfo.id, eventInfo.isSelling, eventInfo.isVisible, !eventInfo.isSoldOut)} style={!eventInfo.isSoldOut ? {backgroundColor:"red"}:{backgroundColor:"green"}}>isSoldOut={eventInfo.isSoldOut ? "TRUE":"FALSE"}</Button>
+                    <Button onClick={() => handleChangeEventState(eventInfo.id, eventInfo.adminIsSelling, eventInfo.isVisible, !eventInfo.isSoldOut)} style={!eventInfo.isSoldOut ? {backgroundColor:"red"}:{backgroundColor:"green"}}>isSoldOut={eventInfo.isSoldOut ? "TRUE":"FALSE"}</Button>
                 </Col>
             </Row>
             

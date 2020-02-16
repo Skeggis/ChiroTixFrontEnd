@@ -99,6 +99,7 @@ function EventPage(props) {
                     title={event.name}
                     subTitle={`${event.city}, ${event.country}`}
                     loading={loading}
+                    isSoldOut={event.isSoldOut}
                 />
 
                 <div ref={mainInfoRef} style={{ position: "sticky", top: 0 }}>
@@ -111,6 +112,8 @@ function EventPage(props) {
                         loading={loading}
                         handleScroll={handleScroll}
                         down={down}
+                        isSelling={event.isSelling}
+                        isSoldOut={event.isSoldOut}
                     />
                 </div>
 

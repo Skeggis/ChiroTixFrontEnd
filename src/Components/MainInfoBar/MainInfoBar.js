@@ -12,7 +12,9 @@ function MainInfoBar(props) {
         setHeight,
         handleScroll,
         down,
-        loading
+        loading,
+        isSelling=true,
+        isSoldOut=true
     } = props
 
     const mobile = useMedia('(max-width: 900px)')
@@ -125,9 +127,10 @@ function MainInfoBar(props) {
 
                 {/* </div> */}
 
-                <div className=' MainInfoBar__buttonDiv' style={{ justifyContent: 'flex-end', width: '100%', }}>
+{isSelling && !isSoldOut ? <div className=' MainInfoBar__buttonDiv' style={{ justifyContent: 'flex-end', width: '100%' }}>
                     <Button onClick={handleBuyTickets} className="MainInfoBar__button" style={{ backgroundColor: "#6D8791", borderColor: "#6D8791", fontSize: "20px", fontWeight: "400", color: "white", marginRight: 150 }} >Tickets</Button>
-                </div>
+                </div>:<div className=' MainInfoBar__buttonDiv' style={{ justifyContent: 'flex-end', width: '100%' }}></div>}
+                
             </div>
         );
 }
