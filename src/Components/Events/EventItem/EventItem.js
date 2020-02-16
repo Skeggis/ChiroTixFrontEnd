@@ -21,7 +21,7 @@ function EventItem(props) {
     eventColNumber,
     setOldColNumber,
     setEventWasClosed,
-    history,
+    history
     //isHovering,
     //setIsHovering
   } = props
@@ -108,7 +108,7 @@ function EventItem(props) {
 
   const selected = selectedEvent.id === event.id
   const cardHover = selected || isHovering ? 'eventItem-hovering' : ''
-
+console.log(event.name, event.isSoldOut, event.isSelling)
   return (
     <div className={`eventItem ${cardHover}`}
       onMouseEnter={handleMouseEnter}
@@ -147,6 +147,9 @@ function EventItem(props) {
         <div className='eventItem__contentWrapper'>
           <div className='eventItem__secondContentWrapper'>
             <div className='eventItem__nameContentWrapper'>
+              <div className='eventItem__soldOutWrapper' style={event.isSoldOut ? {}:{visibility:"hidden"}}>
+                <h1 className='eventItem__soldOutTitle'>Sold Out</h1>
+              </div>
               <Animated isVisible={!isHovering && !selected} animateOnMount={false} animationOut='fadeOutLeft' animationIn='fadeInLeft' animationInDuration={300} animationOutDuration={300} style={{width: '100%'}}>
                 <div className='eventItem__nameContentSecondWrapper'>
                   <h1 className='eventItem__name'>{event.name}</h1>
@@ -159,7 +162,8 @@ function EventItem(props) {
               <Animated style={{ height: '100%' }} isVisible={isHovering || selected} animateOnMount={false} animationOut='fadeOutRight' animationIn='fadeInRight' animationInDuration={300} animationOutDuration={300}>
                 <div className='eventItem__buttonsSecondContainer'>
                   <Button size='large' style={{ color: 'white', backgroundColor: 'rgba(157, 141, 241, 0.7)', }} onClick={() => handleClickMore()}>More</Button>
-                  <Button size='large' style={{ color: 'white', backgroundColor: 'rgba(157, 141, 241, 0.7)', marginLeft: 30}} onClick={(event) => handleClickTickets(event)}>Tickets</Button>
+                  
+                  {event.isSelling && !event.isSoldOut ? <Button size='large' style={{ color: 'white', backgroundColor: 'rgba(157, 141, 241, 0.7)', marginLeft: 30}} onClick={(event) => handleClickTickets(event)}>Tickets</Button>:""}
                 </div>
               </Animated>
             </div>

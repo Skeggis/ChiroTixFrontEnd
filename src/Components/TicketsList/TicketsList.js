@@ -39,11 +39,14 @@ function TicketsList({ ticketTypes = [], location = '', organization = '', handl
                     <Col span={3} className="TicketsList__ticketTypeInfo rightAlign"> {parseFloat(ticket.price).toFixed(2)} $</Col>
                     <Col span={2}></Col>
                     <Col span={2} className="TicketsList__ticketTypeInfo">
-                        <div className="TicketsList__amountDiv">
+                        {ticket.isSoldOut ? <div className="TicketsList__amountDiv">
+                            <h1 className="TicketsList__soldOutTitle">Sold Out</h1>
+                        </div>:<div className="TicketsList__amountDiv">
                             <Button shape="circle" onClick={() => handleTicketChange(ticket.id, false)} size="small">-</Button>
                             <h3 className="TicketsList__amount">{ticket.amount}</h3>
                             <Button shape="circle" onClick={() => handleTicketChange(ticket.id, true)} size="small">+</Button>
-                        </div>
+                        </div>}
+                        
                     </Col>
                 </Row>
             </List.Item>)

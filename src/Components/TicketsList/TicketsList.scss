@@ -25,6 +25,10 @@
         // font-size: $subTitleFontSize*1.2;
     }
 
+    &__soldOutTitle{
+        font-size: $subTitleFontSize;
+    }
+
     .rightAlign{
         text-align: right;
     }
