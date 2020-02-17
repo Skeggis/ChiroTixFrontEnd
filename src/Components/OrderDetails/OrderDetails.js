@@ -14,7 +14,7 @@ export default function OrderDetails(props) {
   } = props
 
   const receipt = orderDetails.receipt
-  const lines = tickets
+  const lines = receipt.lines
 
   console.log('receipt', receipt)
   const order = {
