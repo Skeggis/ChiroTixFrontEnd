@@ -32,7 +32,7 @@ function EventPage(props) {
         let fetchEvent = async () => {
             let eventId = props.match.params.eventId
             setUrl(URL + `/event/${eventId}`)
-            let result = await axios.get(process.env.REACT_APP_SERVER_URL + `/event/${eventId}`)
+            let result = await axios.get(process.env.REACT_APP_SERVER_URL + `/api/event/${eventId}`)
             console.log("HERE!:", result.data)
             if(!result.data.success){ return props.history.push('/notFound') }
             setEvent(result.data.eventInfo)

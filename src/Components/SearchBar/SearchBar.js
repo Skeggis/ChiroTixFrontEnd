@@ -46,7 +46,7 @@ export default function SearchBar(props) {
   async function handleSearch(event) {
     setSearchLoading(true)
     const result = await axios({
-      url: `${process.env.REACT_APP_SERVER_URL}/searchEvents`,
+      url: `${process.env.REACT_APP_SERVER_URL}/api/searchEvents`,
       method: 'post',
       data: {
         search: {

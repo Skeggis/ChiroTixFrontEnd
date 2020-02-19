@@ -117,7 +117,7 @@ function TicketsPage(props) {
         let theSocket = null
         async function fetchData() {
             let eventId = props.match.params.eventId
-            let result = await axios.get(URL + `/tickets/info/${eventId}`)
+            let result = await axios.get(URL + `/api/tickets/info/${eventId}`)
             let data = result.data
             let event = data.event
 
@@ -190,7 +190,7 @@ function TicketsPage(props) {
         // if(ticketTypes.length === 0){return}
         setReserveLoading(true)
         let post = {
-            url: URL + '/tickets/reserveTickets',
+            url: URL + '/api/tickets/reserveTickets',
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -244,7 +244,7 @@ function TicketsPage(props) {
         setReleaseLoading(true)
         // if(ticketTypes.length === 0){return}
         let post = {
-            url: URL + '/tickets/releaseTickets',
+            url: URL + '/api/tickets/releaseTickets',
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -294,7 +294,7 @@ function TicketsPage(props) {
         setSubmitCardLoading(true)
         console.log("BUYINGTICKETS!")
         let post = {
-            url: URL + '/tickets/buyTickets',
+            url: URL + '/api/tickets/buyTickets',
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
