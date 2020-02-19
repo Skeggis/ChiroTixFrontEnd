@@ -41,7 +41,7 @@ export default function HomePage(props) {
   useEffect(() => {
     async function fetchData() {
       console.log(process.env.REACT_APP_SERVER_URL)
-      const result = await axios.get(`${process.env.REACT_APP_SERVER_URL}/initialSearch`)
+      const result = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/initialSearch`)
       console.log(result)
       setSearchValues(result.data.result)
       setEvents(result.data.result.featured)

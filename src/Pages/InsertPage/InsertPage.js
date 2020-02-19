@@ -138,7 +138,7 @@ function InsertPage(props) {
 
   useEffect(() => {
     async function fetchData() {
-      const result = await axios.get(`${process.env.REACT_APP_SERVER_URL}/insertValues`)
+      const result = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/insertValues`)
       console.log(result)
       setValues(result.data)
       setAvailableCities(result.data.cities)
@@ -166,7 +166,7 @@ function InsertPage(props) {
         async function uploadEvent() {
 
 
-          const result = await axios.post(`${process.env.REACT_APP_SERVER_URL}/eventImage`, formData, {
+          const result = await axios.post(`${process.env.REACT_APP_SERVER_URL}/api/eventImage`, formData, {
             headers: {
               'Content-type': 'multipart/form-data'
             }
@@ -186,7 +186,7 @@ function InsertPage(props) {
             }
           }
           console.log(mySpeakers)
-          const eventResult = await axios.post(`${process.env.REACT_APP_SERVER_URL}/events`, {
+          const eventResult = await axios.post(`${process.env.REACT_APP_SERVER_URL}/api/events`, {
             data: {
               name: values.name,
               organization: myOrganization,

@@ -42,7 +42,7 @@ function CreateUserForm(props){
     let postRequest = async (email, password, confirmPassword, name) => {
     console.log("POST!")
         let post = {
-            url: `${process.env.REACT_APP_SERVER_URL}/createUser`,
+            url: `${process.env.REACT_APP_SERVER_URL}/api/createUser`,
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

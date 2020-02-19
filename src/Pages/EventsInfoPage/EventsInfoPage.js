@@ -19,7 +19,7 @@ function EventsInfoPage(props){
 console.log("BOYO")
     useEffect(() => {
         async function getEvents(){
-            let result = await axios(process.env.REACT_APP_SERVER_URL + '/eventsInfo')
+            let result = await axios(process.env.REACT_APP_SERVER_URL + '/api/eventsInfo')
             let {data} = result
             if(!data.success){return showErrors(data.messages)}
             setEvents(data.events)
@@ -30,7 +30,7 @@ console.log("BOYO")
 
     async function onDownload(eventId){
         let response = await axios({
-            url: process.env.REACT_APP_SERVER_URL + '/downloadTickets/' + eventId,
+            url: process.env.REACT_APP_SERVER_URL + '/api/downloadTickets/' + eventId,
             method: 'get',
             responseType: 'blob',
             headers: {
@@ -43,7 +43,7 @@ console.log("BOYO")
 
     async function handleChangeEventState(eventId, isSelling, isVisible, isSoldOut){
         let post = {
-            url: process.env.REACT_APP_SERVER_URL + '/changeEventState',
+            url: process.env.REACT_APP_SERVER_URL + '/api/changeEventState',
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -73,7 +73,7 @@ console.log("BOYO")
 
     async function handleChangeTicketState(ticketTypeId){
         let post = {
-            url: process.env.REACT_APP_SERVER_URL + '/changeTicketState',
+            url: process.env.REACT_APP_SERVER_URL + '/api/changeTicketState',
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

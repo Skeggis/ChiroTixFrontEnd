@@ -16,7 +16,7 @@ export default function ReceiptPage(props) {
 
   useEffect(() => {
     async function fetchData() {
-      const result = await axios.get(`${process.env.REACT_APP_SERVER_URL}/orders/${match.params.orderId}`)
+      const result = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/orders/${match.params.orderId}`)
       console.log(result)
       if (!result.data.success) {
         //TODO handle
